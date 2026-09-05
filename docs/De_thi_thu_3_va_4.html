@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đề thi thử số 3 & 4 — MAT6206</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  chtml: { scale: 1.0 },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#f5f6f2; --card:#ffffff; --ink:#1a2330; --ink-soft:#4a5361;
+  --indigo:#2d3a86; --indigo-tint:#e9ebf7; --jade:#0f7a6a; --jade-tint:#e0efeb;
+  --rust:#ad4527; --rust-tint:#f6e8e2; --rule:#d9dce2;
+  --shadow:0 1px 2px rgba(26,35,48,.04),0 10px 30px rgba(26,35,48,.06);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(var(--rule) 0.6px,transparent 0.6px);
+  background-size:22px 22px;background-position:-11px -11px;}
+.wrap{max-width:860px;margin:0 auto;padding:0 24px 110px}
+
+/* ---- Masthead ---- */
+.masthead{padding:52px 0 30px;border-bottom:2px solid var(--indigo);margin-bottom:6px}
+.kicker{font-family:'JetBrains Mono',monospace;font-size:12.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--jade);font-weight:600;margin:0 0 10px}
+.masthead h1{font-family:'Spectral',serif;font-weight:700;font-size:clamp(30px,5vw,46px);
+  line-height:1.08;margin:0 0 6px;color:var(--indigo);letter-spacing:-.01em}
+.masthead .sub{font-family:'Spectral',serif;font-style:italic;font-size:19px;color:var(--ink-soft);margin:0}
+.motif{margin:22px 0 0;width:100%;height:56px;display:block}
+.meta-row{display:flex;flex-wrap:wrap;gap:10px 20px;margin-top:20px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink-soft)}
+.meta-row b{color:var(--ink);font-weight:600}
+
+/* ---- Coverage table ---- */
+.coverage{margin:30px 0 8px;background:var(--card);border:1px solid var(--rule);
+  border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+.coverage-head{background:var(--indigo-tint);padding:12px 18px;font-family:'JetBrains Mono',monospace;
+  font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--indigo);font-weight:600}
+table{width:100%;border-collapse:collapse}
+.coverage td{padding:9px 18px;border-top:1px solid var(--rule);font-size:14.5px;vertical-align:top}
+.coverage td:first-child{font-family:'JetBrains Mono',monospace;color:var(--jade);font-weight:600;width:56px}
+.coverage td:last-child{color:var(--ink-soft);width:120px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:12.5px}
+
+/* ---- Exam block ---- */
+.exam{margin-top:64px}
+.exam-tab{display:inline-flex;align-items:baseline;gap:12px;background:var(--indigo);color:#fff;
+  padding:10px 20px 11px;border-radius:10px 10px 0 0;font-family:'Spectral',serif}
+.exam-tab .n{font-family:'JetBrains Mono',monospace;font-size:13px;opacity:.75;letter-spacing:.1em}
+.exam-tab .t{font-size:22px;font-weight:600}
+.exam-body{background:var(--card);border:1px solid var(--rule);border-radius:0 12px 12px 12px;
+  box-shadow:var(--shadow);padding:8px 30px 34px}
+
+/* ---- Problem ---- */
+.problem{padding:26px 0;border-bottom:1px dashed var(--rule)}
+.problem:last-child{border-bottom:none}
+.p-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px;flex-wrap:wrap}
+.p-num{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:14px;color:#fff;
+  background:var(--jade);padding:3px 10px;border-radius:6px;white-space:nowrap}
+.p-title{font-family:'Spectral',serif;font-weight:600;font-size:19px;color:var(--indigo)}
+.p-pts{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--ink-soft);
+  border:1px solid var(--rule);padding:2px 9px;border-radius:20px}
+.problem p{margin:11px 0}
+.hint{background:var(--jade-tint);border-left:3px solid var(--jade);padding:10px 15px;border-radius:0 8px 8px 0;
+  font-size:14.5px;color:var(--ink-soft);margin:14px 0 2px}
+.hint b{color:var(--jade)}
+.parts{margin:8px 0 0;padding:0;list-style:none}
+.parts li{margin:9px 0;padding-left:2px}
+.parts .lab{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--rust);margin-right:6px}
+
+/* ---- footer note ---- */
+.tail{margin-top:40px;font-family:'Spectral',serif;font-style:italic;color:var(--ink-soft);
+  text-align:center;font-size:16px;padding:0 20px}
+
+mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
+
+@media (max-width:560px){
+  .exam-body{padding:6px 18px 26px}
+  .p-pts{margin-left:0}
+}
+@media print{
+  body{background:#fff;background-image:none;font-size:12pt}
+  .wrap{max-width:100%;padding:0}
+  .exam-body,.coverage{box-shadow:none}
+  .exam{break-inside:avoid}
+  .problem{break-inside:avoid}
+  .masthead{padding-top:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="kicker">MAT6206 · Các phương pháp ngẫu nhiên và ứng dụng</p>
+    <h1>Đề thi thử số 3 &amp; 4</h1>
+    <p class="sub">Bộ ôn tập giữa kỳ — phủ trọn 7 buổi kiến thức</p>
+    <svg class="motif" viewBox="0 0 860 56" preserveAspectRatio="none" aria-hidden="true">
+      <!-- random walk -->
+      <polyline points="0,40 40,32 80,44 120,28 160,36 200,20 240,30 280,16 320,26 360,10 400,22 440,14 480,26 520,12 560,24 600,18 640,30 680,22 720,34 760,26 800,38 860,30"
+        fill="none" stroke="#0f7a6a" stroke-width="1.6" stroke-linejoin="round" opacity="0.55"/>
+      <!-- bell curve -->
+      <path d="M560,54 C620,54 636,50 660,24 C676,6 684,6 700,24 C724,50 740,54 800,54"
+        fill="none" stroke="#2d3a86" stroke-width="2"/>
+      <line x1="560" y1="54" x2="800" y2="54" stroke="#2d3a86" stroke-width="1" opacity="0.4"/>
+    </svg>
+    <div class="meta-row">
+      <span><b>Thời gian:</b> 90 phút / đề</span>
+      <span><b>Được dùng:</b> Bảng $\Phi(z)$</span>
+      <span><b>Tổng điểm:</b> 10 / đề</span>
+    </div>
+  </header>
+
+  <div class="coverage">
+    <div class="coverage-head">Bản đồ kiến thức — hai đề này lấp đầy các buổi chưa xuất hiện & củng cố phần trọng tâm</div>
+    <table>
+      <tr><td>Đề 3</td><td>Xác suất &amp; Bayes · Kỳ vọng có điều kiện (lặp) · Vector liên tục · Tích chập · CLT</td><td>B1·B2·B3·B4·B7</td></tr>
+      <tr><td>Đề 4</td><td>Covariance &amp; tương quan · Chuẩn nhiều chiều · Jacobian phi tuyến · MGF · Các dạng hội tụ</td><td>B3·B4·B5·B6·B7</td></tr>
+    </table>
+  </div>
+
+  <!-- ============ ĐỀ 3 ============ -->
+  <section class="exam">
+    <div class="exam-tab"><span class="n">ĐỀ 03</span><span class="t">Nền tảng &amp; biến đổi</span></div>
+    <div class="exam-body">
+
+      <div class="problem">
+        <div class="p-head"><span class="p-num">Câu 1</span><span class="p-title">Xác suất đầy đủ &amp; công thức Bayes</span><span class="p-pts">2 điểm</span></div>
+        <p>Một bệnh hiếm gặp có tỷ lệ mắc trong dân số là $1\%$. Một xét nghiệm chẩn đoán bệnh này có:</p>
+        <ul class="parts">
+          <li><span class="lab">•</span><b>Độ nhạy</b> (cho kết quả dương tính khi <em>thực sự</em> có bệnh) $= 95\%$.</li>
+          <li><span class="lab">•</span><b>Độ đặc hiệu</b> (cho kết quả âm tính khi <em>thực sự</em> không bệnh) $= 90\%$.</li>
+        </ul>
+        <p>Chọn ngẫu nhiên một người trong dân số và cho làm xét nghiệm.</p>
+        <ul class="parts">
+          <li><span class="lab">a)</span>(1đ) Tính xác suất người đó có kết quả dương tính.</li>
+          <li><span class="lab">b)</span>(1đ) Biết kết quả dương tính, tính xác suất người đó <em>thực sự</em> mắc bệnh. Nêu nhận xét về con số thu được.</li>
+        </ul>
+      </div>
+
+      <div class="problem">
+        <div class="p-head"><span class="p-num">Câu 2</span><span class="p-title">Kỳ vọng có điều kiện — bài toán lặp</span><span class="p-pts">2 điểm</span></div>
+        <p>Một con chuột được đặt vào điểm xuất phát trong mê cung có $3$ lối đi. Mỗi lần đứng ở điểm xuất phát, chuột chọn ngẫu nhiên một lối với xác suất:</p>
+        <ul class="parts">
+          <li><span class="lab">•</span>Lối 1 (xác suất $0.5$): đi mất $2$ phút rồi <b>ra ngoài</b>.</li>
+          <li><span class="lab">•</span>Lối 2 (xác suất $0.3$): đi mất $3$ phút rồi <b>quay lại</b> điểm xuất phát.</li>
+          <li><span class="lab">•</span>Lối 3 (xác suất $0.2$): đi mất $5$ phút rồi <b>quay lại</b> điểm xuất phát.</li>
+        </ul>
+        <p>Gọi $T$ là tổng thời gian đến khi chuột ra ngoài. Tính $E[T]$.</p>
+        <div class="hint"><b>Gợi ý:</b> đặt $E[T]$ làm ẩn, lập phương trình dựa trên lối chuột chọn ở lần đầu tiên — sau khi "quay lại", bài toán tái khởi động y hệt ban đầu.</div>
+      </div>
+
+      <div class="problem">
+        <div class="p-head"><span class="p-num">Câu 3</span><span class="p-title">Vector ngẫu nhiên liên tục</span><span class="p-pts">3 điểm</span></div>
+        <p>Cho hai đại lượng ngẫu nhiên $X, Y$ có hàm mật độ đồng thời:</p>
+        <p>$$f(x,y)=\begin{cases} c\,xy & \text{nếu } 0&lt;x&lt;y&lt;1 \\ 0 & \text{nếu ngược lại}\end{cases}$$</p>
+        <ul class="parts">
+          <li><span class="lab">a)</span>(0.5đ) Tìm hằng số $c$.</li>
+          <li><span class="lab">b)</span>(1đ) Tìm hàm mật độ biên $f_X(x)$ và $f_Y(y)$. $X, Y$ có độc lập không?</li>
+          <li><span class="lab">c)</span>(1đ) Tìm mật độ có điều kiện $f(y\mid x)$ và tính $E[Y\mid X=x]$.</li>
+          <li><span class="lab">d)</span>(0.5đ) Tính $P\!\left(Y&gt;\tfrac12\right)$.</li>
+        </ul>
+      </div>
+
+      <div class="problem">
+        <div class="p-head"><span class="p-num">Câu 4</span><span class="p-title">Công thức tích chập (convolution)</span><span class="p-pts">2 điểm</span></div>
+        <p>Cho $X, Y$ độc lập, cùng phân phối mũ tham số $\lambda$, tức $X, Y \sim E(\lambda)$.</p>
+        <ul class="parts">
+          <li><span class="lab">a)</span>(1.5đ) Dùng <b>công thức tích chập</b> tìm hàm mật độ $f_Z(z)$ của $Z=X+Y$.</li>
+          <li><span class="lab">b)</span>(0.5đ) Cho biết $Z$ có phân phối gì (nêu tên và tham số).</li>
+        </ul>
+      </div>
+
+      <div class="problem">
+        <div class="p-head"><span class="p-num">Câu 5</span><span class="p-title">Định lý giới hạn trung tâm</span><span class="p-pts">1 điểm</span></div>
+        <p>Tung một con xúc xắc cân đối, đồng chất $180$ lần độc lập. Gọi $S$ là tổng số chấm thu được qua $180$ lần tung. Dùng CLT, tính gần đúng $P(S&gt;650)$.</p>
+        <div class="hint"><b>Nhắc lại:</b> với một lần tung, $E=3.5$ và $\mathrm{Var}=\dfrac{35}{12}$.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ ĐỀ 4 ============ -->
+  <section class="exam">
+    <div class="exam-tab"><span class="n">ĐỀ 04</span><span class="t">Phụ thuộc, chuẩn nhiều chiều &amp; hội tụ</span></div>
+    <div class="exam-body">
+
+      <div class="problem">
+        <div class="p-head"><span class="p-num">Câu 1</span><span class="p-title">Covariance &amp; hệ số tương quan (liên tục)</span><span class="p-pts">2 điểm</span></div>
+        <p>Cho $(X,Y)$ có phân phối đều trên miền tam giác $D=\{(x,y): 0&lt;x&lt;y&lt;1\}$, tức hàm mật độ đồng thời là hằng số $c$ trên $D$ và bằng $0$ ngoài $D$.</p>
+        <ul class="parts">
+          <li><span class="lab">a)</span>(0.5đ) Tìm hằng số $c$.</li>
+          <li><span class="lab">b)</span>(0.5đ) Tính $E[X]$ và $E[Y]$.</li>
+          <li><span class="lab">c)</span>(1đ) Tính $\mathrm{Cov}(X,Y)$ và hệ số tương quan $\rho(X,Y)$. Dấu của $\rho$ nói lên điều gì?</li>
+        </ul>
+      </div>
+
+      <div class="problem">
+        <div class="p-head"><span class="p-num">Câu 2</span><span class="p-title">Phân bố chuẩn hai chiều</span><span class="p-pts">2 điểm</span></div>
+        <p>Cho $(X,Y)$ có phân bố chuẩn hai chiều với $X\sim N(10,4)$, $Y\sim N(8,9)$ và hệ số tương quan $\rho(X,Y)=-0.5$. Đặt $W=X+Y$.</p>
+        <ul class="parts">
+          <li><span class="lab">a)</span>(1đ) Xác định phân phối của $W$ (nêu rõ định lý sử dụng và tính đủ tham số).</li>
+          <li><span class="lab">b)</span>(1đ) Tính $P(W&lt;20)$.</li>
+        </ul>
+      </div>
+
+      <div class="problem">
+        <div class="p-head"><span class="p-num">Câu 3</span><span class="p-title">Biến đổi Jacobian (phi tuyến)</span><span class="p-pts">2 điểm</span></div>
+        <p>Cho $X, Y$ độc lập, cùng phân phối mũ chuẩn tắc $E(1)$. Đặt:</p>
+        <p>$$U=\frac{X}{X+Y}, \qquad V=X+Y.$$</p>
+        <ul class="parts">
+          <li><span class="lab">a)</span>(1.5đ) Dùng phương pháp Jacobian, tìm hàm mật độ đồng thời $f_{U,V}(u,v)$. Nêu rõ miền giá trị.</li>
+          <li><span class="lab">b)</span>(0.5đ) $U$ và $V$ có độc lập không? $U$ có phân phối gì?</li>
+        </ul>
+        <div class="hint"><b>Gợi ý:</b> phép biến đổi ngược là $x=uv$ và $y=v(1-u)$.</div>
+      </div>
+
+      <div class="problem">
+        <div class="p-head"><span class="p-num">Câu 4</span><span class="p-title">Hàm sinh moment</span><span class="p-pts">2 điểm</span></div>
+        <ul class="parts">
+          <li><span class="lab">a)</span>(1đ) Một đại lượng ngẫu nhiên $X$ có hàm sinh moment $M_X(t)=\exp\!\big(3t+8t^2\big)$. Hãy xác định phân phối của $X$ (kèm tham số) và tính $\mathrm{Var}(X)$.</li>
+          <li><span class="lab">b)</span>(1đ) Cho $X\sim N(1,4)$ và $Y\sim N(2,9)$ độc lập. Dùng MGF, tìm phân phối của $X+Y$.</li>
+        </ul>
+        <div class="hint"><b>Nhắc lại:</b> nếu $X\sim N(\mu,\sigma^2)$ thì $M_X(t)=\exp\!\big(\mu t+\tfrac12\sigma^2 t^2\big)$.</div>
+      </div>
+
+      <div class="problem">
+        <div class="p-head"><span class="p-num">Câu 5</span><span class="p-title">Các dạng hội tụ &amp; ứng dụng CLT</span><span class="p-pts">2 điểm</span></div>
+        <ul class="parts">
+          <li><span class="lab">a)</span>(1đ) Nêu định nghĩa <b>hội tụ theo xác suất</b>. Cho dãy $(X_n)$ với $P(X_n=0)=1-\tfrac1n$ và $P(X_n=n)=\tfrac1n$. Hỏi $X_n$ có hội tụ theo xác suất về $0$ không? Dãy $E[X_n]$ có hội tụ về $0$ không? Nhận xét.</li>
+          <li><span class="lab">b)</span>(1đ) Một đại lượng ngẫu nhiên có $E=2$ và $\mathrm{Var}=4$. Lấy mẫu ngẫu nhiên gồm $n=100$ quan sát độc lập, gọi $\bar X$ là trung bình mẫu. Dùng CLT tính gần đúng $P(1.6&lt;\bar X&lt;2.4)$.</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <p class="tail">Làm xong cứ gửi lại để mình chấm — hoặc mở file lời giải đi kèm để tự đối chiếu từng bước.</p>
+
+</div>
+</body>
+</html>

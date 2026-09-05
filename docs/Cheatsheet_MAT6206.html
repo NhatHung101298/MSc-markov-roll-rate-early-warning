@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cheatsheet — MAT6206 Phương pháp ngẫu nhiên</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  chtml:{ scale:0.94 },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#f3f4ef; --card:#ffffff; --ink:#1a2330; --ink-soft:#556; 
+  --indigo:#2d3a86; --jade:#0f7a6a; --rust:#ad4527; --gold:#9a6b12; --plum:#7a3363;
+  --rule:#dcdfe4;
+  --shadow:0 1px 2px rgba(26,35,48,.05),0 6px 18px rgba(26,35,48,.06);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;font-size:13.5px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(var(--rule) 0.5px,transparent 0.5px);
+  background-size:20px 20px;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px 70px}
+
+/* header */
+.top{padding:38px 0 20px;display:flex;align-items:flex-end;justify-content:space-between;
+  flex-wrap:wrap;gap:16px;border-bottom:2px solid var(--indigo);margin-bottom:22px}
+.top h1{font-family:'Spectral',serif;font-weight:700;font-size:clamp(24px,4vw,38px);margin:0;
+  color:var(--indigo);letter-spacing:-.01em;line-height:1.05}
+.top .kick{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--jade);font-weight:600;margin:0 0 6px}
+.top .legend{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-soft);text-align:right;line-height:1.9}
+.top .legend span{display:inline-block;padding:1px 7px;border-radius:4px;color:#fff;font-weight:600;margin-left:4px}
+
+/* grid */
+.grid{column-count:3;column-gap:16px}
+@media(max-width:960px){.grid{column-count:2}}
+@media(max-width:640px){.grid{column-count:1}}
+
+.card{background:var(--card);border:1px solid var(--rule);border-radius:10px;box-shadow:var(--shadow);
+  padding:13px 15px 14px;margin:0 0 16px;break-inside:avoid;border-top:3px solid var(--indigo)}
+.card.b1{border-top-color:var(--indigo)} .card.b2{border-top-color:var(--jade)}
+.card.b3{border-top-color:var(--plum)} .card.b4{border-top-color:var(--gold)}
+.card.b5{border-top-color:var(--rust)} .card.ref{border-top-color:#334}
+.card h2{font-family:'Spectral',serif;font-size:16px;font-weight:600;margin:0 0 3px;color:var(--ink);
+  display:flex;align-items:baseline;gap:8px}
+.tag{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:600;letter-spacing:.08em;
+  padding:2px 6px;border-radius:4px;color:#fff;white-space:nowrap}
+.t1{background:var(--indigo)} .t2{background:var(--jade)} .t3{background:var(--plum)}
+.t4{background:var(--gold)} .t5{background:var(--rust)} .tr{background:#334}
+.card p{margin:7px 0}
+.lead{font-size:12px;color:var(--ink-soft);font-style:italic;margin:4px 0 8px !important}
+.k{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--jade);
+  text-transform:uppercase;letter-spacing:.05em;margin:9px 0 2px !important}
+ul.tight{margin:5px 0;padding-left:18px}
+ul.tight li{margin:3px 0}
+.mini{font-size:12px;color:var(--ink-soft)}
+mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
+mjx-container[display="true"]{margin:6px 0 !important}
+
+/* small tables */
+table.d{width:100%;border-collapse:collapse;font-size:11.5px;margin:6px 0}
+table.d th,table.d td{border:1px solid var(--rule);padding:4px 6px;text-align:left;vertical-align:middle}
+table.d th{background:#eef0f6;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--indigo)}
+table.d td:first-child{font-weight:600}
+
+.trapbox{background:#f8ece7;border:1px solid #e8c9bd;border-radius:6px;padding:2px 12px;margin-top:6px}
+.trapbox li{color:#7a3418}
+.footnote{margin-top:26px;text-align:center;font-family:'Spectral',serif;font-style:italic;color:var(--ink-soft);font-size:14px}
+
+@media print{
+  body{background:#fff;background-image:none;font-size:9.5pt}
+  .wrap{max-width:100%;padding:0}
+  .card{box-shadow:none}
+  .grid{column-count:3}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <p class="kick">MAT6206 · Các phương pháp ngẫu nhiên</p>
+      <h1>Cheatsheet ôn thi giữa kỳ</h1>
+    </div>
+    <div class="legend">
+      Mã màu theo buổi:
+      <span class="t1">B1·2 CƠ SỞ</span>
+      <span class="t2">B3 LIÊN TỤC</span>
+      <span class="t3">B4 BIẾN ĐỔI</span>
+      <span class="t4">B5·6 PHỤ THUỘC·MGF</span>
+      <span class="t5">B7 HỘI TỤ</span>
+    </div>
+  </header>
+
+  <div class="grid">
+
+    <!-- 1 Xác suất & Bayes -->
+    <div class="card b1">
+      <h2>Xác suất &amp; Bayes <span class="tag t1">B1</span></h2>
+      <p class="lead">"Biết hậu quả → suy ngược nguyên nhân"</p>
+      <p class="k">Xác suất đầy đủ</p>
+      <p>$$P(B)=\sum_i P(A_i)P(B\mid A_i)$$</p>
+      <p class="k">Công thức Bayes</p>
+      <p>$$P(A_k\mid B)=\frac{P(A_k)P(B\mid A_k)}{\sum_i P(A_i)P(B\mid A_i)}$$</p>
+      <ul class="tight mini">
+        <li>Độc lập: $P(A\cap B)=P(A)P(B)$</li>
+        <li>Xung khắc $\neq$ độc lập (xung khắc thì <em>phụ thuộc</em>).</li>
+        <li>Nhớ hiệu ứng <b>tỷ lệ nền</b>: bệnh hiếm ⇒ dương tính vẫn ít khả năng bệnh thật.</li>
+      </ul>
+    </div>
+
+    <!-- 2 Kỳ vọng có điều kiện -->
+    <div class="card b1">
+      <h2>Kỳ vọng có điều kiện <span class="tag t1">B2</span></h2>
+      <p class="lead">Tách bài toán theo "bước đầu tiên"</p>
+      <p class="k">Quy tắc tháp (tower)</p>
+      <p>$$E[X]=E\big[E[X\mid Y]\big]=\sum_y E[X\mid Y{=}y]\,P(Y{=}y)$$</p>
+      <p class="k">Phương sai toàn phần</p>
+      <p>$$\mathrm{Var}(X)=E\big[\mathrm{Var}(X\mid Y)\big]+\mathrm{Var}\big(E[X\mid Y]\big)$$</p>
+      <p class="k">Bài toán lặp (recursion)</p>
+      <ul class="tight mini">
+        <li>Đặt $E[T]$ làm ẩn.</li>
+        <li>Nhánh "quay lại" ⇒ cộng <b>chi phí bước đó $+\,E[T]$</b>.</li>
+        <li>Giải phương trình bậc nhất theo $E[T]$.</li>
+      </ul>
+    </div>
+
+    <!-- 3 Vector liên tục -->
+    <div class="card b2">
+      <h2>Vector ngẫu nhiên liên tục <span class="tag t2">B3</span></h2>
+      <p class="lead">Luôn vẽ miền trước khi đặt cận!</p>
+      <p class="k">Chuẩn hoá / mật độ biên</p>
+      <p>$$\iint f(x,y)\,dx\,dy=1,\quad f_X(x)=\int f(x,y)\,dy$$</p>
+      <p class="k">Mật độ &amp; kỳ vọng có điều kiện</p>
+      <p>$$f(y\mid x)=\frac{f(x,y)}{f_X(x)},\quad E[Y\mid X{=}x]=\int y\,f(y\mid x)\,dy$$</p>
+      <ul class="tight mini">
+        <li>Độc lập ⟺ $f(x,y)=f_X(x)f_Y(y)$ <em>trên cả miền chữ nhật</em>.</li>
+        <li>Miền tam giác ($x&lt;y$) ⇒ hầu như luôn <b>không độc lập</b>.</li>
+        <li>Xác suất hình học: $P((X,Y)\in A)=\dfrac{\text{diện tích }A}{\text{diện tích miền}}$ (khi phân phối đều).</li>
+      </ul>
+    </div>
+
+    <!-- 4 Jacobian -->
+    <div class="card b3">
+      <h2>Biến đổi Jacobian <span class="tag t3">B4</span></h2>
+      <p class="lead">Đổi biến $(X,Y)\to(U,V)$</p>
+      <p>$$f_{U,V}(u,v)=f_{X,Y}\big(x(u,v),y(u,v)\big)\,\big|J\big|$$</p>
+      <p>$$J=\det\!\begin{pmatrix}\partial x/\partial u & \partial x/\partial v\\[2pt]\partial y/\partial u & \partial y/\partial v\end{pmatrix}$$</p>
+      <p class="k">Quy trình 4 bước</p>
+      <ul class="tight mini">
+        <li>1. Giải ngược $x,y$ theo $u,v$.</li>
+        <li>2. Tính $|J|$ (lấy trị tuyệt đối).</li>
+        <li>3. Thay vào $f_{X,Y}$, nhân $|J|$.</li>
+        <li>4. Suy <b>miền mới</b> của $(u,v)$ từ miền cũ.</li>
+      </ul>
+      <p class="mini">Tách được $g(u)h(v)$ trên miền chữ nhật ⇒ $U,V$ độc lập.</p>
+    </div>
+
+    <!-- 5 Tích chập -->
+    <div class="card b3">
+      <h2>Tích chập (Convolution) <span class="tag t3">B4</span></h2>
+      <p class="lead">Phân phối của tổng $Z=X+Y$ (độc lập)</p>
+      <p>$$f_Z(z)=\int_{-\infty}^{\infty} f_X(x)\,f_Y(z-x)\,dx$$</p>
+      <ul class="tight mini">
+        <li>Biến dương ⇒ cận $x\in[0,z]$.</li>
+        <li>$E(\lambda)+E(\lambda)\Rightarrow \text{Gamma}(2,\lambda)$, mật độ $\lambda^2 z e^{-\lambda z}$.</li>
+        <li>$U(0,1)+U(0,1)\Rightarrow$ phân phối <b>tam giác</b> trên $[0,2]$.</li>
+        <li>Cách nhanh hơn thường là dùng MGF (xem thẻ MGF).</li>
+      </ul>
+    </div>
+
+    <!-- 6 Covariance -->
+    <div class="card b4">
+      <h2>Covariance &amp; tương quan <span class="tag t4">B5</span></h2>
+      <p>$$\mathrm{Cov}(X,Y)=E[XY]-E[X]E[Y]$$</p>
+      <p>$$\rho=\frac{\mathrm{Cov}(X,Y)}{\sqrt{\mathrm{Var}(X)\,\mathrm{Var}(Y)}}\in[-1,1]$$</p>
+      <p class="k">Phương sai tổ hợp</p>
+      <p>$$\mathrm{Var}(aX{+}bY)=a^2\mathrm{Var}X+b^2\mathrm{Var}Y+2ab\,\mathrm{Cov}(X,Y)$$</p>
+      <ul class="tight mini">
+        <li>$\rho&gt;0$ đồng biến; $\rho&lt;0$ nghịch biến.</li>
+        <li>Với $X-Y$: số hạng chéo là $\mathbf{-2\,Cov}$.</li>
+      </ul>
+    </div>
+
+    <!-- 7 Chuẩn nhiều chiều -->
+    <div class="card b4">
+      <h2>Chuẩn nhiều chiều <span class="tag t4">B5</span></h2>
+      <p class="lead">Tổ hợp tuyến tính của vector chuẩn ⇒ vẫn chuẩn</p>
+      <p>Nếu $(X,Y)$ chuẩn 2 chiều, $Z=aX+bY+c$ thì $Z$ chuẩn với:</p>
+      <p>$$E[Z]=a\mu_X+b\mu_Y+c$$</p>
+      <p>$$\mathrm{Var}(Z)=a^2\sigma_X^2+b^2\sigma_Y^2+2ab\,\rho\,\sigma_X\sigma_Y$$</p>
+      <p class="mini">Với $\mathrm{Cov}(X,Y)=\rho\,\sigma_X\sigma_Y$. Chỉ cần 2 tham số ($E,\mathrm{Var}$) là đủ mô tả $Z$ ⇒ chuẩn hoá &amp; tra $\Phi(z)$.</p>
+      <p class="trapbox"><b>Bẫy:</b> $\rho=0$ nói chung <em>không</em> suy ra độc lập — <b>trừ</b> trường hợp $(X,Y)$ chuẩn 2 chiều (khi đó $\rho=0\Leftrightarrow$ độc lập).</p>
+    </div>
+
+    <!-- 8 MGF -->
+    <div class="card b4">
+      <h2>Hàm sinh moment (MGF) <span class="tag t4">B6</span></h2>
+      <p>$$M_X(t)=E[e^{tX}]$$</p>
+      <p class="k">Ba tính chất vàng</p>
+      <ul class="tight mini">
+        <li>Sinh moment: $E[X^k]=M_X^{(k)}(0)$.</li>
+        <li>Tổng độc lập: $M_{X+Y}=M_X\cdot M_Y$.</li>
+        <li>MGF <b>xác định duy nhất</b> phân phối ⇒ dùng để nhận diện.</li>
+      </ul>
+      <p class="k">Nhận diện nhanh</p>
+      <ul class="tight mini">
+        <li>$\exp(\mu t+\tfrac12\sigma^2 t^2)\Rightarrow N(\mu,\sigma^2)$ &nbsp;(hệ số $t^2$ là $\tfrac12\sigma^2$!).</li>
+        <li>$e^{\lambda(e^t-1)}\Rightarrow \text{Poisson}(\lambda)$.</li>
+        <li>$(pe^t+1{-}p)^n\Rightarrow \text{Binomial}(n,p)$.</li>
+        <li>$\big(\tfrac{\lambda}{\lambda-t}\big)^k\Rightarrow \text{Gamma}(k,\lambda)$.</li>
+      </ul>
+    </div>
+
+    <!-- 9 Hội tụ -->
+    <div class="card b5">
+      <h2>Các dạng hội tụ <span class="tag t5">B7</span></h2>
+      <table class="d">
+        <tr><th>Dạng</th><th>Định nghĩa (rút gọn)</th></tr>
+        <tr><td>Xác suất $\xrightarrow{P}$</td><td>$P(|X_n{-}X|{&gt;}\varepsilon)\to0$</td></tr>
+        <tr><td>H.c.c. $\xrightarrow{a.s.}$</td><td>$P(\lim X_n{=}X){=}1$</td></tr>
+        <tr><td>$L^2$ / $L^p$</td><td>$E|X_n{-}X|^p\to0$</td></tr>
+        <tr><td>Phân bố $\xrightarrow{d}$</td><td>$F_{X_n}(x)\to F_X(x)$</td></tr>
+      </table>
+      <p class="mini">Mạnh → yếu: $a.s. \Rightarrow P \Rightarrow d$; &nbsp; $L^p \Rightarrow P \Rightarrow d$.</p>
+      <p class="trapbox"><b>Bẫy:</b> $X_n\xrightarrow{P}0$ <em>không</em> kéo theo $E[X_n]\to0$ (một đuôi hiếm ở giá trị lớn đủ giữ kỳ vọng).</p>
+    </div>
+
+    <!-- 10 LLN & Chebyshev -->
+    <div class="card b5">
+      <h2>Luật số lớn &amp; Chebyshev <span class="tag t5">B7</span></h2>
+      <p class="k">Bất đẳng thức Chebyshev</p>
+      <p>$$P\big(|X-\mu|\ge k\big)\le \frac{\mathrm{Var}(X)}{k^2}$$</p>
+      <p class="mini">Đúng với <b>mọi</b> phân phối ⇒ cận lỏng. Dùng để <em>chứng minh</em>, không để tính số chính xác.</p>
+      <p class="k">Luật số lớn (LLN)</p>
+      <p>$$\bar X_n=\frac1n\sum X_i \xrightarrow{P}\mu \quad(n\to\infty)$$</p>
+      <p class="mini">Định lý Bernoulli: tần suất $f_n\xrightarrow{P}p$.</p>
+    </div>
+
+    <!-- 11 CLT -->
+    <div class="card b5">
+      <h2>Định lý giới hạn trung tâm <span class="tag t5">B7</span></h2>
+      <p class="lead">Trung bình / tổng của $n$ lớn ⇒ xấp xỉ chuẩn</p>
+      <p>$$\bar X_n\approx N\!\left(\mu,\ \frac{\sigma^2}{n}\right),\qquad S_n\approx N(n\mu,\ n\sigma^2)$$</p>
+      <p>$$Z=\frac{\bar X_n-\mu}{\sigma/\sqrt n}\xrightarrow{d}N(0,1)$$</p>
+      <ul class="tight mini">
+        <li>Quy trình: tính $E,\mathrm{Var}$ của tổng/TB → chuẩn hoá → tra $\Phi$.</li>
+        <li>CLT cho ước lượng <b>chặt hơn nhiều</b> so với Chebyshev.</li>
+        <li>Biến rời rạc: cân nhắc <b>hiệu chỉnh liên tục</b> ($\pm0.5$).</li>
+      </ul>
+    </div>
+
+    <!-- 12 Bảng phân phối -->
+    <div class="card ref">
+      <h2>Bảng phân phối tra nhanh <span class="tag tr">REF</span></h2>
+      <table class="d">
+        <tr><th>Phân phối</th><th>$E$</th><th>$\mathrm{Var}$</th></tr>
+        <tr><td>Bernoulli$(p)$</td><td>$p$</td><td>$p(1{-}p)$</td></tr>
+        <tr><td>Binomial$(n,p)$</td><td>$np$</td><td>$np(1{-}p)$</td></tr>
+        <tr><td>Poisson$(\lambda)$</td><td>$\lambda$</td><td>$\lambda$</td></tr>
+        <tr><td>Geometric$(p)$</td><td>$\tfrac1p$</td><td>$\tfrac{1-p}{p^2}$</td></tr>
+        <tr><td>Uniform$(a,b)$</td><td>$\tfrac{a+b}{2}$</td><td>$\tfrac{(b-a)^2}{12}$</td></tr>
+        <tr><td>Exp$(\lambda)$</td><td>$\tfrac1\lambda$</td><td>$\tfrac1{\lambda^2}$</td></tr>
+        <tr><td>Gamma$(k,\lambda)$</td><td>$\tfrac k\lambda$</td><td>$\tfrac k{\lambda^2}$</td></tr>
+        <tr><td>Normal$(\mu,\sigma^2)$</td><td>$\mu$</td><td>$\sigma^2$</td></tr>
+      </table>
+    </div>
+
+    <!-- 13 Chuẩn tắc + tích phân -->
+    <div class="card ref">
+      <h2>Chuẩn tắc &amp; tích phân hay dùng <span class="tag tr">REF</span></h2>
+      <p class="k">Giá trị $\Phi(z)$ cần thuộc</p>
+      <table class="d">
+        <tr><th>$z$</th><th>$\Phi(z)$</th><th>$z$</th><th>$\Phi(z)$</th></tr>
+        <tr><td>1.00</td><td>.841</td><td>1.645</td><td>.950</td></tr>
+        <tr><td>1.28</td><td>.900</td><td>1.96</td><td>.975</td></tr>
+        <tr><td>2.00</td><td>.977</td><td>2.33</td><td>.990</td></tr>
+        <tr><td>2.58</td><td>.995</td><td>3.00</td><td>.999</td></tr>
+      </table>
+      <p class="mini">$\Phi(-z)=1-\Phi(z)$; &nbsp; quy tắc: $\pm1\sigma\!\approx\!68\%,\ \pm2\sigma\!\approx\!95\%,\ \pm3\sigma\!\approx\!99.7\%$.</p>
+      <p class="k">Nguyên hàm hay gặp</p>
+      <p class="mini">$\displaystyle\int_0^\infty y^{n}e^{-ky}dy=\frac{n!}{k^{\,n+1}}$ &nbsp;(vd $n{=}1:\ 1/k^2$).</p>
+    </div>
+
+    <!-- 14 Bẫy lý thuyết -->
+    <div class="card b5">
+      <h2>Bẫy lý thuyết hay mất điểm <span class="tag t5">!</span></h2>
+      <ul class="tight mini trapbox">
+        <li><b>Độc lập ≠ xung khắc.</b> Xung khắc ⇒ phụ thuộc.</li>
+        <li>$\rho=0$ <b>không</b> ⇒ độc lập (trừ khi chuẩn 2 chiều).</li>
+        <li>Hệ số $t^2$ trong MGF chuẩn là $\tfrac12\sigma^2$, không phải $\sigma^2$.</li>
+        <li>$\mathrm{Var}(X{-}Y)=\mathrm{Var}X+\mathrm{Var}Y-2\mathrm{Cov}$ (phương sai vẫn <em>cộng</em> phần độc lập).</li>
+        <li>Nhầm xác suất <b>đồng thời</b> với <b>có điều kiện</b> (chia sai mẫu số).</li>
+        <li>Miền tích phân sai (tam giác vs. chữ nhật).</li>
+        <li>Bài lặp: quên cộng chi phí bước hỏng cùng $E[T]$.</li>
+      </ul>
+    </div>
+
+    <!-- 15 Chiến lược phòng thi -->
+    <div class="card ref">
+      <h2>Chiến lược phòng thi <span class="tag tr">TIP</span></h2>
+      <ul class="tight mini">
+        <li><b>Vector liên tục:</b> vẽ miền → tìm $c$ → biên → điều kiện → kỳ vọng.</li>
+        <li><b>Tổng biến độc lập:</b> ưu tiên MGF (nhanh hơn tích chập).</li>
+        <li><b>"Xác suất là bao nhiêu" + $n$ lớn</b> ⇒ nghĩ ngay tới CLT.</li>
+        <li><b>Bài quay-vòng / lặp lại</b> ⇒ kỳ vọng có điều kiện + phương trình ẩn.</li>
+        <li>Luôn ghi rõ <b>miền / điều kiện tham số</b> (vd $t&lt;\lambda$ cho MGF mũ).</li>
+        <li>Kết luận bằng một câu chữ, không chỉ để trơ đáp số.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <p class="footnote">Bao quát toàn bộ 4 đề thi thử · Buổi 1 → 7 · In hai mặt hoặc để trên màn hình phụ khi luyện đề.</p>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lời giải chi tiết — Đề 3 &amp; 4 — MAT6206</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#f5f6f2; --card:#ffffff; --ink:#1a2330; --ink-soft:#4a5361;
+  --indigo:#2d3a86; --indigo-tint:#e9ebf7; --jade:#0f7a6a; --jade-tint:#e0efeb;
+  --rust:#ad4527; --rust-tint:#f6e8e2; --rule:#d9dce2;
+  --shadow:0 1px 2px rgba(26,35,48,.04),0 10px 30px rgba(26,35,48,.06);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.64;
+  -webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(var(--rule) 0.6px,transparent 0.6px);
+  background-size:22px 22px;background-position:-11px -11px;}
+.wrap{max-width:860px;margin:0 auto;padding:0 24px 110px}
+
+.masthead{padding:52px 0 26px;border-bottom:2px solid var(--jade);margin-bottom:6px}
+.kicker{font-family:'JetBrains Mono',monospace;font-size:12.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--jade);font-weight:600;margin:0 0 10px}
+.masthead h1{font-family:'Spectral',serif;font-weight:700;font-size:clamp(28px,5vw,44px);
+  line-height:1.08;margin:0 0 6px;color:var(--indigo);letter-spacing:-.01em}
+.masthead .sub{font-family:'Spectral',serif;font-style:italic;font-size:19px;color:var(--ink-soft);margin:0}
+.motif{margin:22px 0 0;width:100%;height:52px;display:block}
+
+.exam{margin-top:56px}
+.exam-tab{display:inline-flex;align-items:baseline;gap:12px;background:var(--jade);color:#fff;
+  padding:10px 20px 11px;border-radius:10px 10px 0 0;font-family:'Spectral',serif}
+.exam-tab .n{font-family:'JetBrains Mono',monospace;font-size:13px;opacity:.8;letter-spacing:.1em}
+.exam-tab .t{font-size:22px;font-weight:600}
+.exam-body{background:var(--card);border:1px solid var(--rule);border-radius:0 12px 12px 12px;
+  box-shadow:var(--shadow);padding:8px 30px 30px}
+
+.sol{padding:26px 0;border-bottom:1px dashed var(--rule)}
+.sol:last-child{border-bottom:none}
+.s-head{display:flex;align-items:baseline;gap:14px;margin-bottom:10px;flex-wrap:wrap}
+.s-num{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:14px;color:#fff;
+  background:var(--indigo);padding:3px 10px;border-radius:6px;white-space:nowrap}
+.s-title{font-family:'Spectral',serif;font-weight:600;font-size:19px;color:var(--indigo)}
+.sol p{margin:11px 0}
+.restate{background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:8px 14px;
+  font-size:14px;color:var(--ink-soft);margin:2px 0 16px}
+.restate b{color:var(--ink)}
+.part{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--rust);
+  display:inline-block;margin:16px 0 2px}
+.step{margin:8px 0 8px}
+.ans{background:var(--jade-tint);border:1px solid #b9ddd4;border-left:4px solid var(--jade);
+  border-radius:0 8px 8px 0;padding:11px 16px;margin:14px 0;font-weight:500}
+.ans::before{content:"ĐÁP SỐ";font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;
+  color:var(--jade);display:block;margin-bottom:3px;font-weight:600}
+.insight{background:var(--indigo-tint);border-left:4px solid var(--indigo);border-radius:0 8px 8px 0;
+  padding:11px 16px;margin:14px 0;font-size:14.5px}
+.insight::before{content:"TRỰC GIÁC";font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;
+  color:var(--indigo);display:block;margin-bottom:3px;font-weight:600}
+.trap{background:var(--rust-tint);border-left:4px solid var(--rust);border-radius:0 8px 8px 0;
+  padding:11px 16px;margin:14px 0;font-size:14.5px}
+.trap::before{content:"⚠  BẪY THƯỜNG GẶP";font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.1em;
+  color:var(--rust);display:block;margin-bottom:3px;font-weight:600}
+
+mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
+.tail{margin-top:40px;font-family:'Spectral',serif;font-style:italic;color:var(--ink-soft);text-align:center;font-size:16px}
+
+@media (max-width:560px){ .exam-body{padding:6px 18px 24px} }
+@media print{
+  body{background:#fff;background-image:none;font-size:11.5pt}
+  .wrap{max-width:100%;padding:0}
+  .exam-body{box-shadow:none}
+  .sol{break-inside:avoid}
+  .masthead{padding-top:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="kicker">MAT6206 · Lời giải chi tiết</p>
+    <h1>Lời giải Đề 3 &amp; Đề 4</h1>
+    <p class="sub">Đầy đủ từng bước — kèm trực giác và các bẫy hay mắc</p>
+    <svg class="motif" viewBox="0 0 860 52" preserveAspectRatio="none" aria-hidden="true">
+      <polyline points="0,36 40,28 80,40 120,24 160,32 200,18 240,28 280,14 320,24 360,10 400,20 440,12 480,24 520,10 560,22 600,16 640,28 680,20 720,32 760,24 800,34 860,26"
+        fill="none" stroke="#2d3a86" stroke-width="1.6" stroke-linejoin="round" opacity="0.5"/>
+      <path d="M40,50 C100,50 116,46 140,20 C156,4 164,4 180,20 C204,46 220,50 280,50"
+        fill="none" stroke="#0f7a6a" stroke-width="2"/>
+    </svg>
+  </header>
+
+  <!-- ================= ĐỀ 3 ================= -->
+  <section class="exam">
+    <div class="exam-tab"><span class="n">ĐỀ 03</span><span class="t">Lời giải</span></div>
+    <div class="exam-body">
+
+      <!-- Câu 1 -->
+      <div class="sol">
+        <div class="s-head"><span class="s-num">Câu 1</span><span class="s-title">Xác suất đầy đủ &amp; Bayes</span></div>
+        <div class="restate"><b>Đặt biến cố:</b> $D$ = "có bệnh", $+$ = "dương tính". Dữ kiện: $P(D)=0.01$, độ nhạy $P(+\mid D)=0.95$, độ đặc hiệu $P(-\mid D^c)=0.90$ nên $P(+\mid D^c)=0.10$.</div>
+
+        <span class="part">a) Xác suất dương tính</span>
+        <p class="step">Kết quả dương có thể đến từ hai "nguồn": người có bệnh xét nghiệm đúng, hoặc người không bệnh bị báo nhầm. Cộng dồn theo công thức xác suất đầy đủ:</p>
+        <p>$$P(+)=P(D)P(+\mid D)+P(D^c)P(+\mid D^c)$$</p>
+        <p>$$=0.01\times0.95+0.99\times0.10=0.0095+0.099=0.1085$$</p>
+        <div class="ans">$P(+)=0.1085$ (khoảng $10.85\%$ dân số cho kết quả dương).</div>
+
+        <span class="part">b) Bayes — dương tính thì thực sự có bệnh?</span>
+        <p class="step">Áp dụng công thức Bayes, lấy nhánh "có bệnh &amp; dương" chia cho toàn bộ "dương":</p>
+        <p>$$P(D\mid +)=\frac{P(D)P(+\mid D)}{P(+)}=\frac{0.0095}{0.1085}\approx 0.0876$$</p>
+        <div class="ans">$P(D\mid +)\approx 8.76\%$.</div>
+        <div class="insight">Dù xét nghiệm khá "nhạy" (95%), một người dương tính vẫn chỉ có $\approx 8.8\%$ khả năng thật sự mắc bệnh. Lý do: bệnh quá hiếm ($1\%$), nên nhóm "không bệnh nhưng báo nhầm" ($0.99\times0.10=0.099$) đông áp đảo nhóm "có bệnh thật" ($0.0095$). Đây là hiệu ứng <b>tỷ lệ nền (base rate)</b> — bài học then chốt của Bayes.</div>
+      </div>
+
+      <!-- Câu 2 -->
+      <div class="sol">
+        <div class="s-head"><span class="s-num">Câu 2</span><span class="s-title">Kỳ vọng có điều kiện — bài toán lặp</span></div>
+        <p class="step">Gọi $E[T]$ là thời gian trung bình cần tìm. Xét kết quả của <b>lần chọn lối đầu tiên</b>. Nếu quay lại điểm xuất phát, chuột đối mặt với đúng bài toán ban đầu, nên thời gian kỳ vọng còn lại lại đúng bằng $E[T]$:</p>
+        <p>$$E[T]=\underbrace{0.5\cdot 2}_{\text{ra ngoài}}+\underbrace{0.3\,(3+E[T])}_{\text{lối 2, quay lại}}+\underbrace{0.2\,(5+E[T])}_{\text{lối 3, quay lại}}$$</p>
+        <p class="step">Khai triển:</p>
+        <p>$$E[T]=1+0.9+0.3E[T]+1.0+0.2E[T]=2.9+0.5\,E[T]$$</p>
+        <p class="step">Chuyển vế:</p>
+        <p>$$0.5\,E[T]=2.9\;\Longrightarrow\;E[T]=5.8$$</p>
+        <div class="ans">Thời gian trung bình để chuột ra ngoài là $E[T]=5.8$ phút.</div>
+        <div class="trap">Đừng quên cộng <b>chi phí thời gian của chính lần đi hỏng</b> (3 phút ở lối 2, 5 phút ở lối 3) <em>cùng với</em> $E[T]$. Nhiều bạn chỉ viết $0.3\cdot E[T]$ mà bỏ mất số 3 — dẫn tới sai đáp số.</div>
+      </div>
+
+      <!-- Câu 3 -->
+      <div class="sol">
+        <div class="s-head"><span class="s-num">Câu 3</span><span class="s-title">Vector ngẫu nhiên liên tục</span></div>
+        <div class="restate"><b>Chú ý miền:</b> $0&lt;x&lt;y&lt;1$ là một <b>tam giác</b> (nằm phía trên đường $y=x$), không phải hình vuông. Cận tích phân phải bám theo tam giác này.</div>
+
+        <span class="part">a) Tìm $c$</span>
+        <p class="step">Tích phân toàn miền phải bằng 1. Cho $x$ chạy từ $0$ đến $y$ trước:</p>
+        <p>$$\int_0^1\!\!\int_0^y cxy\,dx\,dy=\int_0^1 cy\cdot\frac{y^2}{2}\,dy=\frac{c}{2}\int_0^1 y^3\,dy=\frac{c}{2}\cdot\frac14=\frac{c}{8}=1$$</p>
+        <div class="ans">$c=8$.</div>
+
+        <span class="part">b) Mật độ biên &amp; tính độc lập</span>
+        <p class="step">Mật độ biên $f_Y(y)$ — "gộp" hết $x$ từ $0$ đến $y$:</p>
+        <p>$$f_Y(y)=\int_0^y 8xy\,dx=8y\cdot\frac{y^2}{2}=4y^3,\qquad 0&lt;y&lt;1$$</p>
+        <p class="step">Mật độ biên $f_X(x)$ — "gộp" hết $y$ từ $x$ đến $1$:</p>
+        <p>$$f_X(x)=\int_x^1 8xy\,dy=8x\cdot\frac{1-x^2}{2}=4x(1-x^2),\qquad 0&lt;x&lt;1$$</p>
+        <div class="ans">$X, Y$ <b>không</b> độc lập: $f_X(x)f_Y(y)\neq f(x,y)$, và bản thân miền tam giác $x&lt;y$ đã "ràng buộc" hai biến với nhau.</div>
+
+        <span class="part">c) Mật độ có điều kiện &amp; $E[Y\mid X=x]$</span>
+        <p>$$f(y\mid x)=\frac{f(x,y)}{f_X(x)}=\frac{8xy}{4x(1-x^2)}=\frac{2y}{1-x^2},\qquad x&lt;y&lt;1$$</p>
+        <p class="step">Từ đó:</p>
+        <p>$$E[Y\mid X=x]=\int_x^1 y\cdot\frac{2y}{1-x^2}\,dy=\frac{2}{1-x^2}\int_x^1 y^2\,dy=\frac{2}{1-x^2}\cdot\frac{1-x^3}{3}$$</p>
+        <p class="step">Rút gọn nhờ $1-x^3=(1-x)(1+x+x^2)$ và $1-x^2=(1-x)(1+x)$:</p>
+        <p>$$E[Y\mid X=x]=\frac{2\,(1+x+x^2)}{3\,(1+x)}$$</p>
+        <div class="ans">$E[Y\mid X=x]=\dfrac{2(1+x+x^2)}{3(1+x)}$.</div>
+
+        <span class="part">d) Tính $P(Y&gt;\tfrac12)$</span>
+        <p class="step">Dùng mật độ biên $f_Y(y)=4y^3$:</p>
+        <p>$$P\!\left(Y&gt;\tfrac12\right)=\int_{1/2}^{1}4y^3\,dy=\Big[y^4\Big]_{1/2}^{1}=1-\frac{1}{16}=\frac{15}{16}$$</p>
+        <div class="ans">$P(Y&gt;\tfrac12)=\dfrac{15}{16}=0.9375$.</div>
+      </div>
+
+      <!-- Câu 4 -->
+      <div class="sol">
+        <div class="s-head"><span class="s-num">Câu 4</span><span class="s-title">Công thức tích chập</span></div>
+        <span class="part">a) Tìm $f_Z(z)$</span>
+        <p class="step">Với $X,Y$ độc lập, mật độ của tổng là tích chập. Vì cả hai chỉ nhận giá trị dương, khi $z&gt;0$ thì $x$ chỉ chạy trong $[0,z]$:</p>
+        <p>$$f_Z(z)=\int_0^z f_X(x)f_Y(z-x)\,dx=\int_0^z \lambda e^{-\lambda x}\cdot \lambda e^{-\lambda(z-x)}\,dx$$</p>
+        <p class="step">Gộp mũ: $e^{-\lambda x}e^{-\lambda(z-x)}=e^{-\lambda z}$ (không còn phụ thuộc $x$), nên tích phân chỉ còn đo độ dài đoạn:</p>
+        <p>$$f_Z(z)=\lambda^2 e^{-\lambda z}\int_0^z dx=\lambda^2 z\,e^{-\lambda z},\qquad z&gt;0$$</p>
+        <div class="ans">$f_Z(z)=\lambda^2 z\,e^{-\lambda z}$ với $z&gt;0$ (và $=0$ khi $z\le 0$).</div>
+
+        <span class="part">b) Nhận diện phân phối</span>
+        <div class="ans">$Z\sim \text{Gamma}(\text{shape}=2,\ \text{rate}=\lambda)$, còn gọi là phân phối <b>Erlang bậc 2</b>.</div>
+        <div class="insight">Kết quả này trùng khớp với cách làm bằng MGF: $M_Z(t)=\left(\frac{\lambda}{\lambda-t}\right)^2$ cũng là MGF của Gamma$(2,\lambda)$. <b>Tổng hai biến mũ độc lập cùng tham số luôn cho Gamma$(2,\lambda)$</b> — một quy luật rất đáng nhớ, và là điểm giao nhau giữa phương pháp tích chập (buổi 4) và MGF (buổi 6).</div>
+      </div>
+
+      <!-- Câu 5 -->
+      <div class="sol">
+        <div class="s-head"><span class="s-num">Câu 5</span><span class="s-title">Định lý giới hạn trung tâm</span></div>
+        <p class="step">Mỗi lần tung: $\mu=3.5$, $\sigma^2=\dfrac{35}{12}$. Với $n=180$ lần độc lập, tổng $S$ có:</p>
+        <p>$$E[S]=180\times 3.5=630,\qquad \mathrm{Var}(S)=180\times\frac{35}{12}=525$$</p>
+        <p class="step">Độ lệch chuẩn $\sqrt{525}\approx 22.91$. Theo CLT, $S\approx N(630,\,525)$. Chuẩn hoá:</p>
+        <p>$$P(S&gt;650)=P\!\left(Z&gt;\frac{650-630}{22.91}\right)=P(Z&gt;0.873)\approx 1-\Phi(0.87)$$</p>
+        <p>$$\approx 1-0.8078=0.1922$$</p>
+        <div class="ans">$P(S&gt;650)\approx 0.19$.</div>
+        <div class="insight">Nếu dùng <b>hiệu chỉnh liên tục</b> (viết $P(S\ge 651)\approx P(S&gt;650.5)$), ta được $z\approx 0.895$ và xác suất $\approx 0.185$ — sát hơn một chút. Trong đề tự luận, ghi rõ có dùng hiệu chỉnh hay không đều được chấp nhận.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= ĐỀ 4 ================= -->
+  <section class="exam">
+    <div class="exam-tab"><span class="n">ĐỀ 04</span><span class="t">Lời giải</span></div>
+    <div class="exam-body">
+
+      <!-- Câu 1 -->
+      <div class="sol">
+        <div class="s-head"><span class="s-num">Câu 1</span><span class="s-title">Covariance &amp; hệ số tương quan</span></div>
+        <div class="restate"><b>Phân phối đều trên tam giác</b> $D=\{0&lt;x&lt;y&lt;1\}$: mật độ là hằng số $c$ trên $D$. Diện tích tam giác $=\tfrac12$.</div>
+
+        <span class="part">a) Tìm $c$</span>
+        <p class="step">Tích phân của hằng số $c$ trên miền $=$ $c\times$(diện tích) $=1$:</p>
+        <p>$$c\times\frac12=1\;\Longrightarrow\;c=2$$</p>
+        <div class="ans">$c=2$.</div>
+
+        <span class="part">b) Kỳ vọng biên</span>
+        <p class="step">$f_X(x)=\int_x^1 2\,dy=2(1-x)$ và $f_Y(y)=\int_0^y 2\,dx=2y$. Do đó:</p>
+        <p>$$E[X]=\int_0^1 x\cdot 2(1-x)\,dx=2\!\left(\tfrac12-\tfrac13\right)=\frac13$$</p>
+        <p>$$E[Y]=\int_0^1 y\cdot 2y\,dy=2\cdot\frac13=\frac23$$</p>
+        <div class="ans">$E[X]=\tfrac13,\quad E[Y]=\tfrac23$.</div>
+
+        <span class="part">c) Covariance &amp; $\rho$</span>
+        <p class="step">Tính $E[XY]$ trên tam giác:</p>
+        <p>$$E[XY]=\int_0^1\!\!\int_0^y 2xy\,dx\,dy=\int_0^1 2y\cdot\frac{y^2}{2}\,dy=\int_0^1 y^3\,dy=\frac14$$</p>
+        <p class="step">Vậy:</p>
+        <p>$$\mathrm{Cov}(X,Y)=E[XY]-E[X]E[Y]=\frac14-\frac13\cdot\frac23=\frac14-\frac29=\frac{1}{36}$$</p>
+        <p class="step">Cần thêm phương sai. Với $E[X^2]=\int_0^1 x^2\cdot2(1-x)dx=\tfrac16$ và $E[Y^2]=\int_0^1 y^2\cdot2y\,dy=\tfrac12$:</p>
+        <p>$$\mathrm{Var}(X)=\frac16-\frac19=\frac{1}{18},\qquad \mathrm{Var}(Y)=\frac12-\frac49=\frac{1}{18}$$</p>
+        <p class="step">Do đó:</p>
+        <p>$$\rho(X,Y)=\frac{\mathrm{Cov}(X,Y)}{\sqrt{\mathrm{Var}(X)\,\mathrm{Var}(Y)}}=\frac{1/36}{1/18}=\frac12$$</p>
+        <div class="ans">$\mathrm{Cov}(X,Y)=\dfrac{1}{36},\qquad \rho(X,Y)=\dfrac12$.</div>
+        <div class="insight">$\rho=+0.5&gt;0$ cho biết $X$ và $Y$ <b>đồng biến</b>: biết $X$ lớn thì $Y$ có xu hướng lớn theo. Điều này hợp lý vì ràng buộc $X&lt;Y$ khiến hai biến "kéo nhau" cùng chiều.</div>
+      </div>
+
+      <!-- Câu 2 -->
+      <div class="sol">
+        <div class="s-head"><span class="s-num">Câu 2</span><span class="s-title">Phân bố chuẩn hai chiều</span></div>
+        <span class="part">a) Phân phối của $W=X+Y$</span>
+        <p class="step"><b>Định lý:</b> tổ hợp tuyến tính của một vector chuẩn hai chiều vẫn là biến chuẩn một chiều. Chỉ cần tính hai tham số. Trước hết:</p>
+        <p>$$\mathrm{Cov}(X,Y)=\rho\,\sigma_X\sigma_Y=(-0.5)(2)(3)=-3$$</p>
+        <p class="step">Kỳ vọng cộng thẳng; phương sai của tổng có thêm $2\,\mathrm{Cov}$:</p>
+        <p>$$E[W]=10+8=18$$</p>
+        <p>$$\mathrm{Var}(W)=\mathrm{Var}(X)+\mathrm{Var}(Y)+2\,\mathrm{Cov}(X,Y)=4+9+2(-3)=7$$</p>
+        <div class="ans">$W\sim N(18,\,7)$.</div>
+        <div class="trap">Vì $\rho&lt;0$, phương sai của tổng <b>nhỏ hơn</b> tổng phương sai ($7&lt;13$). Đừng quên số hạng $2\,\mathrm{Cov}$ — nếu bỏ qua, bạn sẽ ra $\mathrm{Var}(W)=13$ (sai). Với $X-Y$ thì ngược lại, số hạng đó đổi dấu thành $-2\,\mathrm{Cov}$.</div>
+
+        <span class="part">b) Tính $P(W&lt;20)$</span>
+        <p class="step">$\sqrt7\approx 2.646$, chuẩn hoá:</p>
+        <p>$$P(W&lt;20)=P\!\left(Z&lt;\frac{20-18}{\sqrt7}\right)=P(Z&lt;0.756)\approx\Phi(0.76)=0.7764$$</p>
+        <div class="ans">$P(W&lt;20)\approx 0.776$.</div>
+      </div>
+
+      <!-- Câu 3 -->
+      <div class="sol">
+        <div class="s-head"><span class="s-num">Câu 3</span><span class="s-title">Biến đổi Jacobian (phi tuyến)</span></div>
+        <span class="part">a) Tìm $f_{U,V}(u,v)$</span>
+        <p class="step">Mật độ gốc: $f_{X,Y}(x,y)=e^{-x}e^{-y}=e^{-(x+y)}$ với $x,y&gt;0$. Phép biến đổi ngược đã cho: $x=uv,\ y=v(1-u)$. Tính ma trận Jacobian:</p>
+        <p>$$J=\begin{vmatrix} \partial x/\partial u & \partial x/\partial v \\ \partial y/\partial u & \partial y/\partial v \end{vmatrix}=\begin{vmatrix} v & u \\ -v & 1-u \end{vmatrix}=v(1-u)-u(-v)=v$$</p>
+        <p class="step">Nhận xét mấu chốt: $x+y=uv+v(1-u)=v$, nên $e^{-(x+y)}=e^{-v}$. Thay vào:</p>
+        <p>$$f_{U,V}(u,v)=f_{X,Y}(uv,\,v(1-u))\cdot|J|=e^{-v}\cdot v=v\,e^{-v}$$</p>
+        <p class="step"><b>Miền giá trị:</b> $x&gt;0\Rightarrow uv&gt;0$ và $y&gt;0\Rightarrow v(1-u)&gt;0$. Vì $v=x+y&gt;0$, suy ra $0&lt;u&lt;1$ và $v&gt;0$.</p>
+        <div class="ans">$f_{U,V}(u,v)=v\,e^{-v}$ với $0&lt;u&lt;1,\ v&gt;0$.</div>
+
+        <span class="part">b) Độc lập &amp; phân phối của $U$</span>
+        <p class="step">Viết lại mật độ tách thành tích của một hàm chỉ theo $u$ và một hàm chỉ theo $v$:</p>
+        <p>$$f_{U,V}(u,v)=\underbrace{\mathbf 1_{(0,1)}(u)}_{g(u)}\cdot\underbrace{v\,e^{-v}}_{h(v)}$$</p>
+        <p class="step">Vì tách được thành tích (và miền là hình chữ nhật $0&lt;u&lt;1,\ v&gt;0$), $U$ và $V$ <b>độc lập</b>. Lấy tích phân từng chiều:</p>
+        <p>$$f_U(u)=\int_0^\infty v\,e^{-v}\,dv=1\ \ (0&lt;u&lt;1),\qquad f_V(v)=\int_0^1 v\,e^{-v}\,du=v\,e^{-v}$$</p>
+        <div class="ans">$U\sim \text{Uniform}(0,1)$ và độc lập với $V$; còn $V\sim\text{Gamma}(2,1)$.</div>
+        <div class="insight">Đây là một kết quả "đẹp" kinh điển: khi tách một tổng mũ thành <b>tỷ lệ</b> $U=X/(X+Y)$ và <b>tổng</b> $V=X+Y$, thì tỷ lệ luôn phân phối đều và độc lập hoàn toàn với tổng. Ý tưởng này là nền móng cho quan hệ giữa phân phối Gamma và Beta.</div>
+      </div>
+
+      <!-- Câu 4 -->
+      <div class="sol">
+        <div class="s-head"><span class="s-num">Câu 4</span><span class="s-title">Hàm sinh moment</span></div>
+        <span class="part">a) Nhận diện phân phối từ MGF</span>
+        <p class="step">So khớp $M_X(t)=\exp(3t+8t^2)$ với dạng MGF chuẩn $\exp\!\big(\mu t+\tfrac12\sigma^2 t^2\big)$:</p>
+        <p>$$\mu=3,\qquad \frac12\sigma^2=8\;\Longrightarrow\;\sigma^2=16$$</p>
+        <div class="ans">$X\sim N(3,16)$, do đó $\mathrm{Var}(X)=16$.</div>
+        <div class="trap">Hệ số của $t^2$ trong mũ là $\tfrac12\sigma^2$, <b>không phải</b> $\sigma^2$. Nhìn thấy $8$ mà kết luận ngay "phương sai bằng 8" là sai — phải nhân đôi thành $16$.</div>
+
+        <span class="part">b) Phân phối của $X+Y$</span>
+        <p class="step">$X\sim N(1,4)$ cho $M_X(t)=\exp(t+2t^2)$; $Y\sim N(2,9)$ cho $M_Y(t)=\exp(2t+4.5t^2)$. Vì độc lập, MGF của tổng là tích:</p>
+        <p>$$M_{X+Y}(t)=M_X(t)M_Y(t)=\exp\!\big(3t+6.5t^2\big)$$</p>
+        <p class="step">So khớp lại: $\mu=3$, $\tfrac12\sigma^2=6.5\Rightarrow\sigma^2=13$.</p>
+        <div class="ans">$X+Y\sim N(3,\,13)$.</div>
+      </div>
+
+      <!-- Câu 5 -->
+      <div class="sol">
+        <div class="s-head"><span class="s-num">Câu 5</span><span class="s-title">Các dạng hội tụ &amp; ứng dụng CLT</span></div>
+        <span class="part">a) Hội tụ theo xác suất</span>
+        <p class="step"><b>Định nghĩa:</b> $X_n \xrightarrow{P} X$ nếu với mọi $\varepsilon&gt;0$: $\ \displaystyle\lim_{n\to\infty}P\big(|X_n-X|&gt;\varepsilon\big)=0.$</p>
+        <p class="step">Với dãy đã cho, xét khoảng cách tới $0$. Với $\varepsilon&gt;0$ cố định, khi $n$ đủ lớn thì biến cố $|X_n|&gt;\varepsilon$ chính là $\{X_n=n\}$:</p>
+        <p>$$P\big(|X_n-0|&gt;\varepsilon\big)=P(X_n=n)=\frac1n\xrightarrow[n\to\infty]{}0$$</p>
+        <p class="step">Vậy $X_n\xrightarrow{P}0$. Nhưng kỳ vọng thì:</p>
+        <p>$$E[X_n]=0\cdot\Big(1-\tfrac1n\Big)+n\cdot\tfrac1n=1\quad\text{với mọi }n$$</p>
+        <div class="ans">$X_n\xrightarrow{P}0$, <b>nhưng</b> $E[X_n]=1$ không hội tụ về $0$.</div>
+        <div class="insight">Đây là ví dụ kinh điển phân biệt các <b>dạng hội tụ</b>: khối lượng xác suất dồn hết về $0$, song một "đuôi" hiếm hoi ($xác suất\ 1/n$) tại giá trị rất lớn ($n$) đủ để giữ kỳ vọng bằng $1$. Kết luận: hội tụ theo xác suất <b>không</b> kéo theo hội tụ trung bình.</div>
+
+        <span class="part">b) Ứng dụng CLT cho trung bình mẫu</span>
+        <p class="step">Với $n=100$, theo CLT: $\ \bar X\approx N\!\left(2,\ \dfrac{4}{100}\right)=N(2,\,0.04)$, độ lệch chuẩn $=0.2$.</p>
+        <p>$$P(1.6&lt;\bar X&lt;2.4)=P\!\left(\frac{1.6-2}{0.2}&lt;Z&lt;\frac{2.4-2}{0.2}\right)=P(-2&lt;Z&lt;2)$$</p>
+        <p>$$=\Phi(2)-\Phi(-2)=0.9772-0.0228=0.9544$$</p>
+        <div class="ans">$P(1.6&lt;\bar X&lt;2.4)\approx 0.9544$ (chính là quy tắc "$2\sigma$").</div>
+      </div>
+
+    </div>
+  </section>
+
+  <p class="tail">Chỗ nào cách bạn làm khác với lời giải, cứ gửi lại để mình soi kỹ từng bước cùng bạn.</p>
+
+</div>
+</body>
+</html>
