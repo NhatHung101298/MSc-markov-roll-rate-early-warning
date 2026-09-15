@@ -101,6 +101,27 @@ Trình bày (kèm annotate rõ từng biến trong công thức khi viết báo 
 
 Nếu trong quá trình code thấy một hướng mở rộng "rất hay", hãy **dừng lại và hỏi người thực hiện** trước khi triển khai, thay vì tự động thêm vào.
 
+## 7bis. Cấu trúc thư mục dự án
+
+```
+Stochastic_method/
+├── main.py              # điểm chạy chính: orchestrate toàn bộ pipeline (import từ scripts/, không subprocess)
+├── data/
+│   ├── raw/              # file gốc tải từ Freddie Mac — KHÔNG sửa tay (sample_orig_2016.txt, sample_perf_2016.txt, .zip)
+│   └── processed/        # output ETL, build lại được (loan_trajectory, estimation_set, validation_set)
+├── notebooks/            # EDA thăm dò dữ liệu thô — không phải deliverable, không cần chạy lại từ đầu đến cuối
+├── scripts/
+│   ├── 01..08_*.py       # từng bước theo checklist Chương 3–4, đánh số theo thứ tự chạy
+│   └── utils/            # hàm Markov thủ công dùng lại (MLE, Chapman-Kolmogorov, N=(I-Q)^-1, B=NR...)
+├── outputs/
+│   ├── figures/          # heatmap, biểu đồ
+│   ├── tables/           # bảng số (χ², LR test, so sánh B vs actual...)
+│   └── reports/          # log/stdout từng lần chạy
+└── report/               # report.ipynb — deliverable cuối, chỉ gọi lại utils/, không viết logic mới
+```
+
+Đã chốt cấu trúc folder lớn (2026-09-07); nội dung/file bên trong từng folder sẽ tạo dần theo tiến độ, không tạo sẵn.
+
 ## 7. Định nghĩa hoàn thành (Definition of Done)
 
 Project được coi là hoàn chỉnh khi có:

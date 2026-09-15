@@ -2,10 +2,22 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Planning files — READ FIRST every session
+
+Before doing anything, read both:
+- `plans/master_plan.md` — bức tranh tổng của cả dự án: mục tiêu, kế hoạch 6 buổi, Definition of Done, ràng buộc phạm vi.
+- `plans/active_plan.md` — buổi / bước ĐANG làm, checklist hiện tại, blocker, việc chờ HUNG quyết định.
+
+Also relevant:
+- `plans/logs.md` — nhật ký thời gian thực: quyết định của HUNG, thay đổi phạm vi, kết quả kiểm tra artifact, tiến độ làm report. Ghi 1 entry mỗi khi có quyết định, xong 1 task, hoặc phát hiện rủi ro/phạm vi.
+
+Khi xong 1 buổi: cập nhật `active_plan.md` (chép checklist buổi kế từ `master_plan.md`), ghi 1 dòng vào `logs.md`. `master_plan.md` chỉ sửa khi phạm vi hoặc thứ tự buổi thay đổi. `PROJECT_BRIEF.md` vẫn là spec gốc — đọc full trước khi code.
+
 ## Project status
 
 No implementation code exists yet. The repo currently contains only:
 - `PROJECT_BRIEF.md` — the full spec for this project (read it in full before writing any code)
+- `plans/` — master plan, active plan, logs (xem phần trên)
 - `docs/` — reference materials, including `10_de_tai_du_an_ngan_hang_data_science.md` (a *different*, unrelated list of future thesis topic ideas — do not treat it as scope for this project)
 - `stochastic/` — an empty Python 3.11 venv (no packages installed yet)
 
