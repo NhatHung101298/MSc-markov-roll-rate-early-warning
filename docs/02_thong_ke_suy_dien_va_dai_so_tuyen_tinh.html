@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suy diễn và Tính toán số</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], tags: 'none' },
+  chtml: { scale: 0.96 },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#12141b; --card:#1a1d28; --ink:#e6e9f0; --ink-soft:#93a0b3;
+  --indigo:#93a8ff; --jade:#4fdcc0; --rust:#ff9a6e; --gold:#eec164; --plum:#e6a8d8;
+  --rule:#2b2f3d; --code-bg:#0e1017; --code-ink:#dde4f0;
+  --bg-def:rgba(147,168,255,.10); --bg-thm:rgba(79,220,192,.10); --bg-ex:rgba(238,193,100,.10); --bg-proj:rgba(230,168,216,.10); --bg-trap:rgba(255,154,110,.10);
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 10px 24px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(var(--rule) 0.5px,transparent 0.5px);background-size:20px 20px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px 80px}
+.top{padding:40px 0 22px;border-bottom:2px solid var(--indigo);margin-bottom:24px}
+.kick{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--jade);font-weight:600;margin:0 0 8px}
+.top h1{font-family:'Spectral',serif;font-weight:700;font-size:clamp(26px,4.4vw,42px);margin:0;color:var(--indigo);line-height:1.1;letter-spacing:-.01em}
+.top .sub{margin:10px 0 0;color:var(--ink-soft);max-width:760px}
+.layout{display:grid;grid-template-columns:240px minmax(0,1fr);gap:28px;align-items:start}
+@media(max-width:960px){.layout{grid-template-columns:minmax(0,1fr)}}
+nav.toc{position:sticky;top:16px;background:var(--card);border:1px solid var(--rule);border-radius:10px;box-shadow:var(--shadow);padding:14px 16px;font-size:13px;max-height:calc(100vh - 32px);overflow:auto}
+@media(max-width:960px){nav.toc{position:static;max-height:none}}
+nav.toc p{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--jade);font-weight:600;margin:0 0 6px}
+nav.toc ol{margin:0;padding-left:18px}
+nav.toc li{margin:4px 0}
+nav.toc a{color:var(--ink);text-decoration:none}
+nav.toc a:hover{color:var(--indigo);text-decoration:underline}
+main{min-width:0}
+section.sec{background:var(--card);border:1px solid var(--rule);border-top:3px solid var(--indigo);border-radius:10px;box-shadow:var(--shadow);padding:22px 26px 20px;margin:0 0 22px}
+@media(max-width:640px){section.sec{padding:16px 14px}}
+section.sec.c2{border-top-color:var(--jade)} section.sec.c3{border-top-color:var(--plum)}
+section.sec.c4{border-top-color:var(--gold)} section.sec.c5{border-top-color:var(--rust)}
+h2{font-family:'Spectral',serif;font-size:26px;font-weight:700;margin:0 0 6px;color:var(--ink);line-height:1.2}
+h2 .no{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--paper);background:var(--indigo);padding:3px 8px;border-radius:5px;vertical-align:middle;margin-right:8px}
+h3{font-family:'Spectral',serif;font-size:19px;font-weight:600;color:var(--indigo);margin:22px 0 6px}
+h4{font-size:14px;margin:16px 0 4px;color:var(--ink)}
+p{margin:8px 0}
+.lead{color:var(--ink-soft);font-style:italic;margin:2px 0 12px}
+a{color:var(--indigo)}
+.box{border-left:4px solid var(--indigo);background:var(--bg-def);border-radius:6px;padding:10px 16px;margin:14px 0}
+.box .lbl{display:block;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--indigo)}
+.box.thm{border-color:var(--jade);background:var(--bg-thm)} .box.thm .lbl{color:var(--jade)}
+.box.ex{border-color:var(--gold);background:var(--bg-ex)} .box.ex .lbl{color:var(--gold)}
+.box.proj{border-color:var(--plum);background:var(--bg-proj)} .box.proj .lbl{color:var(--plum)}
+.box.trap{border-color:var(--rust);background:var(--bg-trap)} .box.trap .lbl{color:var(--rust)}
+.box ul,.box ol{margin:6px 0;padding-left:20px}
+ul,ol{padding-left:22px} li{margin:4px 0}
+code{font-family:'JetBrains Mono',monospace;font-size:.86em;background:#242938;color:var(--code-ink);padding:1px 5px;border-radius:4px}
+pre{background:var(--code-bg);color:var(--code-ink);border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:12.8px;line-height:1.55;margin:12px 0;border:1px solid var(--rule)}
+pre code{background:none;padding:0;font-size:inherit;color:inherit}
+.cm{color:#7d92ac}
+mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
+mjx-container[display="true"]{margin:10px 0 !important;padding:2px 0}
+.tbl{overflow-x:auto;margin:10px 0}
+table.d{border-collapse:collapse;font-size:13px;min-width:100%}
+table.d th,table.d td{border:1px solid var(--rule);padding:5px 9px;text-align:center;white-space:nowrap}
+table.d th{background:#1e2230;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.04em;color:var(--indigo)}
+table.d td.l,table.d th.l{text-align:left;white-space:normal}
+table.d td.rh{font-weight:600;background:#1c2029}
+.h1c{background:rgba(147,168,255,.14)} .h2c{background:rgba(147,168,255,.26)} .h3c{background:rgba(147,168,255,.42)} .h4c{background:rgba(147,168,255,.62);color:var(--paper)}
+.hr{background:rgba(255,154,110,.22)}
+details{border:1px solid var(--rule);border-radius:8px;padding:8px 14px;margin:10px 0;background:#161923}
+details summary{cursor:pointer;font-weight:600;color:var(--indigo)}
+details[open] summary{margin-bottom:6px}
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;padding:1px 7px;border-radius:4px;background:var(--jade);color:var(--paper);font-weight:600}
+.foot{margin-top:28px;text-align:center;font-family:'Spectral',serif;font-style:italic;color:var(--ink-soft)}
+@media print{body{background:#fff;color:#1a2330;background-image:none;font-size:10.5pt}nav.toc{display:none}.layout{display:block}section.sec{box-shadow:none;break-inside:auto;background:#fff;border-color:#dcdfe4}details{display:block;background:#fafbfc}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <p class="kick">MAT6206 · Tài liệu tự học cho project Roll-rate Markov · Phần 2/2</p>
+  <h1>Thống kê suy diễn<br>&amp; Đại số tuyến tính – Tính toán số</h1>
+  <p class="sub">Phần A trình bày cách <b>ước lượng</b> và <b>kiểm định</b> mô hình Markov (MLE, χ² thuần nhất, LR test bậc Markov, backtest). Phần B trình bày cách <b>tính đúng và ổn định</b> các đại lượng $P^n$, $\pi$, $N$, $B$ bằng numpy. Mọi đoạn code đã được chạy thử trên dữ liệu mô phỏng, ví dụ minh họa dùng bài toán roll-rate tín dụng cho dễ hình dung. Lý thuyết xích Markov xem file <code>01_xac_suat_va_qua_trinh_ngau_nhien.html</code>.</p>
+</header>
+
+<div class="layout">
+<nav class="toc">
+  <p>Phần A · Suy diễn</p>
+  <ol>
+    <li><a href="#a0">Ký hiệu</a></li>
+    <li><a href="#a1">Hàm hợp lý &amp; MLE</a></li>
+    <li><a href="#a2">Khung kiểm định &amp; định lý Wilks</a></li>
+    <li><a href="#a3">χ² thuần nhất theo thời gian</a></li>
+    <li><a href="#a4">LR test bậc Markov</a></li>
+    <li><a href="#a5">Cỡ mẫu lớn &amp; ý nghĩa thực tế</a></li>
+    <li><a href="#a6">Backtest (mục 4.5)</a></li>
+  </ol>
+  <p style="margin-top:12px">Phần B · Tính toán</p>
+  <ol>
+    <li><a href="#b1">Quy ước vector hàng</a></li>
+    <li><a href="#b2">Lũy thừa &amp; phân rã riêng</a></li>
+    <li><a href="#b3">Trị riêng ma trận ngẫu nhiên</a></li>
+    <li><a href="#b4">Giải π</a></li>
+    <li><a href="#b5">$(I-Q)^{-1}$ &amp; điều kiện số</a></li>
+    <li><a href="#b6">Chuẩn ma trận</a></li>
+    <li><a href="#b7">Đếm chuyển trạng thái &amp; bẫy dữ liệu</a></li>
+    <li><a href="#b8">Khung <code>utils/markov.py</code></a></li>
+  </ol>
+  <p style="margin-top:12px"><a href="#ex">Bài tập tự kiểm tra</a></p>
+</nav>
+
+<main>
+
+<!-- ======================================================= A0 -->
+<section class="sec" id="a0">
+  <h2><span class="no">A0</span>Ký hiệu dùng chung</h2>
+  <div class="tbl"><table class="d">
+    <tr><th class="l">Ký hiệu</th><th class="l">Ý nghĩa</th></tr>
+    <tr><td class="l">$\mathcal S$, $m=|\mathcal S|$</td><td class="l">Không gian trạng thái, số trạng thái</td></tr>
+    <tr><td class="l">$n_{ij}$</td><td class="l">Số lần quan sát chuyển $i\to j$ trong 1 tháng, cộng trên mọi khoản vay và mọi tháng</td></tr>
+    <tr><td class="l">$n_i=\sum_j n_{ij}$</td><td class="l">Số lần "xuất phát" từ $i$ (tổng hàng)</td></tr>
+    <tr><td class="l">$n_{ij}(\tau)$</td><td class="l">Như trên nhưng chỉ tính trong giai đoạn $\tau$ (ví dụ năm 2017)</td></tr>
+    <tr><td class="l">$n_{ijk}$</td><td class="l">Số bộ ba liên tiếp $(S_{t-1},S_t,S_{t+1})=(i,j,k)$</td></tr>
+    <tr><td class="l">$\hat p_{ij}$, $\hat P$</td><td class="l">Ước lượng hợp lý cực đại</td></tr>
+    <tr><td class="l">$\ell(\theta)=\log L(\theta)$</td><td class="l">Log-likelihood</td></tr>
+    <tr><td class="l">$G^2$, $X^2$</td><td class="l">Thống kê tỷ số hợp lý và thống kê Pearson χ²</td></tr>
+  </table></div>
+</section>
+
+<!-- ======================================================= A1 -->
+<section class="sec c2" id="a1">
+  <h2><span class="no">A1</span>Hàm hợp lý &amp; MLE cho ma trận chuyển</h2>
+  <p class="lead">Mục 4.1 của báo cáo. Công thức $\hat p_{ij}=n_{ij}/n_i$ có vẻ "hiển nhiên", nhưng giảng viên muốn thấy phần <b>suy ra</b> công thức này.</p>
+
+  <h3>1.1 Hàm hợp lý của một quỹ đạo</h3>
+  <p>Theo file 1 §2.3, xác suất quan sát quỹ đạo $s_0,s_1,\dots,s_T$ bằng $\mu_0(s_0)\prod_{t=0}^{T-1}p_{s_ts_{t+1}}$. Nhóm các thừa số giống nhau, <b>mỗi cặp $(i,j)$ xuất hiện đúng $n_{ij}$ lần</b>, nên:</p>
+  $$L(P)=\mu_0(s_0)\prod_{i,j}p_{ij}^{\,n_{ij}},\qquad \ell(P)=\log\mu_0(s_0)+\sum_{i,j}n_{ij}\log p_{ij}.$$
+  <p>Với <b>nhiều khoản vay độc lập</b> $\ell=1,\dots,L$, hàm hợp lý là tích của các hàm hợp lý riêng. Trong log, điều này có nghĩa là ta chỉ cần <b>cộng dồn số đếm</b> $n_{ij}$ trên mọi khoản vay. Thông thường ta <b>điều kiện theo trạng thái đầu</b> (bỏ $\mu_0$), vì $\mu_0$ không chứa tham số $P$.</p>
+  <div class="box"><span class="lbl">Ghi chú</span>
+    <p>Thống kê đủ (sufficient statistic) của $P$ là <b>ma trận đếm $(n_{ij})$</b>. Vì vậy, dù dữ liệu gốc có hàng triệu dòng, toàn bộ thông tin cần cho ước lượng $P$ có thể thu gọn thành một bảng $m\times m$ mà không mất mát gì — một pipeline hợp lý chỉ cần tạo cặp chuyển một lần rồi mọi phân tích tiếp theo làm việc trên bảng đếm này.</p>
+  </div>
+
+  <h3>1.2 Suy ra MLE bằng nhân tử Lagrange</h3>
+  <div class="box thm"><span class="lbl">Định lý</span>
+    <p>Cực đại $\ell(P)=\sum_{i,j}n_{ij}\log p_{ij}$ với ràng buộc $\sum_jp_{ij}=1$ cho mỗi $i$ có nghiệm $$\hat p_{ij}=\frac{n_{ij}}{n_i}=\frac{n_{ij}}{\sum_k n_{ik}}\qquad(n_i>0).$$</p>
+    <p><i>Chứng minh:</i> hàm mục tiêu và ràng buộc <b>tách rời theo từng hàng $i$</b>, nên ta tối ưu riêng từng hàng. Lập Lagrangian cho hàng $i$:
+    $$\mathcal L_i=\sum_j n_{ij}\log p_{ij}-\lambda_i\Big(\sum_j p_{ij}-1\Big),\qquad \frac{\partial\mathcal L_i}{\partial p_{ij}}=\frac{n_{ij}}{p_{ij}}-\lambda_i=0\;\Rightarrow\;p_{ij}=\frac{n_{ij}}{\lambda_i}.$$
+    Thay vào ràng buộc được $\sum_j n_{ij}/\lambda_i=1$, suy ra $\lambda_i=n_i$. Hàm $\sum_jn_{ij}\log p_{ij}$ lõm và miền ràng buộc lồi, nên đây là cực đại toàn cục. ∎</p>
+  </div>
+  <p>Diễn giải: mỗi hàng $i$ là một <b>phân phối đa thức (multinomial)</b> với $n_i$ lần thử. MLE của xác suất đa thức chính là tần suất tương đối.</p>
+
+  <div class="box ex"><span class="lbl">Ví dụ: một quỹ đạo</span>
+    <p>Quỹ đạo $C,C,30,60,30,C,C$ có 6 lần chuyển: $C\to C$ (2 lần), $C\to30$, $30\to60$, $60\to30$, $30\to C$. Do đó:</p>
+    $$\hat p_{CC}=\tfrac23,\ \hat p_{C,30}=\tfrac13;\qquad \hat p_{30,60}=\tfrac12,\ \hat p_{30,C}=\tfrac12;\qquad \hat p_{60,30}=1.$$
+    <p>Ước lượng $\hat p_{60,30}=1$ dựa trên <b>một</b> quan sát duy nhất. Ví dụ này cho thấy vì sao phải báo cáo kèm <b>bảng số quan sát $n_i$</b> cạnh heatmap (yêu cầu của mục 4.1).</p>
+  </div>
+
+  <h3>1.3 Độ chính xác của $\hat p_{ij}$</h3>
+  <div class="box thm"><span class="lbl">Định lý (tiệm cận)</span>
+    <p>Khi $n_i\to\infty$, $\hat p_{ij}$ vững (consistent) và xấp xỉ chuẩn:
+    $$\hat p_{ij}\;\dot\sim\;\mathcal N\!\Big(p_{ij},\;\frac{p_{ij}(1-p_{ij})}{n_i}\Big),\qquad \operatorname{Cov}(\hat p_{ij},\hat p_{ik})\approx-\frac{p_{ij}p_{ik}}{n_i}\ (j\ne k).$$
+    Các hàng khác nhau tiệm cận độc lập.</p>
+  </div>
+  <div class="box ex"><span class="lbl">Ví dụ</span>
+    <p>Với $\hat p_{30,60}=0.25$ và $n_{30}=1000$: $\text{SE}=\sqrt{0.25\cdot0.75/1000}=0.0137$, khoảng tin cậy 95% xấp xỉ $0.25\pm0.027$.</p>
+    <p>Hàng <code>90</code> trong dữ liệu thực có thể chỉ có vài trăm quan sát, nên SE lớn gấp nhiều lần. Đây là khoảng tin cậy <b>giải tích</b> theo công thức đa thức (không phải bootstrap).</p>
+  </div>
+
+  <div class="box trap"><span class="lbl">Bẫy</span>
+    <ul>
+      <li><b>Hàng không có quan sát</b> ($n_i=0$): phép chia bị lỗi, nên phải xử lý tường minh (xem §B7).</li>
+      <li><b>Hàng của trạng thái hấp thụ</b>: dữ liệu thường <i>không có</i> dòng nào sau khi khoản vay bị hấp thụ, nên $n_{DF}=0$. Hãy <b>gán cứng</b> $\hat p_{DF,DF}=1$ theo định nghĩa. Không ước lượng hàng này.</li>
+      <li><b>Ô bằng 0</b> ($\hat p_{ij}=0$) có hai loại: <i>không thể xảy ra về cấu trúc</i> (ví dụ $C\to90$ trong một tháng) hoặc <i>ngẫu nhiên chưa quan sát được</i>. Điều này ảnh hưởng đến bậc tự do của kiểm định (§A3, §A4) và tới $\log 0$ trong log-likelihood.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================================================= A2 -->
+<section class="sec" id="a2">
+  <h2><span class="no">A2</span>Khung kiểm định giả thiết &amp; định lý Wilks</h2>
+  <p class="lead">Ôn lại công cụ từ môn Suy diễn thống kê, áp vào mô hình đa thức.</p>
+
+  <h3>2.1 Các thành phần của một kiểm định</h3>
+  <div class="tbl"><table class="d">
+    <tr><th class="l">Thành phần</th><th class="l">Nội dung</th><th class="l">Trong project</th></tr>
+    <tr><td class="l">$H_0$ / $H_1$</td><td class="l">Mô hình rút gọn (lồng trong) / mô hình đầy đủ</td><td class="l">$H_0$: $P$ không đổi theo năm; $H_0$: bậc 1 là đủ</td></tr>
+    <tr><td class="l">Thống kê</td><td class="l">Đại lượng đo khoảng cách từ dữ liệu tới $H_0$</td><td class="l">$G^2$ hoặc $X^2$</td></tr>
+    <tr><td class="l">Phân phối dưới $H_0$</td><td class="l">Để tính p-value</td><td class="l">$\chi^2_{df}$ (tiệm cận)</td></tr>
+    <tr><td class="l">Mức ý nghĩa $\alpha$</td><td class="l">$P(\text{bác bỏ }H_0\mid H_0\text{ đúng})$, tức sai lầm loại I</td><td class="l">$0.05$, có hiệu chỉnh nếu so nhiều cặp</td></tr>
+    <tr><td class="l">p-value</td><td class="l">$P(\text{thống kê}\ge\text{giá trị quan sát}\mid H_0)$</td><td class="l"><code>scipy.stats.chi2.sf(G2, df)</code></td></tr>
+    <tr><td class="l">Lực (power)</td><td class="l">$1-P(\text{sai lầm loại II})$</td><td class="l">Rất cao vì $n$ lớn, xem §A5</td></tr>
+  </table></div>
+  <div class="box trap"><span class="lbl">Bẫy về cách viết kết luận</span>
+    <p>Viết "<b>không bác bỏ</b> $H_0$ ở mức 5%", <b>không</b> viết "chấp nhận $H_0$" hay "chứng minh được ma trận không đổi". p-value <b>không phải</b> xác suất $H_0$ đúng.</p>
+  </div>
+
+  <h3>2.2 Kiểm định tỷ số hợp lý &amp; định lý Wilks</h3>
+  <div class="box"><span class="lbl">Định nghĩa</span>
+    $$G^2=-2\log\Lambda=2\big[\ell(\hat\theta_{H_1})-\ell(\hat\theta_{H_0})\big]\ \ge 0.$$
+  </div>
+  <div class="box thm"><span class="lbl">Định lý Wilks</span>
+    <p>Nếu $H_0$ lồng trong $H_1$ (đạt được bằng cách áp ràng buộc lên tham số của $H_1$) và các điều kiện chính quy được thỏa (tham số nằm trong phần trong của miền, cỡ mẫu lớn) thì dưới $H_0$:
+    $$G^2\xrightarrow{d}\chi^2_{df},\qquad df=\#\text{tham số tự do}(H_1)-\#\text{tham số tự do}(H_0).$$</p>
+  </div>
+  <div class="box thm"><span class="lbl">Dạng tổng quát cho bảng đếm</span>
+    <p>Với số đếm quan sát $O$ và số đếm kỳ vọng dưới $H_0$ là $E$:
+    $$G^2=2\sum O\log\frac{O}{E},\qquad X^2=\sum\frac{(O-E)^2}{E}.$$
+    Hai thống kê <b>tương đương tiệm cận</b>: khai triển Taylor $O\log(O/E)$ quanh $O=E$ cho $G^2\approx X^2$. Quy ước $0\log0=0$.</p>
+  </div>
+  <p><b>Đếm tham số tự do:</b> mỗi hàng của ma trận chuyển có $c_i$ ô dương. Do ràng buộc tổng bằng 1, hàng đó có $c_i-1$ tham số tự do.</p>
+</section>
+
+<!-- ======================================================= A3 -->
+<section class="sec c4" id="a3">
+  <h2><span class="no">A3</span>Kiểm định tính thuần nhất theo thời gian</h2>
+  <p class="lead">Mục 3 (thiết kế) và mục 4.2 (kết quả). Đây là kiểm định Anderson–Goodman (1957) cho xích Markov.</p>
+
+  <h3>3.1 Thiết lập</h3>
+  <p>Chia estimation set thành các giai đoạn $\tau=1,\dots,T$ (ví dụ theo năm). Ước lượng $\hat p_{ij}(\tau)=n_{ij}(\tau)/n_i(\tau)$ cho từng giai đoạn, và $\hat p_{ij}=n_{ij}/n_i$ khi gộp tất cả giai đoạn.</p>
+  $$H_0:\ p_{ij}(1)=p_{ij}(2)=\cdots=p_{ij}(T)\ \ \forall i,j\qquad\text{so với}\qquad H_1:\ \text{mỗi giai đoạn có ma trận riêng}.$$
+
+  <h3>3.2 Thống kê kiểm định</h3>
+  <div class="box thm"><span class="lbl">Công thức</span>
+    $$G^2=2\sum_{\tau=1}^{T}\sum_{i}\sum_{j}n_{ij}(\tau)\,\log\frac{\hat p_{ij}(\tau)}{\hat p_{ij}},\qquad
+      X^2=\sum_{\tau}\sum_{i}\sum_{j}\frac{\big(n_{ij}(\tau)-n_i(\tau)\hat p_{ij}\big)^2}{n_i(\tau)\hat p_{ij}},$$
+    $$df=(T-1)\sum_{i\in\mathcal T}(c_i-1),\qquad c_i=\#\{j:\hat p_{ij}>0\}.$$
+    <ul>
+      <li>$n_i(\tau)\hat p_{ij}$ là <b>số đếm kỳ vọng</b> dưới $H_0$: số lần xuất phát từ $i$ trong giai đoạn $\tau$ nhân với xác suất chung.</li>
+      <li>Tổng chỉ chạy trên các <b>hàng tạm thời</b> $i\in\mathcal T$ và các ô $\hat p_{ij}>0$. Hàng hấp thụ là tất định nên không đóng góp.</li>
+    </ul>
+  </div>
+  <div class="box thm"><span class="lbl">Mẹo tính: tách theo từng hàng</span>
+    <p>Với mỗi trạng thái xuất phát $i$, lập bảng liên hợp <b>giai đoạn × trạng thái đích</b> (kích thước $T\times c_i$). Thống kê của cả ma trận bằng <b>tổng</b> thống kê χ² độc lập của từng bảng, và $df$ cũng cộng dồn. Cách tách này cho phép chỉ ra <b>hàng nào</b> gây ra bác bỏ, rất hữu ích cho phần diễn giải.</p>
+  </div>
+
+  <div class="box ex"><span class="lbl">Ví dụ số: hàng <code>30</code>, hai giai đoạn</span>
+    <div class="tbl"><table class="d">
+      <tr><th>Giai đoạn</th><th>→C</th><th>→30</th><th>→60</th><th>→PP</th><th>$n_{30}(\tau)$</th></tr>
+      <tr><td class="rh">2017</td><td>450</td><td>240</td><td>260</td><td>50</td><td>1000</td></tr>
+      <tr><td class="rh">2018</td><td>900</td><td>560</td><td>420</td><td>120</td><td>2000</td></tr>
+      <tr><td class="rh">$\hat p_{30,j}$ gộp</td><td>0.4500</td><td>0.2667</td><td>0.2267</td><td>0.0567</td><td>3000</td></tr>
+    </table></div>
+    <p>Số đếm kỳ vọng năm 2017 là $1000\times\hat p$, bằng $(450,\ 266.7,\ 226.7,\ 56.7)$. Các đóng góp vào $X^2$:</p>
+    $$\underbrace{0+\tfrac{(240-266.7)^2}{266.7}+\tfrac{(260-226.7)^2}{226.7}+\tfrac{(50-56.7)^2}{56.7}}_{2017:\ 0+2.667+4.902+0.784}+\underbrace{0+1.333+2.451+0.392}_{2018}=12.53.$$
+    <p>$G^2=12.46$, $df=(2-1)(4-1)=3$, giá trị tới hạn $\chi^2_{3;0.95}=7.81$, p-value $=0.006$. <b>Kết luận:</b> bác bỏ $H_0$ ở mức 5%. Phân phối trạng thái kế tiếp của hàng 30 khác nhau giữa 2017 và 2018, chủ yếu ở ô $30\to60$ (26% so với 21%).</p>
+  </div>
+
+  <h3>3.3 Thiết kế: so từng cặp hay so đồng thời?</h3>
+  <ul>
+    <li><b>Kiểm định đồng thời</b> $T$ giai đoạn: một thống kê duy nhất với $df=(T-1)\sum(c_i-1)$. Trả lời câu hỏi "có thay đổi không".</li>
+    <li><b>So từng cặp:</b> có $\binom{T}{2}$ kiểm định, ví dụ 8 năm cho 28 cặp. Trả lời câu hỏi "thay đổi ở đâu, khi nào". Cách này cần <b>hiệu chỉnh kiểm định bội</b>.</li>
+  </ul>
+  <div class="box thm"><span class="lbl">Hiệu chỉnh kiểm định bội</span>
+    <ul>
+      <li><b>Bonferroni:</b> bác bỏ cặp $k$ nếu $p_k\lt\alpha/K$. Với $K=28$: $\alpha^\ast=0.05/28=0.00179$.</li>
+      <li><b>Holm</b> (mạnh hơn và vẫn kiểm soát FWER): sắp $p_{(1)}\le\dots\le p_{(K)}$, bác bỏ lần lượt khi $p_{(k)}\lt\alpha/(K-k+1)$, dừng ở lần đầu tiên không bác bỏ được.</li>
+    </ul>
+    <p>Gợi ý trình bày: một kiểm định đồng thời cho kết luận chính, cộng với bảng so từng cặp (kèm p-value đã hiệu chỉnh) để trả lời câu hỏi "ở đâu".</p>
+  </div>
+
+  <h3>3.4 Code</h3>
+<pre><code>import numpy as np
+from scipy import stats
+from scipy.special import xlogy
+
+def homogeneity_test(C1, C2):
+    <span class="cm">"""C1, C2: ma trận đếm m×m của 2 giai đoạn (hàng hấp thụ để toàn 0).
+    Trả về (G2, X2, df, p_value theo G2)."""</span>
+    G2 = X2 = 0.0; df = 0
+    for i in range(C1.shape[0]):
+        T = np.vstack([C1[i], C2[i]]).astype(float)   <span class="cm"># bảng 2 × m: giai đoạn × đích</span>
+        T = T[:, T.sum(axis=0) > 0]                    <span class="cm"># bỏ đích không bao giờ xảy ra</span>
+        if T.shape[1] &lt; 2 or (T.sum(axis=1) == 0).any():
+            continue                                   <span class="cm"># hàng không thông tin / thiếu giai đoạn</span>
+        E = T.sum(1, keepdims=True) * T.sum(0, keepdims=True) / T.sum()
+        G2 += 2 * np.sum(xlogy(T, T / E))              <span class="cm"># xlogy: 0·log0 = 0</span>
+        X2 += np.sum((T - E) ** 2 / E)
+        df += (T.shape[0] - 1) * (T.shape[1] - 1)
+    return G2, X2, df, stats.chi2.sf(G2, df)</code></pre>
+  <p>Với ví dụ trên (chỉ điền hàng 30), hàm trả về <code>(12.465, 12.529, 3, 0.00595)</code>.</p>
+
+  <div class="box trap"><span class="lbl">Bẫy</span>
+    <ul>
+      <li><b>Tần số kỳ vọng nhỏ</b> (quy tắc thường dùng: $E\lt5$): xấp xỉ χ² kém chính xác. Hàng <code>90</code> hoặc ô <code>→DF</code> trong một năm có thể rất thưa. Cách xử lý: gộp năm thành giai đoạn dài hơn, hoặc gộp đích hiếm, và <b>ghi rõ</b> lựa chọn trong báo cáo.</li>
+      <li><b>df phải trừ ô cấu trúc bằng 0.</b> Nếu dùng công thức sách giáo khoa $(T-1)m(m-1)$ cho ma trận có nhiều ô 0 thì df bị thổi phồng và p-value quá lớn, dẫn tới khó bác bỏ sai.</li>
+      <li>Không dùng hiệu chỉnh Yates (<code>correction=False</code> trong <code>chi2_contingency</code>) để khớp với công thức Anderson–Goodman.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================================================= A4 -->
+<section class="sec c3" id="a4">
+  <h2><span class="no">A4</span>Kiểm định bậc Markov: bậc 1 hay bậc 2</h2>
+  <p class="lead">Mục 4.2, kiểm định thứ hai. Câu hỏi: biết thêm trạng thái tháng trước ($S_{t-1}$) có giúp dự báo $S_{t+1}$ tốt hơn không?</p>
+
+  <h3>4.1 Hai mô hình lồng nhau</h3>
+  <div class="tbl"><table class="d">
+    <tr><th></th><th class="l">$H_0$: bậc 1</th><th class="l">$H_1$: bậc 2</th></tr>
+    <tr><td class="rh">Tham số</td><td class="l">$p_{jk}=P(S_{t+1}=k\mid S_t=j)$</td><td class="l">$p_{ijk}=P(S_{t+1}=k\mid S_t=j,S_{t-1}=i)$</td></tr>
+    <tr><td class="rh">Ràng buộc $H_0$</td><td class="l" colspan="2">$p_{ijk}=p_{jk}$ với mọi $i$: trạng thái tháng trước không ảnh hưởng</td></tr>
+    <tr><td class="rh">MLE</td><td class="l">$\hat p_{jk}=n_{\cdot jk}/n_{\cdot j\cdot}$</td><td class="l">$\hat p_{ijk}=n_{ijk}/n_{ij\cdot}$</td></tr>
+    <tr><td class="rh">Log-lik</td><td class="l">$\ell_1=\sum_{ijk}n_{ijk}\log\hat p_{jk}$</td><td class="l">$\ell_2=\sum_{ijk}n_{ijk}\log\hat p_{ijk}$</td></tr>
+  </table></div>
+  <p>Ký hiệu dấu chấm nghĩa là lấy tổng theo chỉ số đó: $n_{\cdot jk}=\sum_i n_{ijk}$, $n_{ij\cdot}=\sum_k n_{ijk}$.</p>
+
+  <div class="box thm"><span class="lbl">Thống kê &amp; bậc tự do</span>
+    $$G^2=2(\ell_2-\ell_1)=2\sum_{i,j,k}n_{ijk}\log\frac{\hat p_{ijk}}{\hat p_{jk}}\;\;\dot\sim\;\;\chi^2_{df},$$
+    $$df=\sum_{j\in\mathcal T}(r_j-1)(c_j-1),\qquad r_j=\#\{i:n_{ij\cdot}>0\},\quad c_j=\#\{k:n_{\cdot jk}>0\}.$$
+    <p>Khi không có ô 0 nào thì $df=m(m-1)^2$ (Anderson–Goodman).</p>
+    <p><b>Nhận xét quan trọng:</b> với mỗi trạng thái giữa $j$, kiểm định này <b>chính là</b> kiểm định độc lập χ² trên bảng liên hợp <b>trạng thái trước $i$ × trạng thái sau $k$</b>. Bậc 1 đúng tương đương với "trạng thái trước và trạng thái sau độc lập có điều kiện khi biết trạng thái giữa".</p>
+  </div>
+
+  <div class="box ex"><span class="lbl">Ví dụ số: trạng thái giữa $j=30$ (rút gọn còn 3 đích)</span>
+    <div class="tbl"><table class="d">
+      <tr><th>$S_{t-1}$ \ $S_{t+1}$</th><th>C</th><th>30</th><th>60</th><th>$n_{i,30,\cdot}$</th><th>$\hat p_{i,30,k}$</th></tr>
+      <tr><td class="rh">C (mới trượt)</td><td>620</td><td>230</td><td>150</td><td>1000</td><td>(0.62, 0.23, 0.15)</td></tr>
+      <tr><td class="rh">60 (đang hồi phục)</td><td>80</td><td>70</td><td>150</td><td>300</td><td>(0.27, 0.23, 0.50)</td></tr>
+      <tr><td class="rh">Gộp: $\hat p_{30,k}$</td><td>700</td><td>300</td><td>300</td><td>1300</td><td>(0.54, 0.23, 0.23)</td></tr>
+    </table></div>
+    <p>$\ell_1=-1313.13$, $\ell_2=-1230.56$, suy ra $G^2=2(82.57)=165.14$, $df=(2-1)(3-1)=2$, p-value $\approx1.4\times10^{-36}$.</p>
+    <p><b>Kết luận:</b> bác bỏ bậc 1. Diễn giải nghiệp vụ: khoản vay ở 30 DPD <i>vừa lùi về từ 60</i> có 50% khả năng quay lại 60, gấp hơn 3 lần khoản <i>mới trượt từ C</i> (15%). Đây đúng là hiệu ứng "đường đi" đã nêu trong file 1 §2.4.</p>
+  </div>
+
+  <h3>4.2 Code</h3>
+<pre><code>def markov_order_test(n3):
+    <span class="cm">"""n3[i, j, k] = số bộ ba liên tiếp (S_{t-1}=i, S_t=j, S_{t+1}=k).
+    H0: bậc 1. Trả về (G2, df, p_value)."""</span>
+    G2 = 0.0; df = 0
+    for j in range(n3.shape[1]):                      <span class="cm"># từng trạng thái giữa</span>
+        T = n3[:, j, :].astype(float)                 <span class="cm"># bảng: trước × sau</span>
+        T = T[T.sum(axis=1) > 0][:, T.sum(axis=0) > 0]
+        if T.shape[0] &lt; 2 or T.shape[1] &lt; 2:
+            continue                                  <span class="cm"># j hấp thụ hoặc không đủ thông tin</span>
+        E = T.sum(1, keepdims=True) * T.sum(0, keepdims=True) / T.sum()
+        G2 += 2 * np.sum(xlogy(T, T / E))
+        df += (T.shape[0] - 1) * (T.shape[1] - 1)
+    return G2, df, stats.chi2.sf(G2, df)</code></pre>
+
+  <div class="box trap"><span class="lbl">Bẫy</span>
+    <ul>
+      <li><b>Hai mô hình phải được so trên cùng một tập quan sát.</b> Mô hình bậc 2 cần 3 tháng liên tiếp, nên chuyển đầu tiên của mỗi khoản vay không dùng được. Nếu tính $\ell_1$ trên <i>mọi</i> cặp và $\ell_2$ trên <i>các bộ ba</i> thì $G^2$ sai, thậm chí có thể âm. Công thức theo bảng liên hợp ở trên tự động dùng cùng một tập.</li>
+      <li>Trạng thái giữa là trạng thái hấp thụ thì không có thông tin, nên bỏ qua.</li>
+      <li>Bộ ba phải là 3 tháng <b>liền mạch</b> của cùng một khoản vay (xem §B7).</li>
+      <li>Bác bỏ bậc 1 <b>không có nghĩa</b> bắt buộc phải chuyển sang mô hình bậc 2 — đó là một quyết định mở rộng phạm vi mô hình riêng, tách khỏi việc kiểm định và diễn giải.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================================================= A5 -->
+<section class="sec c5" id="a5">
+  <h2><span class="no">A5</span>Cỡ mẫu lớn: có ý nghĩa thống kê chưa chắc có ý nghĩa thực tế</h2>
+  <p class="lead">Với hàng triệu cặp chuyển, gần như chắc chắn cả hai kiểm định đều bác bỏ $H_0$. Cách bạn <b>diễn giải</b> kết quả này quyết định điểm.</p>
+
+  <h3>5.1 Vì sao bác bỏ gần như chắc chắn</h3>
+  <p>Mô hình Markov thuần nhất chỉ là <b>xấp xỉ</b>, nên $H_0$ gần như không bao giờ đúng tuyệt đối. Trong khi đó lực kiểm định tăng theo $n$. Ví dụ: so tỷ lệ $30\to60$ giữa 2 năm, mỗi năm $n=200{,}000$ lần xuất phát, $p\approx0.02$:
+  $$\text{SE}(\hat p_1-\hat p_2)=\sqrt{\frac{2(0.02)(0.98)}{200{,}000}}=0.00044\quad\Rightarrow\quad\text{chênh lệch }0.001\text{ đã cho }z=2.26\ (p\lt0.05).$$
+  Chênh lệch 0.1 điểm phần trăm hầu như không có ý nghĩa nghiệp vụ.</p>
+
+  <h3>5.2 Giả định độc lập bị vi phạm</h3>
+  <p>Thống kê χ² giả định các lần chuyển độc lập <b>khi đã biết trạng thái hiện tại</b>. Nếu các khoản vay <b>khác nhau về rủi ro</b> (mover–stayer, file 1 §3.4), phương sai thực lớn hơn phương sai đa thức (<b>overdispersion</b>). Hệ quả là p-value <b>quá nhỏ</b> và kiểm định bác bỏ quá thường xuyên.</p>
+
+  <h3>5.3 Báo cáo kèm độ lớn hiệu ứng</h3>
+  <div class="box"><span class="lbl">Các thước đo gợi ý</span>
+    <ul>
+      <li><b>Khoảng cách biến phân toàn phần theo hàng:</b> $\ \mathrm{TV}_i=\tfrac12\sum_j|\hat p_{ij}(1)-\hat p_{ij}(2)|\in[0,1]$. Ví dụ ở §A3: $\mathrm{TV}_{30}=\tfrac12(0+0.04+0.05+0.01)=0.05$.</li>
+      <li><b>Chênh lệch lớn nhất theo ô:</b> $\max_{ij}|\hat p_{ij}(1)-\hat p_{ij}(2)|$, kèm tên ô.</li>
+      <li><b>Cramér's V</b> cho từng bảng liên hợp: $V=\sqrt{X^2/(n\cdot(\min(r,c)-1))}$.</li>
+      <li><b>Ảnh hưởng lên đầu ra nghiệp vụ</b>: PD 12 tháng $(P^{12})_{i,DF}$ tính theo từng giai đoạn. Nếu chênh lệch nhỏ thì mô hình gộp vẫn dùng được.</li>
+    </ul>
+  </div>
+  <div class="box"><span class="lbl">Ví dụ: khuôn lập luận khi kiểm định bác bỏ nhưng cỡ mẫu rất lớn</span>
+    <p><i>"Kiểm định Anderson–Goodman bác bỏ giả thiết thuần nhất ($G^2=\dots$, $df=\dots$, $p\lt0.001$). Tuy nhiên, với $n\approx\dots$ triệu lần chuyển, kiểm định có lực rất cao. Chênh lệch lớn nhất nằm ở hàng $\dots$ trong giai đoạn 2020–2021 (TV $=\dots$), trùng với thời kỳ giãn nợ do COVID-19. Loại bỏ giai đoạn này, khoảng cách TV giữa các năm còn lại đều dưới $\dots$. Kết luận: giả định thuần nhất bị vi phạm rõ trong giai đoạn khủng hoảng và là xấp xỉ chấp nhận được ngoài giai đoạn đó."</i></p>
+    <p>Đây chỉ là <b>khuôn lập luận minh họa</b>, không phải kết quả dự đoán trước — dùng nó khi số liệu thực tế thực sự cho ra bức tranh tương tự.</p>
+  </div>
+</section>
+
+<!-- ======================================================= A6 -->
+<section class="sec c2" id="a6">
+  <h2><span class="no">A6</span>Backtest: đối chiếu dự báo với validation set (mục 4.5)</h2>
+  <p class="lead">Muốn so sánh công bằng giữa dự báo và thực tế, kỳ hạn dự báo và cách định nghĩa tập khoản vay phải khớp nhau.</p>
+
+  <h3>6.1 Thiết kế cohort</h3>
+  <ol>
+    <li><b>Mốc</b> $\tau$: tháng đầu tiên của validation set (có thể lấy thêm vài mốc để có nhiều mẫu).</li>
+    <li><b>Cohort</b> $\mathcal C_i(\tau)$: tập khoản vay ở trạng thái tạm thời $i$ tại $\tau$. Ký hiệu $n_i=|\mathcal C_i(\tau)|$.</li>
+    <li><b>Kỳ hạn</b> $h$: ví dụ 12 hoặc 24 tháng, phải nằm trọn trong validation set.</li>
+    <li><b>Kết cục quan sát</b>: $d_i=\#\{\text{khoản trong }\mathcal C_i(\tau)\text{ vào DF trong }(\tau,\tau+h]\}$, và tỷ lệ $\hat d_i=d_i/n_i$.</li>
+    <li><b>Dự báo</b> từ estimation set: $\hat\pi^{(h)}_i=(\hat P^h)_{i,DF}$. Khi $h$ đủ lớn thì dự báo này tiến tới $\hat b_{i,DF}$ (file 1 §3.3, §6.4).</li>
+  </ol>
+
+  <div class="box trap"><span class="lbl">Bẫy</span>
+    <ul>
+      <li><b>So $\hat B$ trực tiếp với tỷ lệ quan sát trong $h$ tháng là so sai</b>, vì $B$ là xác suất trên kỳ hạn vô hạn nên luôn lớn hơn. Hãy trình bày cả $\hat B$ lẫn $(\hat P^h)_{i,DF}$, và backtest bằng $(\hat P^h)_{i,DF}$.</li>
+      <li><b>Kết cục cạnh tranh:</b> khoản vay trả hết (PP) trước $\tau+h$ thì <b>không</b> vỡ nợ, nhưng vẫn giữ trong mẫu số. Cách tính này khớp với $\hat P^h$ khi mô hình có trạng thái PP.</li>
+      <li><b>Kiểm duyệt khác:</b> khoản bị loại khỏi dữ liệu vì lý do không phải PP hay DF (ví dụ mua lại hoặc zero-balance code <code>96</code>) cần một quy tắc nhất quán (thường là loại khỏi cohort). Ghi rõ quy tắc này trong báo cáo.</li>
+      <li>Ma trận dùng để dự báo phải <b>chỉ</b> được ước lượng từ estimation set. Không được "nhìn trước" dữ liệu validation.</li>
+    </ul>
+  </div>
+
+  <h3>6.2 Đánh giá sai lệch</h3>
+  <div class="box thm"><span class="lbl">Kiểm định nhị thức cho từng trạng thái xuất phát</span>
+    <p>$H_0$: tỷ lệ vỡ nợ thực bằng dự báo $\pi_0=(\hat P^h)_{i,DF}$. Dưới $H_0$, $d_i\sim\text{Binomial}(n_i,\pi_0)$ nếu coi các khoản vay độc lập:
+    $$z=\frac{\hat d_i-\pi_0}{\sqrt{\pi_0(1-\pi_0)/n_i}},\qquad\text{hoặc chính xác: }\texttt{scipy.stats.binomtest}(d_i,n_i,\pi_0).$$</p>
+  </div>
+  <div class="box ex"><span class="lbl">Ví dụ</span>
+    <p>Cohort <code>60</code> có $n=800$ khoản, dự báo PD 24 tháng là $0.5617$, quan sát được $420$ vỡ nợ ($\hat d=0.525$).</p>
+    <p>$z=(0.525-0.5617)/\sqrt{0.5617\cdot0.4383/800}=-2.09$, p-value nhị thức chính xác $=0.039$.</p>
+    <p><b>Kết luận:</b> mô hình <b>ước lượng cao hơn thực tế</b> một mức có ý nghĩa thống kê (khoảng 3.7 điểm phần trăm) cho nhóm 60 DPD.</p>
+  </div>
+  <p>Bảng gợi ý cho báo cáo:</p>
+  <div class="tbl"><table class="d">
+    <tr><th>Xuất phát</th><th>$n_i$</th><th>$\hat b_{i,DF}$ (vô hạn)</th><th>$(\hat P^h)_{i,DF}$</th><th>$\hat d_i$ thực tế</th><th>Chênh lệch</th><th>$z$ / p-value</th></tr>
+    <tr><td class="rh">C</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr>
+    <tr><td class="rh">30</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr>
+    <tr><td class="rh">60</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr>
+    <tr><td class="rh">90</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr>
+  </table></div>
+  <p>Ngoài ra nên có một biểu đồ cột ghép <b>dự báo và thực tế theo trạng thái</b>, cùng một đoạn phân tích <b>chiều sai lệch</b> (hệ thống cao hay thấp) và nguyên nhân (không thuần nhất, mover–stayer, chu kỳ vĩ mô ở validation set).</p>
+  <div class="box"><span class="lbl">Ghi chú</span>
+    <p>Kiểm định nhị thức và khoảng tin cậy giải tích cho <b>tỷ lệ quan sát</b> là công cụ suy diễn cơ bản, khác với khoảng tin cậy <b>bootstrap</b> cho chính $\hat\pi$ hay $\hat B$ (vốn đòi hỏi lấy mẫu lại nhiều lần) — hai việc này không nên nhầm lẫn.</p>
+  </div>
+</section>
+
+<!-- ======================================================= B1 -->
+<section class="sec" id="b1">
+  <h2><span class="no">B1</span>Quy ước: vector hàng &amp; ma trận ngẫu nhiên hàng</h2>
+  <p class="lead">Phần lớn lỗi tính toán trong project Markov đến từ việc lẫn lộn hàng và cột.</p>
+  <div class="tbl"><table class="d">
+    <tr><th class="l">Đối tượng</th><th class="l">Quy ước</th><th class="l">numpy</th></tr>
+    <tr><td class="l">Ma trận chuyển $P$</td><td class="l">Hàng = từ, cột = đến; <b>tổng hàng</b> bằng 1: $P\mathbf 1=\mathbf 1$</td><td class="l"><code>np.allclose(P.sum(axis=1), 1)</code></td></tr>
+    <tr><td class="l">Phân phối $\mu$</td><td class="l"><b>Vector hàng</b>, nhân bên trái: $\mu P$</td><td class="l"><code>mu @ P</code></td></tr>
+    <tr><td class="l">Hàm giá trị $f$ (ví dụ 1 nếu DF)</td><td class="l">Vector cột, nhân bên phải: $Pf$ là kỳ vọng $f(S_{1})$ theo trạng thái đầu</td><td class="l"><code>P @ f</code></td></tr>
+    <tr><td class="l">$P^n$</td><td class="l">Lũy thừa ma trận (không phải lũy thừa từng phần tử)</td><td class="l"><code>np.linalg.matrix_power(P, n)</code></td></tr>
+  </table></div>
+  <div class="box trap"><span class="lbl">Bẫy</span>
+    <ul>
+      <li><code>P ** 3</code> là lũy thừa <b>từng phần tử</b>, sai. Phải dùng <code>matrix_power(P, 3)</code> hoặc <code>P @ P @ P</code>.</li>
+      <li><code>P @ mu</code> (nhân bên phải) cho một đại lượng khác, không phải phân phối.</li>
+      <li>Thứ tự trạng thái phải <b>cố định</b> trong toàn bộ code (một hằng <code>STATES</code>). Heatmap, $Q$, $R$ đều phụ thuộc vào thứ tự này.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================================================= B2 -->
+<section class="sec c2" id="b2">
+  <h2><span class="no">B2</span>Lũy thừa ma trận &amp; phân rã riêng</h2>
+
+  <h3>2.1 Chéo hóa</h3>
+  <div class="box thm"><span class="lbl">Định lý</span>
+    <p>Nếu $P$ chéo hóa được, $P=V\Lambda V^{-1}$ với $\Lambda=\operatorname{diag}(\lambda_1,\dots,\lambda_m)$, thì
+    $$P^n=V\Lambda^nV^{-1}=\sum_{k}\lambda_k^{\,n}\,v_k\,u_k^\top,$$
+    trong đó $v_k$ là cột thứ $k$ của $V$ (vector riêng phải) và $u_k^\top$ là hàng thứ $k$ của $V^{-1}$ (vector riêng trái).</p>
+  </div>
+  <p>Với xích ergodic, $\lambda_1=1$ tương ứng $v_1=\mathbf 1$, $u_1^\top=\pi$, và mọi $|\lambda_k|\lt1$ với $k\ge2$. Do đó:
+  $$P^n=\mathbf 1\pi+\sum_{k\ge2}\lambda_k^{\,n}v_ku_k^\top\;\longrightarrow\;\mathbf 1\pi,\qquad\text{sai số}=O\big(|\lambda_2|^n\big).$$</p>
+
+  <div class="box ex"><span class="lbl">Ví dụ: tốc độ hội tụ của ma trận E (file 1 §5)</span>
+    <p>Các trị riêng của E là $1,\ 0.7145,\ 0.2855$. Khoảng cách TV giữa hàng 1 của $E^n$ và π:</p>
+    <div class="tbl"><table class="d">
+      <tr><th>$n$</th><th>1</th><th>5</th><th>10</th><th>20</th></tr>
+      <tr><td class="rh">$\mathrm{TV}(E^n_{1\cdot},\pi)$</td><td>0.2138</td><td>0.0540</td><td>0.0101</td><td>0.00037</td></tr>
+      <tr><td class="rh">$0.7145^n$</td><td>0.7145</td><td>0.186</td><td>0.035</td><td>0.0012</td></tr>
+    </table></div>
+    <p>Tỷ số giữa hai hàng gần như không đổi (khoảng 0.29–0.30), đúng như dự đoán $O(|\lambda_2|^n)$. Đại lượng $1-|\lambda_2|$ gọi là <b>khoảng phổ (spectral gap)</b>: khoảng phổ càng lớn thì xích "quên" trạng thái ban đầu càng nhanh.</p>
+  </div>
+
+  <h3>2.2 Trong thực hành</h3>
+  <ul>
+    <li><code>np.linalg.matrix_power(P, n)</code> dùng bình phương liên tiếp, chỉ cần khoảng $\log_2 n$ phép nhân, và <b>không</b> cần chéo hóa. Đây là lựa chọn mặc định.</li>
+    <li>Chỉ dùng phân rã riêng khi cần <b>phân tích</b> (tốc độ hội tụ, π, phân phối tựa dừng), không dùng để tính $P^n$. Lý do: $V$ có thể gần suy biến (ma trận không chuẩn tắc), làm mất độ chính xác.</li>
+    <li>Kiểm tra sau khi tính: <code>np.allclose(Pn.sum(1), 1)</code> và <code>(Pn >= -1e-12).all()</code>.</li>
+  </ul>
+</section>
+
+<!-- ======================================================= B3 -->
+<section class="sec c3" id="b3">
+  <h2><span class="no">B3</span>Trị riêng của ma trận ngẫu nhiên</h2>
+  <div class="box thm"><span class="lbl">Định lý</span>
+    <ol>
+      <li>$\lambda=1$ luôn là trị riêng, vì $P\mathbf 1=\mathbf 1$.</li>
+      <li>Mọi trị riêng thỏa $|\lambda|\le1$.</li>
+      <li><b>Perron–Frobenius</b> (xích tối giản): trị riêng 1 là <b>đơn</b>, và vector riêng trái tương ứng có thể chọn <b>dương hoàn toàn</b>, đó chính là π. Nếu xích thêm tính không tuần hoàn thì mọi trị riêng khác thỏa $|\lambda|\lt1$.</li>
+      <li>Số lần trị riêng 1 lặp lại bằng <b>số lớp đóng</b>. Ma trận đồ chơi có 2 lớp đóng (PP, DF), nên trị riêng 1 có bội 2 và π không duy nhất.</li>
+    </ol>
+    <p><i>Chứng minh ý (2):</i> giả sử $Pv=\lambda v$, $v\ne0$. Chọn $i$ sao cho $|v_i|=\max_j|v_j|$. Khi đó
+    $$|\lambda||v_i|=\Big|\sum_jp_{ij}v_j\Big|\le\sum_jp_{ij}|v_j|\le|v_i|\sum_jp_{ij}=|v_i|,$$
+    nên $|\lambda|\le1$. ∎</p>
+  </div>
+  <div class="box thm"><span class="lbl">Hệ quả cho khối $Q$ của xích hấp thụ</span>
+    <p>Mỗi hàng của $Q$ có tổng $\le1$, và từ mọi trạng thái tạm thời đều thoát ra được. Do đó bán kính phổ $\rho(Q)=\max|\lambda(Q)|\lt1$. Với ma trận đồ chơi: $\lambda(Q)=\{0.9621,\ 0.7027,\ 0.3506,\ 0.0647\}$.</p>
+    <p>Hai hệ quả: (i) $I-Q$ khả nghịch; (ii) $Q^n\to0$ với tốc độ khoảng $\rho(Q)^n$, nên thời gian hấp thụ có "đuôi" giảm như $0.962^n$ mỗi tháng.</p>
+  </div>
+</section>
+
+<!-- ======================================================= B4 -->
+<section class="sec c4" id="b4">
+  <h2><span class="no">B4</span>Giải phân phối dừng π bằng số</h2>
+  <p class="lead">Ba cách tính. Cách 1 là mặc định; cách 2 dùng để kiểm tra chéo.</p>
+
+  <h3>Cách 1: thay một phương trình bằng điều kiện chuẩn hóa</h3>
+  <p>$\pi P=\pi$ tương đương $(P^\top-I)\pi^\top=0$. Hệ này có hạng $m-1$ (các phương trình phụ thuộc tuyến tính), nên ta <b>thay hàng cuối</b> bằng điều kiện $\sum\pi_i=1$ để được một hệ vuông khả nghịch:</p>
+<pre><code>def stationary(P):
+    m = P.shape[0]
+    A = P.T - np.eye(m)
+    A[-1, :] = 1.0              <span class="cm"># thay phương trình cuối bằng Σ π_i = 1</span>
+    b = np.zeros(m); b[-1] = 1.0
+    return np.linalg.solve(A, b)
+
+stationary(E)   <span class="cm"># array([0.68627, 0.18627, 0.12745])</span></code></pre>
+  <p>Nếu xích có nhiều lớp đóng thì <code>A</code> suy biến và numpy báo <code>LinAlgError: Singular matrix</code>. Đây là <b>tín hiệu có ích</b> cho biết π không duy nhất (file 1 §5.3).</p>
+
+  <h3>Cách 2: vector riêng trái</h3>
+<pre><code>def stationary_eig(P):
+    w, V = np.linalg.eig(P.T)             <span class="cm"># vector riêng PHẢI của Pᵀ = vector riêng TRÁI của P</span>
+    k = np.argmin(np.abs(w - 1))          <span class="cm"># trị riêng gần 1 nhất (không so == 1)</span>
+    v = np.real(V[:, k])                  <span class="cm"># eig trả kiểu complex</span>
+    return v / v.sum()                    <span class="cm"># chuẩn hóa → cũng sửa luôn dấu âm</span></code></pre>
+  <div class="box trap"><span class="lbl">Bẫy</span>
+    <ul>
+      <li>Quên <code>.T</code> thì bạn lấy vector riêng <b>phải</b> của $P$, luôn bằng $\mathbf 1$ (sai).</li>
+      <li><code>np.linalg.eig</code> chuẩn hóa vector theo độ dài Euclid bằng 1 và có thể trả vector âm, nên <b>phải chia cho tổng</b>.</li>
+      <li>Không so sánh <code>w == 1</code> vì sai số dấu phẩy động.</li>
+      <li>Kết quả có thể có phần tử cỡ <code>-1e-17</code>. Có thể dùng <code>np.clip(pi, 0, None)</code> rồi chuẩn hóa lại.</li>
+    </ul>
+  </div>
+
+  <h3>Cách 3: lũy thừa (power iteration)</h3>
+  <p>Lặp $\mu\leftarrow\mu P$ tới khi $\|\mu P-\mu\|_1\lt10^{-12}$. Cách này đơn giản và trực quan (đúng với định lý hội tụ), nhưng chậm khi khoảng phổ nhỏ. Nên dùng nó để minh họa trong báo cáo.</p>
+
+  <h3>Áp dụng cho phân phối tựa dừng (tùy chọn, file 1 §5.4b)</h3>
+<pre><code>w, V = np.linalg.eig(Q.T)
+k = np.argmax(w.real)                     <span class="cm"># trị riêng lớn nhất = ρ(Q)</span>
+q = np.abs(np.real(V[:, k])); q /= q.sum()
+<span class="cm"># đồ chơi: ρ(Q)=0.9621, q=(0.8938, 0.0531, 0.0209, 0.0322)</span></code></pre>
+</section>
+
+<!-- ======================================================= B5 -->
+<section class="sec c5" id="b5">
+  <h2><span class="no">B5</span>Tính $N=(I-Q)^{-1}$ và $B=NR$ ổn định</h2>
+
+  <h3>5.1 Đừng nghịch đảo nếu không cần</h3>
+  <p>Ta cần $B=(I-Q)^{-1}R$ và $\mathbf t=(I-Q)^{-1}\mathbf 1$. Cả hai là nghiệm của <b>hệ tuyến tính</b> $(I-Q)X=R$, nên giải trực tiếp bằng <code>solve</code> (phân rã LU) sẽ nhanh hơn và chính xác hơn so với tính <code>inv</code> rồi nhân.</p>
+<pre><code>def absorbing_parts(P, n_transient):
+    <span class="cm">"""P đã sắp: n_transient trạng thái tạm thời trước, hấp thụ sau."""</span>
+    t = n_transient
+    Q, R = P[:t, :t], P[:t, t:]
+    I = np.eye(t)
+    N = np.linalg.solve(I - Q, I)          <span class="cm"># N = (I−Q)^{-1}</span>
+    B = np.linalg.solve(I - Q, R)          <span class="cm"># B = N R</span>
+    steps = N.sum(axis=1)                  <span class="cm"># t = N 1</span>
+    assert np.allclose(B.sum(axis=1), 1)   <span class="cm"># mỗi hàng B là phân phối</span>
+    return N, B, steps</code></pre>
+  <p>Với ma trận đồ chơi, hàm trả về $B$ và $\mathbf t=(27.44,\ 23.01,\ 15.66,\ 9.01)$, khớp file 1 §6.</p>
+
+  <h3>5.2 Số điều kiện</h3>
+  <div class="box"><span class="lbl">Định nghĩa</span>
+    <p>$\kappa(A)=\|A\|\,\|A^{-1}\|$. Quy tắc ngón tay cái: khi giải $Ax=b$, ta mất khoảng $\log_{10}\kappa$ chữ số chính xác. Hơn nữa, <b>sai số tương đối trong $A$</b> (chẳng hạn do ước lượng $\hat Q$) có thể bị <b>khuếch đại tối đa $\kappa$ lần</b> trong nghiệm.</p>
+  </div>
+  <div class="box ex"><span class="lbl">Ví dụ</span>
+    <p><code>np.linalg.cond(np.eye(4) - Q)</code> cho $34.2$ với ma trận đồ chơi, tức ổn định. Tuy nhiên $\kappa$ tăng mạnh khi $\rho(Q)\to1$: nếu tỷ lệ thoát khỏi <code>C</code> rất nhỏ (chẳng hạn 0.5%/tháng) thì $N_{CC}\approx200$. Khi đó <b>sai số ước lượng nhỏ trong $\hat p_{C,PP}$ tạo ra thay đổi lớn trong $N$ và $\mathbf t$</b>. Nên nêu nhận xét này trong phần hạn chế.</p>
+  </div>
+  <div class="box trap"><span class="lbl">Bẫy</span>
+    <ul>
+      <li>Nếu một trạng thái "tạm thời" trong $\hat P$ <b>thực ra không thoát ra được</b> (ví dụ hàng 90 không quan sát thấy chuyển sang DF và mọi chuyển khác quay về lớp đóng), thì $I-\hat Q$ suy biến. Hãy kiểm tra phân loại trạng thái (file 1 §4) trước khi giải.</li>
+      <li>Phải sắp thứ tự trạng thái <b>tạm thời trước, hấp thụ sau</b> trước khi cắt khối $Q$, $R$.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================================================= B6 -->
+<section class="sec" id="b6">
+  <h2><span class="no">B6</span>Chuẩn ma trận: đo sai lệch cho mục 4.3</h2>
+  <div class="tbl"><table class="d">
+    <tr><th class="l">Chuẩn</th><th class="l">Công thức</th><th class="l">Diễn giải</th><th class="l">numpy</th></tr>
+    <tr><td class="l">Frobenius</td><td class="l">$\|A\|_F=\sqrt{\sum_{ij}a_{ij}^2}$</td><td class="l">"Độ dài Euclid" của toàn ma trận, đơn giản và hay dùng</td><td class="l"><code>np.linalg.norm(A)</code></td></tr>
+    <tr><td class="l">Max phần tử</td><td class="l">$\max_{ij}|a_{ij}|$</td><td class="l">Ô lệch nhiều nhất, dễ diễn giải</td><td class="l"><code>np.abs(A).max()</code></td></tr>
+    <tr><td class="l">Chuẩn ∞ (theo hàng)</td><td class="l">$\max_i\sum_j|a_{ij}|$</td><td class="l">Bằng $2\times$ TV lớn nhất giữa hai phân phối hàng</td><td class="l"><code>np.linalg.norm(A, np.inf)</code></td></tr>
+    <tr><td class="l">TV theo hàng</td><td class="l">$\tfrac12\sum_j|a_{ij}|$</td><td class="l">Xác suất lớn nhất mà hai phân phối "bất đồng"</td><td class="l"><code>0.5*np.abs(A).sum(1)</code></td></tr>
+  </table></div>
+  <div class="box"><span class="lbl">Ghi chú: cách đọc kết quả so sánh CK</span>
+    <p>Chuẩn Frobenius trên <b>khối các hàng tạm thời</b> cho một con số tổng quát, nhưng tự nó không nói lên mô hình lệch theo hướng nào. Một heatmap của ma trận chênh lệch $(\hat P^{(1)})^3-\hat P^{(3)}$ với thang màu phân kỳ (âm/dương) cho thấy trực quan mô hình dự báo quá cao hay quá thấp ở ô nào, và TV theo hàng giúp diễn giải bằng lời (ví dụ: "từ trạng thái 60, phân phối 3 tháng dự báo lệch thực tế tối đa X%"). Vì Frobenius có đơn vị khó cảm nhận, có thể đối chiếu nó với mức nhiễu mẫu ước lượng bằng cách chia ngẫu nhiên tập khoản vay — đây là một kỹ thuật gần với bootstrap nên cần cân nhắc trước khi dùng.</p>
+  </div>
+</section>
+
+<!-- ======================================================= B7 -->
+<section class="sec c5" id="b7">
+  <h2><span class="no">B7</span>Đếm chuyển trạng thái từ dữ liệu panel &amp; các bẫy dữ liệu</h2>
+  <p class="lead">Phần "tính toán số" mà sách không dạy, nhưng quyết định kết quả có đúng hay không.</p>
+
+  <h3>7.1 Tạo cặp chuyển liền mạch</h3>
+<pre><code>import pandas as pd
+
+STATES = ["C", "30", "60", "90", "PP", "DF"]      <span class="cm"># tạm thời trước, hấp thụ sau</span>
+ABSORBING = ["PP", "DF"]
+IDX = {s: k for k, s in enumerate(STATES)}
+
+def add_transitions(df, lag=1):
+    <span class="cm">"""df: loan_id, period (Timestamp đầu tháng), state.
+    Trả về các dòng có (state → to_state) cách ĐÚNG `lag` tháng, cùng khoản vay."""</span>
+    df = df.sort_values(["loan_id", "period"])
+    g = df.groupby("loan_id")
+    out = df.assign(to_state=g["state"].shift(-lag), to_period=g["period"].shift(-lag))
+    gap = ((out["to_period"].dt.year - out["period"].dt.year) * 12
+           + (out["to_period"].dt.month - out["period"].dt.month))
+    return out[gap == lag]                          <span class="cm"># loại tháng khuyết &amp; dòng cuối (NaN)</span>
+
+def count_matrix(pairs):
+    ct = pd.crosstab(pairs["state"], pairs["to_state"])
+    return ct.reindex(index=STATES, columns=STATES, fill_value=0).to_numpy()
+
+def mle(counts, absorbing=ABSORBING):
+    n_i = counts.sum(axis=1, keepdims=True)
+    P = np.divide(counts, n_i, out=np.zeros(counts.shape), where=n_i > 0)
+    for s in absorbing:                             <span class="cm"># gán cứng hàng hấp thụ</span>
+        k = IDX[s]; P[k] = 0.0; P[k, k] = 1.0
+    return P</code></pre>
+
+  <div class="box trap"><span class="lbl">Bẫy 1: khoản vay "biến mất" sau khi bị hấp thụ (đã kiểm chứng bằng mô phỏng)</span>
+    <p>Trong Freddie Mac, sau khi khoản vay về zero-balance thì <b>không còn dòng dữ liệu</b>. Điều này gây ra hai lỗi:</p>
+    <ol>
+      <li>Hàng PP và DF của $\hat P$ toàn số 0 (vì $n_i=0$), nên $\hat P^3$ bị sai. Cách sửa: gán cứng hàng hấp thụ như trong hàm <code>mle</code> ở trên.</li>
+      <li>Khi đếm cặp $(S_t,S_{t+3})$, những khoản vay bị hấp thụ trong vòng 3 tháng <b>không có dòng tại $t+3$</b> nên bị bỏ khỏi mẫu. Kết quả là $\hat P^{(3)}$ thiếu hẳn phần chuyển vào PP/DF (lệch có hệ thống). Cách sửa: <b>kéo dài trạng thái hấp thụ</b> thêm $h$ tháng trước khi tạo cặp.</li>
+    </ol>
+    <p>Mô phỏng 3.000 khoản vay từ <b>đúng</b> một xích Markov thuần nhất (tức CK đúng tuyệt đối) cho kết quả: nếu không sửa, $\|(\hat P^{(1)})^3-\hat P^{(3)}\|_F=0.289$, dễ bị kết luận sai là "CK bị vi phạm nặng". Sau khi sửa cả hai lỗi, giá trị này còn <b>0.030</b>, tương ứng mức nhiễu mẫu.</p>
+  </div>
+<pre><code>def pad_absorbing(df, horizon):
+    <span class="cm">"""Lặp lại trạng thái hấp thụ thêm `horizon` tháng sau lần quan sát cuối."""</span>
+    last = df.sort_values("period").groupby("loan_id").tail(1)
+    last = last[last["state"].isin(ABSORBING)]
+    ext = [last.assign(period=last["period"] + pd.DateOffset(months=h))
+           for h in range(1, horizon + 1)]
+    return pd.concat([df, *ext], ignore_index=True)
+
+P1 = mle(count_matrix(add_transitions(df, 1)))
+P3 = mle(count_matrix(add_transitions(pad_absorbing(df, 3), 3)))
+D  = np.linalg.matrix_power(P1, 3) - P3
+fro = np.linalg.norm(D[:4])                          <span class="cm"># chỉ các hàng tạm thời</span></code></pre>
+
+  <div class="box trap"><span class="lbl">Bẫy 2: tháng bị khuyết</span>
+    <p>Nếu dùng <code>shift(-1)</code> mà không kiểm tra khoảng cách tháng, một cặp (tháng 5, tháng 7) sẽ bị đếm như chuyển 1 tháng. Luôn lọc theo <code>gap == lag</code> như trong code ở trên.</p>
+  </div>
+
+  <h3>7.2 Đếm bộ ba cho LR test</h3>
+<pre><code>d = df.sort_values(["loan_id", "period"])
+g = d.groupby("loan_id")
+d = d.assign(prev=g["state"].shift(1),  prev_p=g["period"].shift(1),
+             nxt=g["state"].shift(-1),  nxt_p=g["period"].shift(-1))
+ok = ((d["period"] - pd.DateOffset(months=1) == d["prev_p"]) &amp;
+      (d["period"] + pd.DateOffset(months=1) == d["nxt_p"]))
+tri = d[ok]
+
+m = len(STATES)
+n3 = np.zeros((m, m, m))
+np.add.at(n3, (tri["prev"].map(IDX).to_numpy(),
+               tri["state"].map(IDX).to_numpy(),
+               tri["nxt"].map(IDX).to_numpy()), 1)   <span class="cm"># add.at cộng dồn chỉ số lặp</span>
+G2, df_, p = markov_order_test(n3)</code></pre>
+  <p>Mẹo: <code>n3[i, j, k]</code> đã chứa đủ thông tin cho cả bậc 1 và bậc 2 trên cùng một tập, đúng yêu cầu ở §A4.</p>
+
+  <h3>7.3 Dấu phẩy động &amp; log(0)</h3>
+  <ul>
+    <li><b><code>0 * np.log(0)</code> trả về <code>nan</code></b>. Dùng <code>scipy.special.xlogy(n, p)</code>, hàm này trả 0 khi <code>n == 0</code>.</li>
+    <li>Kiểm tra tổng hàng bằng <code>np.allclose(P.sum(1), 1)</code>, không dùng <code>==</code>.</li>
+    <li>Khi đọc DPD, <b>giữ dạng chuỗi</b> (<code>dtype=str</code>) vì mã <code>"RA"</code> sẽ làm cột số bị lỗi, còn <code>"03"</code> thì mất số 0 đầu.</li>
+    <li>Với 3.4 triệu dòng, dùng kiểu <code>category</code> cho <code>state</code> và đọc theo chunk, sau đó <b>cộng dồn ma trận đếm</b> của từng chunk. Cách này đúng vì thống kê đủ là số đếm (§A1). Lưu ý không cắt chunk ở giữa một khoản vay.</li>
+  </ul>
+</section>
+
+<!-- ======================================================= B8 -->
+<section class="sec c2" id="b8">
+  <h2><span class="no">B8</span>Khung module <code>scripts/utils/markov.py</code></h2>
+  <p class="lead">Gom các hàm trên thành một module. Mỗi hàm ánh xạ tới một công thức ở Chương 2 để trích dẫn thẳng vào báo cáo.</p>
+  <div class="tbl"><table class="d">
+    <tr><th class="l">Hàm</th><th class="l">Công thức</th><th class="l">Mục báo cáo</th></tr>
+    <tr><td class="l"><code>add_transitions</code>, <code>pad_absorbing</code>, <code>count_matrix</code></td><td class="l">$n_{ij}$, $n^{(h)}_{ij}$</td><td class="l">Ch.3</td></tr>
+    <tr><td class="l"><code>mle</code></td><td class="l">$\hat p_{ij}=n_{ij}/n_i$</td><td class="l">4.1</td></tr>
+    <tr><td class="l"><code>np.linalg.matrix_power</code></td><td class="l">$P^{(n)}=P^n$</td><td class="l">4.3, 4.5</td></tr>
+    <tr><td class="l"><code>homogeneity_test</code></td><td class="l">$G^2$ Anderson–Goodman</td><td class="l">4.2</td></tr>
+    <tr><td class="l"><code>markov_order_test</code></td><td class="l">$G^2=2(\ell_2-\ell_1)$</td><td class="l">4.2</td></tr>
+    <tr><td class="l"><code>stationary</code>, <code>stationary_eig</code></td><td class="l">$\pi P=\pi$</td><td class="l">4.4</td></tr>
+    <tr><td class="l"><code>absorbing_parts</code></td><td class="l">$N=(I-Q)^{-1}$, $B=NR$, $\mathbf t=N\mathbf 1$</td><td class="l">4.5</td></tr>
+  </table></div>
+  <div class="box"><span class="lbl">Tự kiểm tra module trước khi chạy dữ liệu thật</span>
+    <ol>
+      <li>Chạy <code>absorbing_parts</code> trên ma trận đồ chơi, phải ra đúng $B$ và $\mathbf t$ ở file 1 §6.</li>
+      <li>Chạy <code>stationary(E)</code>, phải ra $(70,19,13)/102$.</li>
+      <li><b>Mô phỏng</b> vài nghìn quỹ đạo từ ma trận đồ chơi, rồi chạy toàn bộ pipeline. Các kết quả mong đợi: $\hat P\approx P$; CK có Frobenius nhỏ; kiểm định thuần nhất và LR test <b>thường không bác bỏ</b> (khoảng 5% số lần bác bỏ do ngẫu nhiên). Nếu pipeline "bác bỏ" trên dữ liệu mô phỏng thì lỗi nằm ở code, không phải ở dữ liệu.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ======================================================= EX -->
+<section class="sec c3" id="ex">
+  <h2><span class="no">★</span>Bài tập tự kiểm tra</h2>
+
+  <details><summary>Bài 1. Hàng <code>60</code> có số đếm $(C,30,60,90,PP)=(30,20,50,96,4)$. Tính MLE và SE của $\hat p_{60,90}$.</summary>
+    <p>$n_{60}=200$. MLE là $(0.15,\ 0.10,\ 0.25,\ 0.48,\ 0.02)$. $\text{SE}(\hat p_{60,90})=\sqrt{0.48\cdot0.52/200}=0.0353$, nên khoảng tin cậy 95% xấp xỉ $0.48\pm0.069$.</p>
+  </details>
+
+  <details><summary>Bài 2. Ma trận 6 trạng thái với 2 trạng thái hấp thụ, không có ô 0 nào trên 4 hàng tạm thời. So 3 giai đoạn: df của kiểm định thuần nhất là bao nhiêu?</summary>
+    <p>Mỗi hàng tạm thời có $c_i=6$, tức 5 tham số tự do; có 4 hàng. $df=(3-1)\times4\times5=40$.</p>
+  </details>
+
+  <details><summary>Bài 3. Vì sao cả hai kiểm định ở mục 4.2 đều quy được về kiểm định độc lập χ² trên bảng liên hợp?</summary>
+    <p>Thuần nhất: với mỗi hàng $i$, $H_0$ nói phân phối đích không phụ thuộc giai đoạn, tức <i>giai đoạn</i> độc lập với <i>đích</i> khi biết xuất phát. Bậc Markov: với mỗi trạng thái giữa $j$, $H_0$ nói phân phối $S_{t+1}$ không phụ thuộc $S_{t-1}$, tức <i>trước</i> độc lập với <i>sau</i> khi biết trạng thái giữa. Trong cả hai trường hợp, MLE dưới $H_0$ là tích tổng hàng × tổng cột chia tổng, và $G^2$ cộng dồn qua các bảng.</p>
+  </details>
+
+  <details><summary>Bài 4. Bạn tính $G^2$ bậc Markov và được số âm. Nêu 2 nguyên nhân có thể.</summary>
+    <p>(1) $\ell_1$ và $\ell_2$ tính trên hai tập quan sát khác nhau (cặp và bộ ba). (2) Dùng <code>np.log</code> với ô 0 sinh ra <code>nan</code>/<code>-inf</code> và bị xử lý sai, ví dụ bằng <code>nansum</code> ở một vế nhưng không ở vế kia. Với MLE lồng nhau đúng thì luôn có $\ell_2\ge\ell_1$.</p>
+  </details>
+
+  <details><summary>Bài 5. <code>np.linalg.eig(P)</code> (không có <code>.T</code>) trả về vector riêng ứng với trị riêng 1 là $(0.408,0.408,\dots)$. Chuyện gì đã xảy ra?</summary>
+    <p>Đó là vector riêng <b>phải</b> $\mathbf 1$ đã chuẩn hóa độ dài ($1/\sqrt6\approx0.408$), không phải π. Cần dùng <code>eig(P.T)</code>.</p>
+  </details>
+
+  <details><summary>Bài 6. Mô hình dự báo PD 12 tháng cho nhóm <code>30</code> là 0.19. Cohort có 1.500 khoản, quan sát 330 vỡ nợ. Kiểm định ở mức 5%.</summary>
+    <p>$\hat d=0.22$. $z=(0.22-0.19)/\sqrt{0.19\cdot0.81/1500}=0.03/0.01013=2.96$, p-value hai phía $\approx0.003$. Bác bỏ $H_0$: mô hình <b>ước lượng thấp</b> rủi ro của nhóm 30 DPD khoảng 3 điểm phần trăm.</p>
+  </details>
+
+  <details><summary>Bài 7. Giải thích vì sao đọc dữ liệu theo chunk rồi cộng ma trận đếm cho ra đúng cùng một $\hat P$ như đọc toàn bộ, và điều kiện nào có thể làm hỏng tính chất này.</summary>
+    <p>$\hat p_{ij}=n_{ij}/n_i$ chỉ phụ thuộc số đếm, và số đếm có tính cộng. Tính chất này bị hỏng nếu một chunk <b>cắt ngang quỹ đạo</b> của một khoản vay: cặp chuyển ở ranh giới hai chunk bị mất. Nếu thêm logic "kéo dài trạng thái hấp thụ" chỉ trong chunk thì cũng có thể đếm trùng. Cách tránh: chia chunk theo <code>loan_id</code>, hoặc lưu dòng cuối của mỗi chunk để nối với chunk sau.</p>
+  </details>
+
+  <details><summary>Bài 8. Với $\rho(Q)=0.995$, ước lượng thô số tháng kỳ vọng tới khi hấp thụ, và giải thích vì sao $N$ khi đó nhạy với sai số ước lượng.</summary>
+    <p>Xấp xỉ $t\approx1/(1-\rho(Q))=200$ tháng. Ta có $\partial N=N\,(\partial Q)\,N$, nên sai số trong $\hat Q$ bị nhân với $N$ ở cả hai phía, tức cỡ $200^2$ lần theo độ lớn. Tương ứng, số điều kiện của $I-Q$ rất lớn.</p>
+  </details>
+</section>
+
+<p class="foot">Hết phần 2. Quay lại <code>01_xac_suat_va_qua_trinh_ngau_nhien.html</code> để ôn lý thuyết xích Markov.</p>
+</main>
+</div>
+</div>
+</body>
+</html>

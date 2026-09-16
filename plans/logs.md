@@ -6,6 +6,13 @@
 
 ---
 
+## 2026-09-17
+
+- `[REPORT]` Tạo `outputs/TranNhatHung_MAT6206_BaoCaoCuoiKy/`: `outline.md` (tổng quan), `noi_dung_chi_tiet/00..06_*.md` (mỗi phần 1 file), `build_docx.sh` (pandoc gộp → .docx). Ch.1, Ch.2, Ch.3 viết nháp đầy đủ; Ch.4 + Tóm tắt kết luận là khung TODO.
+- `[RỦI RO]` Với Default là trạng thái hấp thụ DUY NHẤT thì $B = NR = \mathbf{1}$ (vô nghĩa cho backtest 4.5). Cần HUNG chốt: (A) censor khoản prepaid + dùng PD kỳ hạn hữu hạn $(I-Q^H)NR$, hoặc (B) thêm trạng thái hấp thụ "Prepaid". Đã viết lý thuyết cho cả hai ở Ch.2 mục 2.5.5.
+
+---
+
 ## 2026-09-07
 
 - `[TASK]` Tạo folder `plans/` với `master_plan.md`, `active_plan.md`, `logs.md`. Cập nhật `CLAUDE.md` để tham chiếu master + active plan.

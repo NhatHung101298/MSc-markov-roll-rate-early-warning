@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xác suất và Xích Markov</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], tags: 'none' },
+  chtml: { scale: 0.96 },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --paper:#12141b; --card:#1a1d28; --ink:#e6e9f0; --ink-soft:#93a0b3;
+  --indigo:#93a8ff; --jade:#4fdcc0; --rust:#ff9a6e; --gold:#eec164; --plum:#e6a8d8;
+  --rule:#2b2f3d; --code-bg:#0e1017; --code-ink:#dde4f0;
+  --bg-def:rgba(147,168,255,.10); --bg-thm:rgba(79,220,192,.10); --bg-ex:rgba(238,193,100,.10); --bg-proj:rgba(230,168,216,.10); --bg-trap:rgba(255,154,110,.10);
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 10px 24px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(var(--rule) 0.5px,transparent 0.5px);background-size:20px 20px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px 80px}
+.top{padding:40px 0 22px;border-bottom:2px solid var(--indigo);margin-bottom:24px}
+.kick{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--jade);font-weight:600;margin:0 0 8px}
+.top h1{font-family:'Spectral',serif;font-weight:700;font-size:clamp(26px,4.4vw,42px);margin:0;color:var(--indigo);line-height:1.1;letter-spacing:-.01em}
+.top .sub{margin:10px 0 0;color:var(--ink-soft);max-width:760px}
+.layout{display:grid;grid-template-columns:240px minmax(0,1fr);gap:28px;align-items:start}
+@media(max-width:960px){.layout{grid-template-columns:minmax(0,1fr)}}
+nav.toc{position:sticky;top:16px;background:var(--card);border:1px solid var(--rule);border-radius:10px;box-shadow:var(--shadow);padding:14px 16px;font-size:13px;max-height:calc(100vh - 32px);overflow:auto}
+@media(max-width:960px){nav.toc{position:static;max-height:none}}
+nav.toc p{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--jade);font-weight:600;margin:0 0 6px}
+nav.toc ol{margin:0;padding-left:18px}
+nav.toc li{margin:4px 0}
+nav.toc a{color:var(--ink);text-decoration:none}
+nav.toc a:hover{color:var(--indigo);text-decoration:underline}
+main{min-width:0}
+section.sec{background:var(--card);border:1px solid var(--rule);border-top:3px solid var(--indigo);border-radius:10px;box-shadow:var(--shadow);padding:22px 26px 20px;margin:0 0 22px}
+@media(max-width:640px){section.sec{padding:16px 14px}}
+section.sec.c2{border-top-color:var(--jade)} section.sec.c3{border-top-color:var(--plum)}
+section.sec.c4{border-top-color:var(--gold)} section.sec.c5{border-top-color:var(--rust)}
+h2{font-family:'Spectral',serif;font-size:26px;font-weight:700;margin:0 0 6px;color:var(--ink);line-height:1.2}
+h2 .no{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--paper);background:var(--indigo);padding:3px 8px;border-radius:5px;vertical-align:middle;margin-right:8px}
+h3{font-family:'Spectral',serif;font-size:19px;font-weight:600;color:var(--indigo);margin:22px 0 6px}
+h4{font-size:14px;margin:16px 0 4px;color:var(--ink)}
+p{margin:8px 0}
+.lead{color:var(--ink-soft);font-style:italic;margin:2px 0 12px}
+a{color:var(--indigo)}
+.box{border-left:4px solid var(--indigo);background:var(--bg-def);border-radius:6px;padding:10px 16px;margin:14px 0}
+.box .lbl{display:block;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;color:var(--indigo)}
+.box.thm{border-color:var(--jade);background:var(--bg-thm)} .box.thm .lbl{color:var(--jade)}
+.box.ex{border-color:var(--gold);background:var(--bg-ex)} .box.ex .lbl{color:var(--gold)}
+.box.proj{border-color:var(--plum);background:var(--bg-proj)} .box.proj .lbl{color:var(--plum)}
+.box.trap{border-color:var(--rust);background:var(--bg-trap)} .box.trap .lbl{color:var(--rust)}
+.box ul,.box ol{margin:6px 0;padding-left:20px}
+ul,ol{padding-left:22px} li{margin:4px 0}
+code{font-family:'JetBrains Mono',monospace;font-size:.86em;background:#242938;color:var(--code-ink);padding:1px 5px;border-radius:4px}
+pre{background:var(--code-bg);color:var(--code-ink);border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:12.8px;line-height:1.55;margin:12px 0;border:1px solid var(--rule)}
+pre code{background:none;padding:0;font-size:inherit;color:inherit}
+.cm{color:#7d92ac}
+mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
+mjx-container[display="true"]{margin:10px 0 !important;padding:2px 0}
+.tbl{overflow-x:auto;margin:10px 0}
+table.d{border-collapse:collapse;font-size:13px;min-width:100%}
+table.d th,table.d td{border:1px solid var(--rule);padding:5px 9px;text-align:center;white-space:nowrap}
+table.d th{background:#1e2230;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.04em;color:var(--indigo)}
+table.d td.l,table.d th.l{text-align:left;white-space:normal}
+table.d td.rh{font-weight:600;background:#1c2029}
+.h1c{background:rgba(147,168,255,.14)} .h2c{background:rgba(147,168,255,.26)} .h3c{background:rgba(147,168,255,.42)} .h4c{background:rgba(147,168,255,.62);color:var(--paper)}
+.hr{background:rgba(255,154,110,.22)}
+details{border:1px solid var(--rule);border-radius:8px;padding:8px 14px;margin:10px 0;background:#161923}
+details summary{cursor:pointer;font-weight:600;color:var(--indigo)}
+details[open] summary{margin-bottom:6px}
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;padding:1px 7px;border-radius:4px;background:var(--jade);color:var(--paper);font-weight:600}
+.foot{margin-top:28px;text-align:center;font-family:'Spectral',serif;font-style:italic;color:var(--ink-soft)}
+@media print{body{background:#fff;color:#1a2330;background-image:none;font-size:10.5pt}nav.toc{display:none}.layout{display:block}section.sec{box-shadow:none;break-inside:auto;background:#fff;border-color:#dcdfe4}details{display:block;background:#fafbfc}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <p class="kick">MAT6206 · Tài liệu tự học cho project Roll-rate Markov · Phần 1/2</p>
+  <h1>Xác suất &amp; Quá trình ngẫu nhiên:<br>Xích Markov rời rạc cho bài toán quá hạn nợ</h1>
+  <p class="sub">Từ nền tảng xác suất có điều kiện đến ma trận cơ bản $N=(I-Q)^{-1}$. Mỗi khái niệm gồm định nghĩa, định lý hoặc chứng minh ngắn, và ví dụ số minh họa bằng bài toán roll-rate tín dụng (quá hạn nợ) để dễ hình dung. Phần thống kê suy diễn và tính toán số nằm ở file <code>02_thong_ke_suy_dien_va_dai_so_tuyen_tinh.html</code>.</p>
+</header>
+
+<div class="layout">
+<nav class="toc">
+  <p>Mục lục</p>
+  <ol start="0">
+    <li><a href="#s0">Cách đọc &amp; ví dụ xuyên suốt</a></li>
+    <li><a href="#s1">Nền tảng xác suất</a></li>
+    <li><a href="#s2">Quá trình ngẫu nhiên &amp; tính Markov</a></li>
+    <li><a href="#s3">Chapman–Kolmogorov</a></li>
+    <li><a href="#s4">Phân loại trạng thái</a></li>
+    <li><a href="#s5">Phân phối dừng</a></li>
+    <li><a href="#s6">Xích Markov hấp thụ</a></li>
+    <li><a href="#s7">Tổng kết công thức → mục báo cáo</a></li>
+    <li><a href="#s8">Bài tập tự kiểm tra</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ 0 -->
+<section class="sec" id="s0">
+  <h2><span class="no">§0</span>Cách đọc &amp; ví dụ xuyên suốt</h2>
+  <p class="lead">Một ma trận "đồ chơi" dùng lại trong toàn bộ tài liệu, để bạn kiểm tra mọi công thức bằng số.</p>
+
+  <p>Tài liệu dùng 5 loại hộp:</p>
+  <ul>
+    <li><b style="color:var(--indigo)">Định nghĩa</b>: khái niệm cần phát biểu chính xác trong Chương 2 của báo cáo.</li>
+    <li><b style="color:var(--jade)">Định lý</b>: kết quả cần nhớ, kèm ý chứng minh.</li>
+    <li><b style="color:var(--gold)">Ví dụ</b>: tính bằng số trên ma trận đồ chơi. Tất cả số liệu đã được kiểm lại bằng numpy.</li>
+    <li><b style="color:var(--plum)">Liên hệ dự án</b>: kiến thức này dùng ở đâu (mục 4.1–4.5).</li>
+    <li><b style="color:var(--rust)">Bẫy</b>: lỗi hay gặp khi làm hoặc lỗi dễ bị giảng viên hỏi vặn.</li>
+  </ul>
+
+  <h3>Ma trận chuyển đồ chơi (theo tháng)</h3>
+  <p>Có 6 trạng thái: 4 trạng thái <b>tạm thời</b> là <code>C</code> (Current), <code>30</code>, <code>60</code>, <code>90</code> (90+ DPD), và 2 trạng thái <b>hấp thụ</b> là <code>PP</code> (trả hết hoặc tất toán sớm) và <code>DF</code> (Default/Foreclosure).</p>
+  <div class="tbl"><table class="d">
+    <tr><th>từ \ đến</th><th>C</th><th>30</th><th>60</th><th>90</th><th>PP</th><th>DF</th><th>Σ hàng</th></tr>
+    <tr><td class="rh">C</td><td class="h4c">0.93</td><td class="h1c">0.04</td><td>0</td><td>0</td><td class="h1c">0.03</td><td>0</td><td>1</td></tr>
+    <tr><td class="rh">30</td><td class="h3c">0.45</td><td class="h2c">0.25</td><td class="h2c">0.25</td><td>0</td><td class="h1c">0.05</td><td>0</td><td>1</td></tr>
+    <tr><td class="rh">60</td><td class="h1c">0.15</td><td class="h1c">0.10</td><td class="h2c">0.25</td><td class="h3c">0.48</td><td class="h1c">0.02</td><td>0</td><td>1</td></tr>
+    <tr><td class="rh">90</td><td class="h1c">0.05</td><td>0</td><td class="h1c">0.05</td><td class="h4c">0.65</td><td>0</td><td class="h2c">0.25</td><td>1</td></tr>
+    <tr><td class="rh">PP</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="h4c">1</td><td>0</td><td>1</td></tr>
+    <tr><td class="rh">DF</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="h4c">1</td><td>1</td></tr>
+  </table></div>
+
+  <div class="box"><span class="lbl">Ghi chú: vì sao ví dụ dùng 6 trạng thái thay vì 5?</span>
+    <p>Nhiều bài toán roll-rate tín dụng chỉ định nghĩa <code>Default</code> là trạng thái hấp thụ, nhưng thực tế còn một lối thoát khác: khoản vay có thể được <b>trả hết</b> (prepay). Sau khi trả hết, khoản vay không quay lại trạng thái nào nữa, nên về bản chất đó cũng là một <b>trạng thái hấp thụ</b>. §6 sẽ chứng minh rằng nếu mô hình chỉ có một trạng thái hấp thụ thì $B=NR$ bằng 1 ở mọi hàng — "cuối cùng ai cũng vỡ nợ" — một kết quả đúng về toán nhưng không nói lên điều gì. Ví dụ ở đây dùng 6 trạng thái (thêm <code>PP</code>) để minh họa xích hấp thụ có nhiều lối ra, đúng dạng thường gặp khi mô hình hóa dữ liệu vay.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 1 -->
+<section class="sec c2" id="s1">
+  <h2><span class="no">§1</span>Nền tảng xác suất cần nhớ</h2>
+  <p class="lead">Toàn bộ lý thuyết xích Markov được xây từ bốn công cụ: xác suất có điều kiện, quy tắc nhân, xác suất toàn phần và kỳ vọng của biến chỉ báo.</p>
+
+  <h3>1.1 Xác suất có điều kiện</h3>
+  <div class="box"><span class="lbl">Định nghĩa</span>
+    <p>Với $P(B)>0$: $$P(A\mid B)=\frac{P(A\cap B)}{P(B)}.$$</p>
+    <p>Trong đó $A$ là biến cố quan tâm (ví dụ "tháng sau khoản vay ở 60 DPD") và $B$ là thông tin đã biết (ví dụ "tháng này khoản vay ở 30 DPD").</p>
+  </div>
+  <p>Xác suất chuyển $p_{ij}$ của xích Markov chính là một xác suất có điều kiện, nên mọi tính chất của xác suất có điều kiện đều áp dụng được. Riêng tính chất $\sum_j P(S_{t+1}=j\mid S_t=i)=1$ cho ta ràng buộc tổng hàng bằng 1.</p>
+
+  <h3>1.2 Quy tắc nhân (chain rule)</h3>
+  <div class="box thm"><span class="lbl">Định lý</span>
+    $$P(A_0\cap A_1\cap\cdots\cap A_n)=P(A_0)\,P(A_1\mid A_0)\,P(A_2\mid A_0\cap A_1)\cdots P(A_n\mid A_0\cap\cdots\cap A_{n-1}).$$
+    <p>Công thức này luôn đúng, không cần giả định gì. Tính Markov (§2) chỉ <b>rút gọn</b> các điều kiện dài thành điều kiện một bước.</p>
+  </div>
+
+  <h3>1.3 Xác suất toàn phần</h3>
+  <div class="box thm"><span class="lbl">Định lý</span>
+    <p>Nếu $\{B_k\}$ là một phân hoạch của không gian mẫu thì $$P(A)=\sum_k P(A\mid B_k)\,P(B_k),\qquad P(A\mid C)=\sum_k P(A\mid B_k\cap C)\,P(B_k\mid C).$$</p>
+  </div>
+  <p>Dạng thứ hai, tức xác suất toàn phần <b>có điều kiện</b>, là toàn bộ nội dung chứng minh phương trình Chapman–Kolmogorov: ta chia theo trạng thái trung gian $k$.</p>
+
+  <h3>1.4 Biến chỉ báo &amp; kỳ vọng số lần xảy ra</h3>
+  <div class="box"><span class="lbl">Định nghĩa</span>
+    <p>$\mathbf 1_A(\omega)=1$ nếu $\omega\in A$, bằng 0 nếu ngược lại. Ta có $E[\mathbf 1_A]=P(A)$.</p>
+  </div>
+  <p>Số tháng khoản vay nằm ở trạng thái $j$ là $V_j=\sum_{n\ge 0}\mathbf 1\{S_n=j\}$. Theo tính tuyến tính của kỳ vọng: $$E[V_j\mid S_0=i]=\sum_{n\ge0}P(S_n=j\mid S_0=i).$$ Đây chính là phần tử $N_{ij}$ của ma trận cơ bản ở §6.</p>
+
+  <h3>1.5 Kỳ vọng có điều kiện &amp; luật tháp</h3>
+  <div class="box thm"><span class="lbl">Định lý (luật kỳ vọng toàn phần)</span>
+    $$E[X]=\sum_k E[X\mid B_k]\,P(B_k),\qquad E[X]=E\big[E[X\mid Y]\big].$$
+  </div>
+  <p>Luật này là cơ sở của <b>phân tích bước đầu (first-step analysis)</b>: ta chia theo kết quả của bước chuyển đầu tiên, rồi lập hệ phương trình tuyến tính cho xác suất hấp thụ hoặc thời gian kỳ vọng (§6.4).</p>
+</section>
+
+<!-- ============================================================ 2 -->
+<section class="sec" id="s2">
+  <h2><span class="no">§2</span>Quá trình ngẫu nhiên &amp; xích Markov</h2>
+  <p class="lead">Mục này tương ứng các công thức "Ma trận chuyển" ở Chương 2 của báo cáo.</p>
+
+  <h3>2.1 Quá trình ngẫu nhiên</h3>
+  <div class="box"><span class="lbl">Định nghĩa</span>
+    <p>Một <b>quá trình ngẫu nhiên</b> là một họ biến ngẫu nhiên $\{S_t\}_{t\in\mathcal T}$ trên cùng một không gian xác suất, gồm:</p>
+    <ul>
+      <li><b>Tập chỉ số</b> $\mathcal T$: ở đây $\mathcal T=\{0,1,2,\dots\}$ là số tháng, tức <b>thời gian rời rạc</b>.</li>
+      <li><b>Không gian trạng thái</b> $\mathcal S$: tập các giá trị $S_t$ có thể nhận. Ở đây $\mathcal S=\{C,30,60,90,PP,DF\}$ là tập <b>hữu hạn</b>, ký hiệu $m=|\mathcal S|$.</li>
+    </ul>
+  </div>
+  <p>Mỗi khoản vay cho ra một <b>quỹ đạo</b> (sample path), ví dụ $C,C,30,60,30,C,\dots$. Dữ liệu Freddie Mac là một tập gồm khoảng 50.000 quỹ đạo như vậy.</p>
+
+  <h3>2.2 Tính Markov</h3>
+  <div class="box"><span class="lbl">Định nghĩa: xích Markov (bậc 1)</span>
+    <p>$\{S_t\}$ là xích Markov nếu với mọi $t$ và mọi $i_0,\dots,i_{t-1},i,j$:
+    $$P(S_{t+1}=j\mid S_t=i,\,S_{t-1}=i_{t-1},\dots,S_0=i_0)=P(S_{t+1}=j\mid S_t=i).$$</p>
+    <p>Nói gọn: <i>khi đã biết hiện tại thì tương lai độc lập với quá khứ</i>.</p>
+  </div>
+
+  <div class="box"><span class="lbl">Định nghĩa: thuần nhất theo thời gian &amp; ma trận chuyển</span>
+    <p>Xích <b>thuần nhất</b> nếu $P(S_{t+1}=j\mid S_t=i)=p_{ij}$ <b>không phụ thuộc $t$</b>. Khi đó ma trận chuyển $P=(p_{ij})_{m\times m}$ thỏa:
+    $$p_{ij}\ge 0,\qquad \sum_{j\in\mathcal S}p_{ij}=1\quad\forall i.$$</p>
+    <ul>
+      <li>$p_{ij}$: xác suất một khoản vay đang ở trạng thái $i$ trong tháng $t$ chuyển sang $j$ ở tháng $t+1$.</li>
+      <li>Hàng $i$ là <b>phân phối xác suất</b> của trạng thái kế tiếp khi xuất phát từ $i$.</li>
+      <li>Ma trận có hàng không âm và tổng hàng bằng 1 được gọi là <b>ma trận ngẫu nhiên (stochastic matrix)</b>.</li>
+    </ul>
+  </div>
+
+  <div class="box trap"><span class="lbl">Bẫy</span>
+    <p>Markov và thuần nhất là <b>hai giả định khác nhau</b>, và project kiểm định riêng từng giả định (mục 4.2):</p>
+    <ul>
+      <li><b>Bậc Markov</b> hỏi: có cần biết thêm $S_{t-1}$ không? Dùng LR test bậc 1 so với bậc 2.</li>
+      <li><b>Thuần nhất</b> hỏi: $P$ có thay đổi theo năm không? Dùng kiểm định χ² giữa các giai đoạn.</li>
+    </ul>
+  </div>
+
+  <h3>2.3 Phân phối ban đầu &amp; xác suất một quỹ đạo</h3>
+  <div class="box thm"><span class="lbl">Định lý</span>
+    <p>Gọi $\mu_0(i)=P(S_0=i)$ là phân phối ban đầu. Với xích Markov thuần nhất:
+    $$P(S_0=i_0,S_1=i_1,\dots,S_n=i_n)=\mu_0(i_0)\,p_{i_0i_1}\,p_{i_1i_2}\cdots p_{i_{n-1}i_n}.$$</p>
+    <p><i>Chứng minh:</i> áp dụng quy tắc nhân (§1.2), sau đó dùng tính Markov để bỏ mọi điều kiện trừ trạng thái liền trước, và dùng tính thuần nhất để thay mỗi thừa số bằng $p_{\cdot\cdot}$. ∎</p>
+  </div>
+  <p>Hệ quả: một xích Markov thuần nhất được xác định <b>hoàn toàn</b> bởi cặp $(\mu_0,P)$. Hàm hợp lý dùng để suy ra MLE $\hat p_{ij}=n_{ij}/n_i$ (file 2, §A1) được xây trực tiếp từ công thức này.</p>
+
+  <div class="box ex"><span class="lbl">Ví dụ</span>
+    <p>Một khoản vay đang ở <code>C</code>. Xác suất nó đi đúng quỹ đạo $C\to30\to60\to90\to DF$ trong 4 tháng là:
+    $$p_{C,30}\,p_{30,60}\,p_{60,90}\,p_{90,DF}=0.04\times0.25\times0.48\times0.25=0.0012.$$</p>
+    <p>Xác suất đi quỹ đạo $C\to30\to C$ (quá hạn 1 tháng rồi trả lại) là $0.04\times0.45=0.018$.</p>
+  </div>
+
+  <h3>2.4 Xích bậc cao và xích không thuần nhất</h3>
+  <div class="box"><span class="lbl">Định nghĩa: xích Markov bậc 2</span>
+    $$P(S_{t+1}=k\mid S_t=j,S_{t-1}=i,\dots)=P(S_{t+1}=k\mid S_t=j,S_{t-1}=i)=p_{ijk}.$$
+    <p>Mô hình bậc 2 có $m^2$ phân phối điều kiện, mỗi phân phối có $m-1$ tham số tự do, tổng cộng $m^2(m-1)$ tham số. Mô hình bậc 1 chỉ có $m(m-1)$.</p>
+  </div>
+  <div class="box thm"><span class="lbl">Mẹo: nhúng bậc 2 thành bậc 1</span>
+    <p>Đặt $X_t=(S_{t-1},S_t)$. Khi đó $\{X_t\}$ là xích Markov <b>bậc 1</b> trên không gian cặp trạng thái $\mathcal S\times\mathcal S$, với chuyển $(i,j)\to(j,k)$ có xác suất $p_{ijk}$. Nhờ vậy mọi công cụ bậc 1 đều dùng lại được cho bậc 2.</p>
+  </div>
+  <p><b>Xích không thuần nhất:</b> ma trận chuyển phụ thuộc thời gian, $P(t)$. Khi đó xác suất $n$ bước là $P(t)P(t+1)\cdots P(t+n-1)$ thay vì $P^n$.</p>
+
+  <div class="box"><span class="lbl">Ví dụ thực tế: giả định Markov có thể sai ở đâu trong dữ liệu nợ?</span>
+    <ul>
+      <li><b>Hiệu ứng "đường đi"</b>: hai khoản vay cùng ở <code>30</code>, nhưng một khoản vừa từ <code>60</code> lùi về (đang hồi phục dở) và một khoản vừa từ <code>C</code> trượt xuống (mới quá hạn). Rủi ro của chúng thường khác nhau. Đây là vi phạm bậc 1, và LR test ở mục 4.2 sinh ra để phát hiện điều này.</li>
+      <li><b>Chu kỳ vĩ mô, COVID-19 (2020–2021), chương trình giãn nợ (forbearance)</b>: $P$ đổi theo năm, vi phạm tính thuần nhất.</li>
+      <li><b>Tuổi khoản vay (seasoning)</b> và <b>khác biệt giữa khách hàng</b>: gộp nhiều nhóm khác nhau làm hỏng cả hai giả định (xem ví dụ "hỗn hợp" ở §3.4).</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ 3 -->
+<section class="sec c2" id="s3">
+  <h2><span class="no">§3</span>Phương trình Chapman–Kolmogorov</h2>
+  <p class="lead">Xác suất chuyển nhiều bước, sự tiến triển của phân phối danh mục, và cách kiểm chứng ở mục 4.3.</p>
+
+  <h3>3.1 Phát biểu &amp; chứng minh</h3>
+  <div class="box"><span class="lbl">Định nghĩa</span>
+    <p>Xác suất chuyển $n$ bước: $p^{(n)}_{ij}=P(S_{t+n}=j\mid S_t=i)$. Với xích thuần nhất, giá trị này không phụ thuộc $t$. Ma trận tương ứng ký hiệu là $P^{(n)}$.</p>
+  </div>
+  <div class="box thm"><span class="lbl">Định lý Chapman–Kolmogorov</span>
+    $$p^{(m+n)}_{ij}=\sum_{k\in\mathcal S}p^{(m)}_{ik}\,p^{(n)}_{kj}\qquad\Longleftrightarrow\qquad P^{(m+n)}=P^{(m)}P^{(n)}.$$
+    <p><i>Chứng minh:</i> dùng xác suất toàn phần có điều kiện, chia theo trạng thái trung gian $S_{t+m}=k$:
+    $$\begin{aligned}
+    P(S_{t+m+n}=j\mid S_t=i)&=\sum_k P(S_{t+m+n}=j\mid S_{t+m}=k,\,S_t=i)\;P(S_{t+m}=k\mid S_t=i)\\
+    &=\sum_k P(S_{t+m+n}=j\mid S_{t+m}=k)\;p^{(m)}_{ik}\quad\text{(tính Markov)}\\
+    &=\sum_k p^{(n)}_{kj}\,p^{(m)}_{ik}\quad\text{(tính thuần nhất)}.\ ∎
+    \end{aligned}$$</p>
+  </div>
+  <div class="box thm"><span class="lbl">Hệ quả</span>
+    <p>Quy nạp từ $P^{(1)}=P$ cho ta $$P^{(n)}=P^n.$$ Nói cách khác, <b>xác suất $n$ bước chính là lũy thừa bậc $n$ của ma trận chuyển một bước</b>.</p>
+  </div>
+
+  <div class="box ex"><span class="lbl">Ví dụ: tính tay một phần tử của $P^2$</span>
+    <p>Xác suất khoản vay đang ở <code>60</code> sẽ ở <code>90</code> sau 2 tháng. Tổng theo $k$ chỉ còn các số hạng khác 0:
+    $$p^{(2)}_{60,90}=p_{60,60}\,p_{60,90}+p_{60,90}\,p_{90,90}=0.25\times0.48+0.48\times0.65=0.12+0.312=0.432.$$
+    Tương tự, $p^{(2)}_{60,DF}=p_{60,90}\,p_{90,DF}=0.48\times0.25=0.12$.</p>
+  </div>
+
+  <h3>3.2 Tiến triển của phân phối danh mục</h3>
+  <div class="box thm"><span class="lbl">Định lý</span>
+    <p>Nếu $\mu_n$ là <b>vector hàng</b> với $\mu_n(j)=P(S_n=j)$ thì $$\mu_{n}=\mu_{n-1}P=\mu_0P^n.$$</p>
+    <p><i>Chứng minh:</i> $P(S_n=j)=\sum_i P(S_{n-1}=i)\,p_{ij}$ theo xác suất toàn phần. ∎</p>
+  </div>
+  <p>Diễn giải cho danh mục: nếu hôm nay tỷ trọng các nhóm nợ là $\mu_0$, thì sau $n$ tháng mô hình dự báo tỷ trọng là $\mu_0P^n$. Đây là ứng dụng "roll-rate forecasting" kinh điển trong quản trị rủi ro tín dụng.</p>
+
+  <h3>3.3 Ý nghĩa nghiệp vụ: PD theo kỳ hạn</h3>
+  <p>Cột <code>DF</code> của $P^n$ cho <b>xác suất vỡ nợ tích lũy trong $n$ tháng</b> (cumulative PD), theo trạng thái xuất phát. Kết quả với ma trận đồ chơi:</p>
+  <div class="tbl"><table class="d">
+    <tr><th>Xuất phát</th><th>$p^{(3)}_{i,DF}$</th><th>$p^{(12)}_{i,DF}$ (PD 12 tháng)</th><th>$p^{(24)}_{i,DF}$</th><th>$b_{i,DF}$ (vô hạn, §6)</th></tr>
+    <tr><td class="rh">C</td><td>0.0000</td><td>0.0364</td><td>0.0873</td><td>0.1752</td></tr>
+    <tr><td class="rh">30</td><td>0.0300</td><td>0.1888</td><td>0.2360</td><td>0.3065</td></tr>
+    <tr><td class="rh">60</td><td>0.2280</td><td>0.5246</td><td>0.5617</td><td>0.6043</td></tr>
+    <tr><td class="rh">90</td><td>0.5241</td><td>0.7819</td><td>0.8046</td><td>0.8256</td></tr>
+  </table></div>
+  <p>Từ <code>C</code>, cần ít nhất 4 tháng mới tới được <code>DF</code> ($C\to30\to60\to90\to DF$), nên $p^{(3)}_{C,DF}=0$. Khi $n\to\infty$, cột này tăng dần và hội tụ tới xác suất hấp thụ $b_{i,DF}$.</p>
+
+  <h3>3.4 Kiểm chứng Chapman–Kolmogorov bằng dữ liệu (mục 4.3)</h3>
+  <p>CK là <b>hệ quả</b> của hai giả định Markov và thuần nhất. Vì thế, nếu dữ liệu thỏa hai giả định này thì:</p>
+  $$\underbrace{\big(\hat P^{(1)}\big)^3}_{\text{lũy thừa ma trận tháng}}\;\approx\;\underbrace{\hat P^{(3)}}_{\text{ước lượng trực tiếp từ cặp }(S_t,\,S_{t+3})}.$$
+  <p>Sai lệch lớn là <b>bằng chứng gián tiếp</b> rằng ít nhất một giả định bị vi phạm. Cách làm:</p>
+  <ol>
+    <li>Đếm $n^{(1)}_{ij}$ từ các cặp $(S_t,S_{t+1})$, tính $\hat P^{(1)}$.</li>
+    <li>Đếm $n^{(3)}_{ij}$ từ các cặp $(S_t,S_{t+3})$ <b>của cùng khoản vay, cách đúng 3 tháng liền mạch</b>, tính $\hat P^{(3)}=n^{(3)}_{ij}/\sum_k n^{(3)}_{ik}$.</li>
+    <li>Đo sai lệch bằng chuẩn Frobenius $\|(\hat P^{(1)})^3-\hat P^{(3)}\|_F$, cùng với bảng chênh lệch từng ô (xem file 2, §B6).</li>
+  </ol>
+
+  <div class="box ex"><span class="lbl">Ví dụ: vì sao gộp các nhóm khách hàng khác nhau làm CK "gãy"</span>
+    <p>Xét 2 trạng thái $\{C,D\}$ và 2 nhóm khách hàng, nhóm <b>tốt</b> $A$ (80%) và nhóm <b>xấu</b> $B$ (20%). Mỗi nhóm <i>đều</i> là xích Markov thuần nhất:
+    $$A=\begin{pmatrix}0.98 & 0.02\\0.30 & 0.70\end{pmatrix},\qquad B=\begin{pmatrix}0.70 & 0.30\\0.60 & 0.40\end{pmatrix}.$$</p>
+    <p>Gộp cả danh mục (mỗi hàng lấy trung bình có trọng số theo số khoản vay đang ở trạng thái đó) thì:</p>
+    $$\hat P^{(1)}=\begin{pmatrix}0.9377 & 0.0623\\0.4714 & 0.5286\end{pmatrix},\quad \big(\hat P^{(1)}\big)^3=\begin{pmatrix}0.8952 & 0.1048\\ \mathbf{0.7938} & 0.2062\end{pmatrix},\quad \hat P^{(3)}_{\text{thực}}=\begin{pmatrix}0.9134 & 0.0866\\ \mathbf{0.6560} & 0.3440\end{pmatrix}.$$
+    <p>Chuẩn Frobenius của hiệu là $0.196$. Mô hình gộp <b>đánh giá quá cao khả năng hồi phục</b> (0.79 so với 0.66), vì các khoản đang ở $D$ phần lớn thuộc nhóm xấu và nhóm này ít hồi phục. Hiện tượng này gọi là <b>mover–stayer</b>, và rất hay gặp trong dữ liệu tín dụng thực tế.</p>
+  </div>
+
+  <div class="box trap"><span class="lbl">Bẫy</span>
+    <ul>
+      <li><b>Khoản vay biến mất khỏi dữ liệu sau khi bị hấp thụ.</b> Nếu không kéo dài trạng thái PP/DF và không gán cứng hàng hấp thụ của $\hat P$ bằng $(0,\dots,1)$, thì ngay cả dữ liệu mô phỏng đúng Markov cũng cho Frobenius 0.289 thay vì 0.030. Chi tiết và code sửa xem file 2, §B7.</li>
+      <li>Khi ước lượng $\hat P^{(3)}$, phải bỏ các cặp có <b>tháng bị khuyết</b> ở giữa. Chỉ đếm cặp cách đúng 3 kỳ báo cáo liên tiếp.</li>
+      <li>Nên dùng <b>cùng một tập khoản vay và cùng giai đoạn</b> cho $\hat P^{(1)}$ và $\hat P^{(3)}$. Nếu không, sai lệch có thể đến từ việc thành phần mẫu thay đổi chứ không phải do vi phạm giả định.</li>
+      <li>Trạng thái hấp thụ đúng nghĩa thì hàng tương ứng luôn là $(0,\dots,1,\dots,0)$ ở cả hai ma trận. Đừng để chúng "đóng góp" sai lệch bằng 0 làm loãng chỉ số, mà nên báo cáo thêm sai lệch trên khối trạng thái tạm thời.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ 4 -->
+<section class="sec c3" id="s4">
+  <h2><span class="no">§4</span>Phân loại trạng thái</h2>
+  <p class="lead">Cần nắm để biết khi nào phân phối dừng tồn tại, là duy nhất và có ý nghĩa, và vì sao xích hấp thụ khác xích ergodic.</p>
+
+  <h3>4.1 Đến được &amp; liên thông</h3>
+  <div class="box"><span class="lbl">Định nghĩa</span>
+    <ul>
+      <li>$j$ <b>đến được từ</b> $i$ (viết $i\to j$) nếu tồn tại $n\ge0$ để $p^{(n)}_{ij}>0$.</li>
+      <li>$i$ và $j$ <b>liên thông</b> ($i\leftrightarrow j$) nếu $i\to j$ và $j\to i$. Quan hệ liên thông là quan hệ tương đương, nên nó chia $\mathcal S$ thành các <b>lớp liên thông</b>.</li>
+      <li>Một lớp $\mathcal C$ là <b>đóng</b> nếu không thể thoát ra: $p_{ij}=0$ với mọi $i\in\mathcal C$, $j\notin\mathcal C$.</li>
+      <li>Xích là <b>tối giản (irreducible)</b> nếu chỉ có một lớp liên thông.</li>
+      <li>Trạng thái $i$ là <b>hấp thụ</b> nếu $p_{ii}=1$, tức nó là một lớp đóng chỉ gồm một phần tử.</li>
+    </ul>
+  </div>
+
+  <h3>4.2 Hồi quy &amp; tạm thời</h3>
+  <div class="box"><span class="lbl">Định nghĩa</span>
+    <p>Gọi $f_{ii}=P(\text{có lúc quay lại }i\mid S_0=i)$.</p>
+    <ul>
+      <li>$i$ là <b>hồi quy (recurrent)</b> nếu $f_{ii}=1$: chắc chắn quay lại, và quay lại vô hạn lần.</li>
+      <li>$i$ là <b>tạm thời (transient)</b> nếu $f_{ii}\lt 1$: số lần ghé thăm hữu hạn, có phân phối hình học, với kỳ vọng $\sum_n p^{(n)}_{ii}\lt\infty$.</li>
+    </ul>
+  </div>
+  <div class="box thm"><span class="lbl">Định lý (xích hữu hạn trạng thái)</span>
+    <ol>
+      <li>Hồi quy và tạm thời là <b>tính chất của cả lớp</b>: trong một lớp, mọi trạng thái cùng hồi quy hoặc cùng tạm thời.</li>
+      <li>Một lớp là hồi quy <b>khi và chỉ khi</b> lớp đó đóng. Mọi lớp không đóng đều tạm thời.</li>
+      <li>Mọi xích hữu hạn có ít nhất một lớp đóng. Xuất phát từ trạng thái tạm thời, xích sẽ rời khỏi tập tạm thời sau hữu hạn bước với xác suất 1.</li>
+    </ol>
+  </div>
+
+  <h3>4.3 Chu kỳ &amp; tính ergodic</h3>
+  <div class="box"><span class="lbl">Định nghĩa</span>
+    <ul>
+      <li><b>Chu kỳ</b> của $i$: $d(i)=\gcd\{n\ge1:\,p^{(n)}_{ii}>0\}$. Trạng thái $i$ <b>không tuần hoàn (aperiodic)</b> nếu $d(i)=1$. Nếu $p_{ii}>0$ thì chắc chắn $d(i)=1$.</li>
+      <li>Xích hữu hạn, <b>tối giản và không tuần hoàn</b> được gọi là <b>ergodic</b>.</li>
+    </ul>
+  </div>
+
+  <div class="box ex"><span class="lbl">Ví dụ: phân loại ma trận đồ chơi</span>
+    <ul>
+      <li>$C\to30\to60\to90\to C$ nên $\{C,30,60,90\}$ là <b>một lớp liên thông</b>. Lớp này <b>không đóng</b> (thoát được sang PP và DF), do đó <b>tạm thời</b>.</li>
+      <li>$\{PP\}$ và $\{DF\}$ là hai lớp đóng một phần tử, tức <b>trạng thái hấp thụ</b>, và đều hồi quy.</li>
+      <li>Xích <b>không tối giản</b> (có 3 lớp), nên <b>không ergodic</b>. Hệ quả ở §5: phân phối dừng không duy nhất và không mang thông tin.</li>
+      <li>Mọi trạng thái tạm thời có $p_{ii}>0$ nên đều không tuần hoàn.</li>
+    </ul>
+  </div>
+  <div class="box"><span class="lbl">Ghi chú</span>
+    <p>Trước khi tính π hay $N$ trên một ma trận ước lượng từ dữ liệu thật, nên phân loại lại trạng thái của $\hat P$: có trạng thái nào không bao giờ quay lại được nữa không, có ô $\hat p_{ij}=0$ nào làm đứt đường liên thông không. Việc này quyết định công thức nào (§5 phân phối dừng, hay §6 xích hấp thụ) thực sự áp dụng được, thay vì áp công thức một cách máy móc.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 5 -->
+<section class="sec c4" id="s5">
+  <h2><span class="no">§5</span>Phân phối dừng</h2>
+  <p class="lead">Mục 4.4: tính π và đối chiếu với dữ liệu. Phần khó nhất là làm cho π có ý nghĩa khi xích có trạng thái hấp thụ.</p>
+
+  <h3>5.1 Định nghĩa &amp; phương trình cân bằng</h3>
+  <div class="box"><span class="lbl">Định nghĩa</span>
+    <p>Vector hàng $\pi=(\pi_1,\dots,\pi_m)$ là <b>phân phối dừng</b> nếu
+    $$\pi P=\pi,\qquad \pi_i\ge0,\qquad \sum_i\pi_i=1.$$</p>
+    <p>Viết theo từng thành phần (<b>phương trình cân bằng toàn cục</b>): $\displaystyle\pi_j=\sum_i\pi_i\,p_{ij}$, nghĩa là "khối lượng chảy vào $j$ bằng khối lượng đang ở $j$".</p>
+    <p>Ý nghĩa: nếu $\mu_0=\pi$ thì $\mu_n=\pi P^n=\pi$ với mọi $n$, tức phân phối không đổi theo thời gian.</p>
+  </div>
+  <p>Về đại số, π là <b>vector riêng trái</b> của $P$ ứng với giá trị riêng 1 (tương đương vector riêng phải của $P^\top$), đã chuẩn hóa để tổng bằng 1. Cách tính bằng số xem file 2, §B4.</p>
+
+  <h3>5.2 Tồn tại, duy nhất, hội tụ</h3>
+  <div class="box thm"><span class="lbl">Định lý (xích hữu hạn)</span>
+    <ol>
+      <li><b>Tồn tại:</b> mọi xích Markov hữu hạn đều có ít nhất một phân phối dừng.</li>
+      <li><b>Duy nhất:</b> nếu xích có <b>đúng một lớp đóng</b> (đặc biệt khi xích tối giản) thì π là duy nhất, và $\pi_i=0$ tại mọi trạng thái tạm thời.</li>
+      <li><b>Hội tụ:</b> nếu xích ergodic (tối giản và không tuần hoàn) thì với mọi $\mu_0$: $\mu_0P^n\to\pi$, và $P^n\to\mathbf 1\pi$ (mọi hàng tiến về π).</li>
+      <li><b>Định lý ergodic:</b> nếu xích tối giản thì tỷ lệ thời gian ở trạng thái $i$ hội tụ hầu chắc chắn: $\frac1n\sum_{t\lt n}\mathbf 1\{S_t=i\}\to\pi_i$. Ngoài ra $\pi_i=1/m_i$, với $m_i$ là thời gian quay lại kỳ vọng.</li>
+    </ol>
+  </div>
+  <p>Ý (4) là cơ sở để <b>đối chiếu π với tần suất thực nghiệm</b>: nếu mô hình đúng và danh mục ở trạng thái cân bằng, tỷ trọng quan sát được của mỗi nhóm nợ phải gần π.</p>
+
+  <div class="box ex"><span class="lbl">Ví dụ: giải tay xích ergodic 3 trạng thái (Tốt / Theo dõi / Xấu)</span>
+    $$E=\begin{pmatrix}0.9 & 0.08 & 0.02\\0.3 & 0.5 & 0.2\\0.1 & 0.3 & 0.6\end{pmatrix}.$$
+    <p>Phương trình cân bằng cho trạng thái 1: $\pi_1=0.9\pi_1+0.3\pi_2+0.1\pi_3$, suy ra $\pi_1=3\pi_2+\pi_3$.</p>
+    <p>Phương trình cho trạng thái 2: $\pi_2=0.08\pi_1+0.5\pi_2+0.3\pi_3$. Thay $\pi_1$ vào được $0.26\pi_2=0.38\pi_3$, suy ra $\pi_2=\tfrac{19}{13}\pi_3$, và $\pi_1=\tfrac{70}{13}\pi_3$.</p>
+    <p>Chuẩn hóa: $\tfrac{102}{13}\pi_3=1$, nên $$\pi=\Big(\tfrac{70}{102},\tfrac{19}{102},\tfrac{13}{102}\Big)=(0.6863,\;0.1863,\;0.1275).$$</p>
+    <p>Kiểm tra: hàng đầu của $E^{20}$ bằng $(0.6866,0.1861,0.1273)$, gần đúng π như định lý hội tụ khẳng định. Thời gian quay lại "Tốt" kỳ vọng là $m_1=102/70\approx1.46$ tháng.</p>
+    <p><i>Lưu ý:</i> ta chỉ dùng $m-1$ phương trình cân bằng cộng với phương trình chuẩn hóa, vì $m$ phương trình cân bằng <b>phụ thuộc tuyến tính</b> (tổng của chúng là một đồng nhất thức).</p>
+  </div>
+
+  <h3>5.3 Vấn đề: π của xích có trạng thái hấp thụ</h3>
+  <div class="box trap"><span class="lbl">Bẫy quan trọng nhất của mục 4.4</span>
+    <p>Với ma trận đồ chơi, mọi π có dạng $$\pi=(0,0,0,0,\;a,\;1-a),\qquad a\in[0,1].$$
+    Có <b>vô số</b> nghiệm (vì có 2 lớp đóng), và mọi khối lượng đều dồn vào PP/DF. Với mô hình chỉ có DF là trạng thái hấp thụ thì $\pi=(0,0,0,0,1)$: "cuối cùng mọi khoản vay đều vỡ nợ".</p>
+    <p>So một kết quả như vậy với tần suất thực nghiệm (khoảng 98% ở <code>C</code>) là phép đối chiếu vô nghĩa — cần hiểu rõ vì sao trước khi dùng, rồi chọn một trong các cách làm π có ý nghĩa ở §5.4.</p>
+  </div>
+
+  <h3>5.4 Ba cách làm π có ý nghĩa</h3>
+  <p>Cả ba cách đều nằm trong phạm vi lý thuyết xích Markov chuẩn (không cần đến HMM hay survival analysis). Mỗi cách trả lời một câu hỏi hơi khác nhau, nên lựa chọn phụ thuộc vào việc bạn muốn diễn giải π theo hướng nào.</p>
+
+  <h4>(a) Xích "tái sinh" (renewal / open portfolio)</h4>
+  <p>Giả định mỗi khoản vay bị hấp thụ (PP hoặc DF) được thay bằng một khoản vay mới ở <code>C</code>, để quy mô danh mục giữ ổn định. Về mặt ma trận, ta cộng dồn cột PP và DF vào cột C trên khối tạm thời:
+  $$\tilde p_{iC}=p_{iC}+p_{i,PP}+p_{i,DF},\qquad \tilde p_{ij}=p_{ij}\ (j\ne C).$$
+  Xích mới trên $\{C,30,60,90\}$ là ergodic. Với ma trận đồ chơi: $$\tilde\pi=(0.9051,\;0.0508,\;0.0186,\;0.0255).$$
+  Vector này so sánh trực tiếp được với <b>tỷ trọng cắt ngang</b> (cross-section) các nhóm nợ của danh mục trong các tháng gần đây.</p>
+
+  <h4>(b) Phân phối tựa dừng (quasi-stationary distribution)</h4>
+  <p>Là phân phối giới hạn <b>có điều kiện chưa bị hấp thụ</b>: $\lim_n P(S_n=j\mid S_n\in\mathcal T)$. Nó bằng vector riêng trái của khối $Q$ ứng với giá trị riêng lớn nhất $\rho(Q)$, sau khi chuẩn hóa:
+  $$q\,Q=\rho(Q)\,q,\qquad \text{đồ chơi: }\rho(Q)=0.9621,\quad q=(0.8938,\;0.0531,\;0.0209,\;0.0322).$$
+  Diễn giải: <i>trong số khoản vay còn sống sau thời gian dài, tỷ trọng mỗi nhóm nợ</i>. Đại lượng $1-\rho(Q)\approx3.8\%$/tháng là tốc độ "rời danh mục" tiệm cận.</p>
+
+  <h4>(c) Tính π trên xích con tạm thời đã chuẩn hóa lại hàng</h4>
+  <p>Chia mỗi hàng của $Q$ cho tổng hàng. Cách này đơn giản nhất nhưng diễn giải yếu hơn: nó ngầm giả định "không ai rời danh mục".</p>
+
+  <div class="box"><span class="lbl">Ghi chú: đối chiếu π với dữ liệu thực nghiệm</span>
+    <p>Quy trình chung để kiểm chứng một π đã tính (theo cách (a) hoặc (b) ở trên) là: so nó với tỷ trọng số khoản vay quan sát được ở từng trạng thái trong dữ liệu thực (lấy trung bình trên một giai đoạn), rồi diễn giải chênh lệch. Chênh lệch lớn thường đến từ việc danh mục là một <b>cohort đóng</b> (không có khoản vay mới gia nhập liên tục) nên chưa đạt trạng thái cân bằng, hoặc từ các cú sốc vĩ mô làm $P$ không thuần nhất trong giai đoạn quan sát.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 6 -->
+<section class="sec c5" id="s6">
+  <h2><span class="no">§6</span>Xích Markov hấp thụ</h2>
+  <p class="lead">Mục 4.5 gồm ma trận cơ bản $N$, thời gian kỳ vọng tới khi hấp thụ, xác suất hấp thụ $B$, và phần backtest bắt buộc.</p>
+
+  <h3>6.1 Dạng chuẩn tắc</h3>
+  <div class="box"><span class="lbl">Định nghĩa</span>
+    <p>Xích là <b>hấp thụ</b> nếu có ít nhất một trạng thái hấp thụ và từ mọi trạng thái đều đến được một trạng thái hấp thụ. Sắp xếp các trạng thái theo thứ tự <b>tạm thời trước ($t$ trạng thái), hấp thụ sau ($r$ trạng thái)</b>:
+    $$P=\begin{pmatrix}Q & R\\ \mathbf 0 & I_r\end{pmatrix},$$</p>
+    <ul>
+      <li>$Q\in\mathbb R^{t\times t}$: xác suất chuyển giữa các trạng thái tạm thời.</li>
+      <li>$R\in\mathbb R^{t\times r}$: xác suất từ trạng thái tạm thời rơi thẳng vào trạng thái hấp thụ.</li>
+      <li>$\mathbf 0\in\mathbb R^{r\times t}$: từ trạng thái hấp thụ không quay lại được.</li>
+      <li>$I_r$: mỗi trạng thái hấp thụ ở lại chính nó.</li>
+    </ul>
+  </div>
+  <div class="box ex"><span class="lbl">Ví dụ: các khối của ma trận đồ chơi ($t=4$, $r=2$)</span>
+    $$Q=\begin{pmatrix}0.93 & 0.04 & 0 & 0\\0.45 & 0.25 & 0.25 & 0\\0.15 & 0.10 & 0.25 & 0.48\\0.05 & 0 & 0.05 & 0.65\end{pmatrix},\qquad
+      R=\begin{pmatrix}0.03 & 0\\0.05 & 0\\0.02 & 0\\0 & 0.25\end{pmatrix}\ \ (\text{cột: }PP,\ DF).$$
+  </div>
+
+  <h3>6.2 Lũy thừa của dạng chuẩn</h3>
+  <div class="box thm"><span class="lbl">Định lý</span>
+    $$P^n=\begin{pmatrix}Q^n & (I+Q+\cdots+Q^{n-1})R\\ \mathbf 0 & I\end{pmatrix},\qquad Q^n\xrightarrow[n\to\infty]{}\mathbf 0.$$
+    <p><i>Ý chứng minh:</i> công thức khối có được bằng quy nạp khi nhân ma trận khối. Để thấy $Q^n\to0$: phần tử $(Q^n)_{ij}$ là xác suất sau $n$ bước vẫn còn ở trạng thái tạm thời $j$, và xác suất này tiến về 0 theo §4.2. Tương đương, bán kính phổ $\rho(Q)\lt 1$ (đồ chơi: $0.9621$).</p>
+  </div>
+
+  <h3>6.3 Ma trận cơ bản $N$</h3>
+  <div class="box thm"><span class="lbl">Định lý</span>
+    <p>$I-Q$ khả nghịch và $$N=(I-Q)^{-1}=I+Q+Q^2+\cdots=\sum_{n\ge0}Q^n.$$</p>
+    <p><b>Ý nghĩa:</b> $N_{ij}$ là <b>số tháng kỳ vọng</b> khoản vay ở trạng thái tạm thời $j$ trước khi bị hấp thụ, khi xuất phát từ $i$ (tính cả tháng 0 nếu $i=j$).</p>
+    <p><i>Chứng minh:</i></p>
+    <ol>
+      <li><b>Chuỗi Neumann:</b> $(I-Q)(I+Q+\cdots+Q^{n-1})=I-Q^n\to I$. Vì $Q^n\to0$, chuỗi hội tụ và tổng của nó là nghịch đảo của $I-Q$.</li>
+      <li><b>Ý nghĩa:</b> theo §1.4, $E[V_j\mid S_0=i]=\sum_n P(S_n=j\mid S_0=i)=\sum_n (Q^n)_{ij}=N_{ij}$. Ta dùng được $Q^n$ vì muốn đang ở $j$ tạm thời tại bước $n$ thì mọi bước trước đó phải nằm trong tập tạm thời. ∎</li>
+    </ol>
+  </div>
+  <div class="box thm"><span class="lbl">Hệ quả: thời gian kỳ vọng tới khi hấp thụ</span>
+    $$\mathbf t=N\mathbf 1,\qquad t_i=\sum_j N_{ij}=E[\text{số tháng trước khi bị hấp thụ}\mid S_0=i].$$
+  </div>
+
+  <div class="box ex"><span class="lbl">Ví dụ: tính N và t cho ma trận đồ chơi</span>
+    <div class="tbl"><table class="d">
+      <tr><th>$N$</th><th>C</th><th>30</th><th>60</th><th>90</th><th>$t_i=\sum_j N_{ij}$</th></tr>
+      <tr><td class="rh">C</td><td class="h3c">24.833</td><td>1.393</td><td>0.511</td><td>0.701</td><td><b>27.44</b></td></tr>
+      <tr><td class="rh">30</td><td class="h3c">18.458</td><td>2.437</td><td>0.894</td><td>1.226</td><td><b>23.02</b></td></tr>
+      <tr><td class="rh">60</td><td class="h2c">10.674</td><td>0.804</td><td>1.763</td><td>2.417</td><td><b>15.66</b></td></tr>
+      <tr><td class="rh">90</td><td class="h1c">5.072</td><td>0.314</td><td>0.325</td><td>3.303</td><td><b>9.01</b></td></tr>
+    </table></div>
+    <p>Đọc bảng: một khoản vay đang ở <code>90</code> dự kiến còn "sống" khoảng 9 tháng. Trong thời gian đó, trung bình 3.3 tháng nằm ở 90+ và 5.1 tháng ở <code>C</code> (sau khi hồi phục).</p>
+  </div>
+
+  <h3>6.4 Xác suất hấp thụ $B=NR$</h3>
+  <div class="box thm"><span class="lbl">Định lý</span>
+    <p>Gọi $b_{ik}=P(\text{bị hấp thụ tại }k\mid S_0=i)$ với $i$ tạm thời, $k$ hấp thụ. Khi đó $$B=(b_{ik})_{t\times r}=NR,\qquad \sum_k b_{ik}=1.$$</p>
+    <p><i>Chứng minh 1 (phân tích bước đầu):</i> chia theo bước đầu tiên. Bước này hoặc rơi thẳng vào $k$, hoặc đi tới một trạng thái tạm thời $j$ rồi "bắt đầu lại" nhờ tính Markov:
+    $$b_{ik}=r_{ik}+\sum_{j\in\mathcal T}q_{ij}\,b_{jk}\;\;\Longrightarrow\;\; B=R+QB\;\;\Longrightarrow\;\;(I-Q)B=R\;\;\Longrightarrow\;\;B=NR.$$</p>
+    <p><i>Chứng minh 2 (tổng theo thời điểm hấp thụ):</i> $b_{ik}=\sum_n\sum_j P(S_n=j,\ S_{n+1}=k)=\sum_n (Q^nR)_{ik}=(NR)_{ik}$. ∎</p>
+  </div>
+  <div class="box ex"><span class="lbl">Ví dụ</span>
+    <div class="tbl"><table class="d">
+      <tr><th>$B$</th><th>PP (trả hết)</th><th>DF (vỡ nợ)</th></tr>
+      <tr><td class="rh">C</td><td>0.8248</td><td class="hr">0.1752</td></tr>
+      <tr><td class="rh">30</td><td>0.6935</td><td class="hr">0.3065</td></tr>
+      <tr><td class="rh">60</td><td>0.3957</td><td class="hr">0.6043</td></tr>
+      <tr><td class="rh">90</td><td>0.1744</td><td class="hr">0.8256</td></tr>
+    </table></div>
+    <p><b>Kiểm tra bằng phương trình bước đầu</b> cho hàng <code>90</code>: $$b_{90,DF}=0.25+0.05\,b_{C,DF}+0.05\,b_{60,DF}+0.65\,b_{90,DF}=0.25+0.0088+0.0302+0.5366=0.8256.\ ✓$$</p>
+    <p>Tính đơn điệu $b_{C}\lt b_{30}\lt b_{60}\lt b_{90}$ là điều nghiệp vụ mong đợi. Nếu $\hat B$ thực tế <b>không</b> đơn điệu, hãy kiểm tra lại số quan sát ở các hàng hiếm.</p>
+  </div>
+
+  <div class="box trap"><span class="lbl">Bẫy 1: chỉ có một trạng thái hấp thụ thì $B\equiv 1$</span>
+    <p>Nếu $r=1$ thì $B$ là một vector cột và $\sum_k b_{ik}=1$ cho $b_{i,DF}=1$ với mọi $i$. Kiểm tra với mô hình gộp PP vào C (chỉ còn DF hấp thụ): kết quả đúng là $B=(1,1,1,1)^\top$ và $t=(156.6,\ 131.6,\ 77.6,\ 36.3)$ tháng. <b>Mọi khoản vay cuối cùng đều vỡ nợ</b>: đúng về toán nhưng vô nghĩa về nghiệp vụ. Để kết quả có nội dung thì cần hoặc thêm trạng thái hấp thụ <code>PP</code>, hoặc dùng PD theo kỳ hạn hữu hạn (xem bẫy 2).</p>
+  </div>
+  <div class="box trap"><span class="lbl">Bẫy 2: B là xác suất trên kỳ hạn vô hạn, còn validation set có kỳ hạn hữu hạn</span>
+    <p>$b_{i,DF}$ là xác suất vỡ nợ <b>có lúc nào đó</b>. Validation set (khoảng 20% kỳ cuối, tức vài năm) chỉ quan sát được vỡ nợ <b>trong $h$ tháng</b>, và những khoản vay chưa bị hấp thụ khi dữ liệu kết thúc là bị <b>kiểm duyệt (censored)</b>. Phép so sánh công bằng là:
+    $$\underbrace{\big(P^h\big)_{i,DF}}_{\text{dự báo PD }h\text{ tháng}}\quad\text{so với}\quad\frac{\#\{\text{khoản ở }i\text{ tại mốc }\tau\text{, vỡ nợ trước }\tau+h\}}{\#\{\text{khoản ở }i\text{ tại mốc }\tau\}}.$$
+    Bảng ở §3.3 cho thấy khác biệt rất rõ, ví dụ từ <code>C</code>: PD 24 tháng là 0.087 còn $b$ là 0.175. Khi backtest với dữ liệu có kỳ hạn hữu hạn, nên so với $P^h$ chứ không phải $B$ trực tiếp, và giải thích quan hệ $P^h\to B$ khi $h\to\infty$. Chi tiết thiết kế backtest xem file 2, §A6.</p>
+  </div>
+
+  <h3>6.5 Phân tích bước đầu: kỹ thuật tổng quát</h3>
+  <p>Mọi đại lượng dạng "kỳ vọng hoặc xác suất của một sự kiện xảy ra trước khi bị hấp thụ" đều giải được theo cùng một khuôn:</p>
+  <ol>
+    <li>Đặt ẩn $x_i$ cho mỗi trạng thái xuất phát tạm thời $i$.</li>
+    <li>Chia theo bước chuyển đầu tiên, rồi dùng tính Markov để viết $x_i=(\text{đóng góp của bước này})+\sum_j q_{ij}x_j$.</li>
+    <li>Giải hệ tuyến tính $(I-Q)\mathbf x=\mathbf c$.</li>
+  </ol>
+  <div class="box ex"><span class="lbl">Ví dụ</span>
+    <ul>
+      <li>Thời gian tới khi hấp thụ: $c_i=1$, cho $\mathbf t=N\mathbf 1$.</li>
+      <li>Xác suất hấp thụ tại $k$: $c_i=r_{ik}$, cho $B=NR$.</li>
+      <li>Phương sai thời gian tới khi hấp thụ (đọc thêm): $\operatorname{Var}=(2N-I)\mathbf t-\mathbf t^{\,2}$, trong đó $\mathbf t^{\,2}$ là bình phương từng phần tử.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ 7 -->
+<section class="sec" id="s7">
+  <h2><span class="no">§7</span>Tổng kết công thức → mục báo cáo</h2>
+  <div class="tbl"><table class="d">
+    <tr><th class="l">Công thức</th><th class="l">Ý nghĩa ngắn</th><th>Giả định cần</th><th>Mục</th></tr>
+    <tr><td class="l">$p_{ij}=P(S_{t+1}=j\mid S_t=i)$, $\sum_jp_{ij}=1$</td><td class="l">Ma trận chuyển 1 tháng</td><td>Markov + thuần nhất</td><td>Ch.2, 4.1</td></tr>
+    <tr><td class="l">$P(i_0,\dots,i_n)=\mu_0(i_0)\prod p_{i_ki_{k+1}}$</td><td class="l">Xác suất quỹ đạo → hàm hợp lý</td><td>Markov + thuần nhất</td><td>4.1 (MLE)</td></tr>
+    <tr><td class="l">$P^{(m+n)}=P^{(m)}P^{(n)}$, $P^{(n)}=P^n$</td><td class="l">Xác suất nhiều bước</td><td>Markov + thuần nhất</td><td>4.3</td></tr>
+    <tr><td class="l">$\mu_n=\mu_0P^n$</td><td class="l">Dự báo cơ cấu danh mục</td><td>như trên</td><td>4.3, 4.4</td></tr>
+    <tr><td class="l">$\pi P=\pi$, $\sum\pi_i=1$</td><td class="l">Cơ cấu cân bằng dài hạn</td><td>Duy nhất khi có 1 lớp đóng</td><td>4.4</td></tr>
+    <tr><td class="l">$qQ=\rho(Q)q$</td><td class="l">Phân phối tựa dừng (tùy chọn)</td><td>$Q$ tối giản</td><td>4.4</td></tr>
+    <tr><td class="l">$P=\begin{pmatrix}Q & R\\0 & I\end{pmatrix}$</td><td class="l">Dạng chuẩn tắc</td><td>Xích hấp thụ</td><td>Ch.2, 4.5</td></tr>
+    <tr><td class="l">$N=(I-Q)^{-1}=\sum Q^n$</td><td class="l">Số tháng kỳ vọng ở mỗi trạng thái</td><td>$\rho(Q)\lt1$</td><td>4.5</td></tr>
+    <tr><td class="l">$\mathbf t=N\mathbf 1$</td><td class="l">Thời gian kỳ vọng tới khi hấp thụ</td><td>như trên</td><td>4.5</td></tr>
+    <tr><td class="l">$B=NR$</td><td class="l">Xác suất vỡ nợ hoặc trả hết cuối cùng</td><td>$r\ge2$ mới có thông tin</td><td>4.5</td></tr>
+    <tr><td class="l">$(P^h)_{i,DF}$</td><td class="l">PD tích lũy $h$ tháng, dùng khi backtest</td><td>như trên</td><td>4.5</td></tr>
+  </table></div>
+</section>
+
+<!-- ============================================================ 8 -->
+<section class="sec c3" id="s8">
+  <h2><span class="no">§8</span>Bài tập tự kiểm tra</h2>
+  <p class="lead">Tự làm trước, sau đó mở lời giải. Các bài đều dùng ma trận đồ chơi ở §0 hoặc ma trận E ở §5.</p>
+
+  <details><summary>Bài 1. Tính $p^{(2)}_{30,C}$ bằng tay.</summary>
+    <p>$p^{(2)}_{30,C}=\sum_k p_{30,k}p_{k,C}=0.45(0.93)+0.25(0.45)+0.25(0.15)+0.05(0)=0.4185+0.1125+0.0375=0.5685.$</p>
+  </details>
+
+  <details><summary>Bài 2. Vì sao $p^{(3)}_{C,DF}=0$ nhưng $p^{(4)}_{C,DF}>0$? Tính $p^{(4)}_{C,DF}$.</summary>
+    <p>Đường ngắn nhất từ C tới DF là $C\to30\to60\to90\to DF$, gồm 4 bước. Đây cũng là đường 4 bước duy nhất vì các chuyển khác đều không tiến "xuống" đủ nhanh. Do đó $p^{(4)}_{C,DF}=0.04\times0.25\times0.48\times0.25=0.0012$.</p>
+  </details>
+
+  <details><summary>Bài 3. Chứng minh $\pi_i=0$ với mọi trạng thái tạm thời $i$ trong mọi phân phối dừng.</summary>
+    <p>Nếu $\pi$ dừng thì $\pi=\pi P^n$, nên $\pi_i=\sum_k\pi_k\,p^{(n)}_{ki}$. Với $i$ tạm thời, $p^{(n)}_{ki}\to0$ với mọi $k$ (xích hữu hạn nên số lần ghé $i$ có kỳ vọng hữu hạn). Lấy giới hạn khi $n\to\infty$ (tổng hữu hạn nên đổi thứ tự được) ta được $\pi_i=0$.</p>
+  </details>
+
+  <details><summary>Bài 4. Dùng phân tích bước đầu, lập hệ phương trình cho $t_i$ và kiểm tra $t_{90}=9.01$.</summary>
+    <p>$t_i=1+\sum_j q_{ij}t_j$. Với hàng 90: $t_{90}=1+0.05t_C+0.05t_{60}+0.65t_{90}=1+0.05(27.437)+0.05(15.658)+0.65(9.0136)=1+1.3719+0.7829+5.8588=9.0136.\ ✓$</p>
+  </details>
+
+  <details><summary>Bài 5. Mô hình 5 trạng thái chỉ có DF hấp thụ. Giải thích (không cần tính) vì sao $B=\mathbf 1$ và nêu 2 cách khắc phục.</summary>
+    <p>Mỗi hàng của $B$ là phân phối xác suất trên tập trạng thái hấp thụ. Chỉ có một trạng thái hấp thụ thì phân phối đó dồn hết vào DF, nên $b_i=1$. Hai cách khắc phục: (1) thêm trạng thái hấp thụ <code>PP</code> cho khoản vay trả hết; (2) dùng PD theo kỳ hạn hữu hạn $(P^h)_{i,DF}$, đồng thời xử lý PP như kiểm duyệt.</p>
+  </details>
+
+  <details><summary>Bài 6. Với ma trận E, xích có tuần hoàn không? Vì sao $E^n$ hội tụ?</summary>
+    <p>$e_{11}=0.9>0$ nên trạng thái 1 có chu kỳ 1. Xích tối giản (mọi phần tử của E đều dương) nên cả xích không tuần hoàn và do đó ergodic. Theo định lý hội tụ, $E^n\to\mathbf 1\pi$. Tốc độ hội tụ do giá trị riêng lớn thứ hai quyết định, ở đây $|\lambda_2|=0.7145$ (file 2, §B2).</p>
+  </details>
+
+  <details><summary>Bài 7. Trong ví dụ mover–stayer ở §3.4, mô hình gộp dự báo sai theo hướng nào, và điều này ảnh hưởng gì tới backtest mục 4.5?</summary>
+    <p>Mô hình gộp dự báo khoản vay đang quá hạn <b>hồi phục nhiều hơn thực tế</b> (0.79 so với 0.66). Hệ quả thường gặp: PD dự báo cho nhóm quá hạn nặng bị <b>thấp hơn</b> tỷ lệ vỡ nợ thực tế, còn PD của nhóm Current bị <b>cao hơn</b> thực tế vì nhóm "tốt ổn định" bị gộp với nhóm dễ trượt. Khi backtest cho ra kiểu sai lệch này, hãy đưa lý do này vào phần diễn giải.</p>
+  </details>
+
+  <details><summary>Bài 8. Chứng minh $\mathbf 1$ là vector riêng phải của mọi ma trận ngẫu nhiên $P$. Từ đó suy ra vì sao phân phối dừng luôn tồn tại (ở mức ý tưởng).</summary>
+    <p>$(P\mathbf 1)_i=\sum_jp_{ij}=1$ nên $P\mathbf 1=\mathbf 1$, tức 1 là giá trị riêng của $P$, và do đó cũng là giá trị riêng của $P^\top$. Vì vậy tồn tại vector $v\ne0$ với $vP=v$. Phần khó hơn là chứng minh chọn được $v\ge0$. Điều này suy ra từ định lý Perron–Frobenius, hoặc từ lập luận trung bình Cesàro $\frac1n\sum_{k\lt n}\mu_0P^k$ cùng với tính compact của tập phân phối xác suất.</p>
+  </details>
+</section>
+
+<p class="foot">Hết phần 1. Tiếp theo: <code>02_thong_ke_suy_dien_va_dai_so_tuyen_tinh.html</code> (MLE, χ², LR test, backtest, tính toán số).</p>
+</main>
+</div>
+</div>
+</body>
+</html>
