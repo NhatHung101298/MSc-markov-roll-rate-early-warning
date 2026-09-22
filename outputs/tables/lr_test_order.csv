@@ -1,0 +1,5 @@
+metric,value
+statistic,36899.99729884043
+dof,54
+p_value,0.0
+reject_H0,True

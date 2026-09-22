@@ -6,6 +6,46 @@
 
 ---
 
+## 2026-09-23 (tiếp — Phase 4 FROZEN, toàn bộ pipeline dữ liệu thật hoàn tất)
+
+- `[KẾT QUẢ]` **Phase 4 (`scripts/05_stationary_and_absorption.ipynb`) FROZEN — phase cuối cùng đụng dữ liệu thật.** HUNG tự chạy full trong VS Code. Trong lúc REVIEWED phát hiện + Claude sửa 2 lỗi thật: (1) `matplotlib.use("Agg")` chặn nhúng ảnh biểu đồ vào notebook (chỉ hiện cảnh báo, không có hình) — sửa bằng `%matplotlib inline` + `display(fig)`, ổn định hơn qua mọi cách chạy (nbconvert/VS Code); (2) lỗi phương pháp nghiêm trọng hơn ở §4.4 — "% thực tế" tính trên mẫu số khoản **còn đang báo cáo** mỗi tháng (co dần theo thời gian vì khoản Prepaid/Default hoàn tất ngừng xuất hiện trong dữ liệu thô), không khớp mẫu số cố định của dự báo `μ_τ·P̂^t` → % Prepaid thực tế bị tính sai nghiêm trọng (0,61% thay vì đúng 13,6%). Sửa bằng cách theo dõi cố định cohort 42.677 khoản xuyên suốt 25 tháng, forward-fill trạng thái cuối cùng đã biết cho khoản ngừng báo cáo.
+- `[KẾT QUẢ]` Sau khi sửa: bậc thang quá hạn + Default (§4.4) khớp thực tế tốt (Default lệch <1 điểm % suốt 25 tháng); Current/Prepaid lệch lớn đối xứng nhau (mô hình dự đoán Prepaid nhanh gấp >2 lần thực tế) — do `P_hat` học từ giai đoạn lãi suất thấp 2020-2021, khớp trực tiếp kết quả bác bỏ thuần nhất ở Phase 3. Backtest §4.5 (DoD #4): Default dự đoán cao hơn thực tế ở Current/30/60DPD (lệch có ý nghĩa thống kê), nhưng **90+DPD dự đoán 56,6% nằm trong CI thực tế [42,7-65,4%]** — điểm sáng ở đúng nhóm quan trọng nhất cho cảnh báo sớm. Prepaid dự đoán cao hơn thực tế ở mọi state.
+- `[QUYẾT ĐỊNH]` **Không tinh chỉnh thêm** (ví dụ ước lượng lại `P_hat` trên cửa sổ gần τ hơn thay vì toàn bộ 2016-2024, dù đã cân nhắc) — HUNG quyết định dừng ở kết quả hiện tại, ghi nhận trung thực làm hạn chế trong Kết luận thay vì tiếp tục điều chỉnh, tránh kéo dài quá phạm vi ~6 buổi.
+- `[TASK]` Đồng bộ Ch.4 báo cáo (`04_chuong4_ket_qua_thuc_nghiem.md`) §4.4 + §4.5 (bảng, biểu đồ, diễn giải) và Ch.5 (`05_ket_luan.md`) mục Tóm tắt kết quả + Hạn chế bằng số liệu thật. Cập nhật `plans/active_plan.md` — toàn bộ Phase 0-4 đã FROZEN, chuyển sang chuẩn bị Buổi 6 (viết báo cáo, ghép `report/report.ipynb`).
+
+---
+
+## 2026-09-22 (tiếp — Phase 3 FROZEN)
+
+- `[KẾT QUẢ]` **Phase 3 (`scripts/04_hypothesis_tests.ipynb`) FROZEN.** HUNG tự chạy full trong VS Code; Claude freeze: điền cell Quyết định, đổi DRAFT→FROZEN, xác nhận artifact khớp. Cả 2 kiểm định bắt buộc đều **BÁC BỎ H0**: χ² thuần nhất theo thời gian (statistic=69.101,63, dof=160, p≈0; 8/9 cặp năm liền kề bác bỏ sau Bonferroni, statistic lớn nhất ở 2019-2020 khớp giả thuyết COVID/forbearance) và LR test bậc Markov 1 vs 2 (statistic=36.899,997, dof=54, p≈0, bậc 1 không đủ) — nhất quán với tín hiệu Chapman-Kolmogorov đã thấy ở Phase 2 (Frobenius norm 0,42 không giảm theo N).
+- `[QUYẾT ĐỊNH]` **Không build Markov bậc 2/semi-Markov để "sửa" kết quả bác bỏ H0** — đây là phát hiện cần ghi nhận trung thực (đúng tinh thần chấm điểm của đề bài: kiểm tra giả thiết mô hình quan trọng hơn áp công thức không phản biện), không phải lỗi cần fix. Nằm ngoài phạm vi `PROJECT_BRIEF.md` mục 6 ("Multistate hoặc semi-Markov regression"). Lưu ý diễn giải quan trọng: cỡ mẫu triệu dòng làm p-value rất nhạy với sai lệch nhỏ — cần nhấn mạnh độ lớn statistic giữa các giai đoạn khi viết báo cáo, không chỉ đọc accept/reject nhị phân.
+- `[TASK]` Đồng bộ Ch.4 báo cáo (`04_chuong4_ket_qua_thuc_nghiem.md`) §4.2 (bảng χ² tổng thể + từng cặp, bảng LR test, kết luận) và Ch.5 (`05_ket_luan.md`) mục Hạn chế (cập nhật từ "giả định" sang kết quả kiểm định thật) bằng số liệu thật. Cập nhật `plans/active_plan.md` (Phase 3 FROZEN, chuyển sang chuẩn bị Phase 4).
+
+---
+
+## 2026-09-22 (tiếp — Phase 2 FROZEN)
+
+- `[KẾT QUẢ]` **Phase 2 (`scripts/03_estimate_transition_matrix.ipynb`) FROZEN.** HUNG tự chạy full (`SUFFIX="full"`) trong VS Code; Claude freeze: điền cell Quyết định (nội dung lấy đúng từ hội thoại đã thảo luận, không tự suy diễn thêm), đổi trạng thái DRAFT→FROZEN, xác nhận artifact trên đĩa khớp số liệu.
+- `[QUYẾT ĐỊNH]` Chấp nhận `P_hat` (estimation set 150.000 khoản vay) làm đầu vào chính thức §4.1. Chapman-Kolmogorov: Frobenius norm=0,421953, sai lệch ô lớn nhất=0,186636 — **không tự kết luận đạt/không đạt ở Phase 2**, để Phase 3 (LR test bậc Markov 1 vs 2) trả lời chính thức bằng accept/reject H0, vì sai lệch không giảm nhiều so với smoke dù N tăng ~60 lần (dấu hiệu hệ thống, không thuần túy nhiễu).
+- `[TASK]` Đồng bộ Ch.4 báo cáo (`04_chuong4_ket_qua_thuc_nghiem.md`) §4.1 (bảng $n_{i\cdot}$, ma trận $\hat{P}$, diễn giải cure/roll-forward) và §4.3 (bảng Frobenius/max-cell, diễn giải liên hệ Phase 3) bằng số liệu thật. Cập nhật `plans/active_plan.md` (Phase 2 FROZEN, chuyển sang chuẩn bị Phase 3).
+
+---
+
+## 2026-09-22 (tiếp — đổi định dạng notebook-first sang .ipynb thật)
+
+- `[QUYẾT ĐỊNH]` **Đổi định dạng pipeline DRAFT/REVIEWED/FROZEN từ `.py` + cell `# %%` sang notebook `.ipynb` thật.** HUNG chốt: định dạng `# %%` khó đọc, khó thực hành trực tiếp. Áp dụng từ đây về sau (không convert lại Phase 1, vẫn giữ `.py` thường vì đã FROZEN theo cách cũ — không thuộc gate này). Đã sửa `.claude/skills/notebook-first-model-dev/SKILL.md`: DRAFT/REVIEWED/FROZEN giờ thao tác trên `.ipynb`, không dùng CLI `--limit` (notebook không có argv) mà dùng biến `SUFFIX = "smoke"/"full"` ở đầu file; chạy bằng `jupyter nbconvert --to notebook --execute --inplace` để lưu output thật (bảng, hình) vào file thay vì chỉ in ra console.
+- `[TASK]` Chuyển `scripts/03_estimate_transition_matrix.py` (DRAFT cũ, dạng `# %%`) sang `scripts/03_estimate_transition_matrix.ipynb`, xóa file `.py` cũ. Chạy lại smoke test (`SUFFIX="smoke"`) qua `jupyter nbconvert --execute` — không lỗi, output đã lưu vào notebook. Vẫn dừng ở REVIEWED, chưa FROZEN, chờ HUNG mở file xem trực tiếp.
+
+---
+
+## 2026-09-22 (tiếp — quy chuẩn notebook-first cho phát triển pipeline)
+
+- `[QUYẾT ĐỊNH]` **Từ Phase 2 trở đi, mọi `scripts/0X_*.py` (ETL/ước lượng/kiểm định/hấp thụ-backtest) đi qua 3 trạng thái DRAFT → REVIEWED → FROZEN, cùng 1 file, dùng cell `# %%` (Jupytext-style).** HUNG chốt sau khi brainstorm cách anh có thể tự khai phá/kiểm tra dữ liệu trung gian bằng tay (VS Code Interactive Window) trước khi 1 script được coi là chính thức, thay vì chỉ nhận báo cáo cuối từ Claude. Lý do: không thể tin tưởng tuyệt đối 1 pipeline chạy end-to-end không có điểm dừng, đặc biệt với các bước có phán đoán (đã từng phải chỉnh ngưỡng Default, horizon backtest dựa trên số liệu thực tế). Không áp dụng cho `scripts/utils/markov.py` và `report/report.ipynb`.
+- `[TASK]` Viết `.claude/skills/notebook-first-model-dev/SKILL.md`, kiểm định bằng pressure test qua subagent (RED-GREEN theo `superpowers:writing-skills`): baseline (không có skill) cho thấy agent tự đặt ra timeout ngầm "chờ 20-30 phút rồi tự chạy full, ghi log lại giả định" dưới áp lực deadline + HUNG im lặng — đây là lỗ hổng thật. Viết skill có bảng rationalization chặn đúng lỗ hổng này ("im lặng không phải đồng ý, không có timeout tự động"), chạy lại cùng kịch bản áp lực với skill trong context — agent giữ nguyên REVIEWED, không tự leo thang. Chưa áp dụng cho phase thực tế nào (Phase 1 đã chạy xong theo cách cũ, không làm lại).
+- `[PHẠM VI]` Quy chuẩn hiện chỉ để ở project-level (`.claude/skills/`). Nếu dùng ổn qua vài phase, cân nhắc nâng lên `~/.claude/skills/` (user scope) — chưa quyết định.
+
+---
+
 ## 2026-09-22 (tiếp — Phase 1 ETL hoàn tất)
 
 - `[QUYẾT ĐỊNH]` **Sticky absorbing = giữ bản ghi + ép state (không cắt quỹ đạo).** HUNG chốt khi được hỏi lại: câu chữ ngắn gọn "cắt quỹ đạo sau khi vào Default/Prepaid" trong `active_plan.md` cũ không đúng nghĩa đen Ch.3 báo cáo. Cách làm đúng: một khi khoản vay chạm ngưỡng Default/Prepaid lần đầu, các bản ghi tháng sau đó vẫn giữ nguyên trong bảng quỹ đạo nhưng bị ép `state=Default/Prepaid`, không cho quay lại state thấp hơn. Default có ưu tiên tuyệt đối nếu trùng với Prepaid ở cùng khoản vay (hiếm, nhưng có xảy ra trong dữ liệu thật — xem kết quả bên dưới).

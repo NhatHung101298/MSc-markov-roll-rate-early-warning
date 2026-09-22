@@ -7,10 +7,48 @@
 
 ## Trạng thái hiện tại
 
-- **Ngày cập nhật:** 2026-09-22
-- **Buổi:** đang ở Buổi 2 (2 / 6) — **Phase 1 xong, chuẩn bị Phase 2** (`scripts/03_estimate_transition_matrix.py`, xem mục 6 `master_plan.md`)
-- **Tình trạng:** Phase 0 + Phase 1 hoàn tất, có artifact thật trong `data/processed/`. Song song đã viết nháp lý thuyết Ch.1–3 của báo cáo cuối kỳ (`outputs/TranNhatHung_MAT6206_BaoCaoCuoiKy/`) trước khi có kết quả số — Ch.3 §3.2.3 đã đồng bộ τ thật (xem bên dưới), Ch.4 vẫn là khung chờ Phase 2-4.
+- **Ngày cập nhật:** 2026-09-23
+- **Buổi:** Phase 0-4 hoàn tất (toàn bộ pipeline dữ liệu thật đã xong) — chuẩn bị Buổi 6 (viết báo cáo cuối, xem mục 6 `master_plan.md`)
+- **Tình trạng:** Ch.4 báo cáo đã có số thật đầy đủ §4.1-§4.5. Ch.5 Kết luận đã cập nhật hạn chế + tóm tắt theo kết quả kiểm định/backtest thật. Còn lại: ghép toàn bộ vào `report/report.ipynb` (Buổi 6) và rà soát tổng thể trước khi nộp.
 - **Blocker:** không còn.
+
+## Checklist Phase 4 — `scripts/05_stationary_and_absorption.ipynb` — FROZEN (2026-09-23)
+
+- [x] Notebook 13 mục: load estimation+validation set → P_hat → π (suy biến) → μ_τ + dự báo hữu hạn kỳ vs thực tế → biểu đồ → Q/R/N/B → PD_i(12) → cohort tại τ → outcome thực tế cửa sổ H=12 → DR_i/PR_i + Wilson CI → bảng backtest → biểu đồ cột → cell Quyết định
+- [x] HUNG tự chạy full trong VS Code; phát hiện + Claude sửa **2 lỗi trong quá trình REVIEWED**: (1) `matplotlib.use("Agg")` chặn nhúng ảnh vào notebook — sửa bằng `%matplotlib inline` + `display(fig)`; (2) lỗi phương pháp ở §4.4 — tính "% thực tế" trên mẫu số co dần (chỉ khoản còn báo cáo) thay vì cohort cố định, làm % Prepaid thực tế sai nghiêm trọng (0,61% thay vì 13,6% đúng) — sửa bằng forward-fill cohort cố định 42.677 khoản
+- [x] Claude freeze: điền cell Quyết định, xóa 2 cell trùng lặp phát sinh khi HUNG khám phá thủ công, đổi DRAFT→FROZEN
+
+**Kết quả full run (τ=2024/02, cohort 42.677 khoản cho §4.4, cohort 39.741 khoản (state∈{0,1,2,3}) cho §4.5):**
+- **π suy biến** = [0,0,0,0,0.5,0.5] — đúng lý thuyết (2 trạng thái hấp thụ), không dùng so trực tiếp với thực nghiệm.
+- **§4.4 (sau khi sửa lỗi mẫu số):** bậc thang quá hạn (30/60/90+DPD) và Default khớp thực tế tốt suốt 25 tháng (Default lệch <1 điểm %). Current/Prepaid lệch lớn và đối xứng (Current -16,86pp, Prepaid +16,08pp ở t=25) — mô hình dự đoán tốc độ Prepaid nhanh gấp >2 lần thực tế, do `P_hat` học từ giai đoạn lãi suất thấp 2020-2021 áp lên giai đoạn validation lãi suất cao hơn — khớp trực tiếp kết quả bác bỏ thuần nhất ở §4.2.
+- **§4.5 (backtest bắt buộc, DoD #4):** Default dự đoán cao hơn thực tế ở Current/30DPD/60DPD (lệch có ý nghĩa thống kê, ngoài CI Wilson) — tệ nhất ở 60DPD (38,9% vs 15,5%, m=84); nhưng **90+DPD dự đoán 56,6% nằm TRONG CI thực tế [42,7-65,4%]** (m=70) — không phân biệt được thống kê, điểm sáng ở đúng nhóm quan trọng nhất cho cảnh báo sớm. Prepaid dự đoán cao hơn thực tế ở mọi state, cực đoan ở 90+DPD (9,3% vs 0/70 khoản thực tế).
+- **Quyết định:** không tinh chỉnh thêm (ví dụ ước lượng `P_hat` trên cửa sổ gần τ hơn) — dừng ở kết quả này, ghi nhận trung thực làm hạn chế.
+- Artifact: `outputs/figures/{forecast_vs_actual_distribution,backtest_4_5}.png`, `outputs/tables/{forecast_vs_actual_distribution,backtest_4_5}.csv`. Đã đồng bộ vào Ch.4 §4.4/§4.5 và Ch.5 Kết luận.
+
+## Checklist Phase 3 — `scripts/04_hypothesis_tests.ipynb` — FROZEN (2026-09-22)
+
+- [x] `scripts/utils/transitions.py` bổ sung: `build_triple_counts`, `triples_to_count_matrix`; `build_pair_counts` thêm cột `t1` (tương thích ngược, không ảnh hưởng Phase 2)
+- [x] Notebook 8 cell: load estimation set → xây n_ij theo năm → gộp giai đoạn ít quan sát (ngưỡng `MERGE_THRESHOLD=30`, không cần dùng ở full run) → χ² tổng thể → χ² từng cặp (Bonferroni) → xây n_ijk → LR test bậc Markov → cell Quyết định
+- [x] HUNG tự chạy full (`SUFFIX="full"`) trong VS Code, Claude freeze: điền cell Quyết định, đổi trạng thái DRAFT→FROZEN, xác nhận artifact khớp
+
+**Kết quả full run (estimation set, 150.000 khoản vay):**
+- **χ² thuần nhất theo thời gian:** tổng thể statistic=69.101,63, dof=160, p≈0 → **BÁC BỎ H0**. Từng cặp năm (Bonferroni α=0,05/9=0,005556): 8/9 cặp bác bỏ, chỉ 2023-2024 không bác bỏ (p=0,123). Statistic lớn nhất ở 2019-2020 (19.344,72) — khớp giả thuyết COVID/forbearance. **Lưu ý diễn giải:** cỡ mẫu triệu dòng làm p-value rất nhạy, không nên đọc "8/9 cặp khác nhau hoàn toàn" theo nghĩa thực chất — nên so độ lớn statistic giữa các cặp.
+- **LR test bậc Markov 1 vs 2:** statistic=36.899,997, dof=54, p≈0 → **BÁC BỎ H0** (bậc 1 không đủ). Khớp tín hiệu Chapman-Kolmogorov ở Phase 2 (Frobenius norm 0,42 không giảm theo N).
+- **Quyết định:** ghi nhận cả 2 kết quả bác bỏ H0 vào Ch.4 + Ch.5 (hạn chế), KHÔNG build Markov bậc 2/semi-Markov (ngoài phạm vi `PROJECT_BRIEF.md` mục 6).
+- Artifact: `outputs/tables/{chi2_homogeneity,lr_test_order}.csv`. Đã đồng bộ vào Ch.4 §4.2 và Ch.5 Kết luận.
+
+## Checklist Phase 2 — `scripts/03_estimate_transition_matrix.ipynb` — FROZEN (2026-09-22)
+
+- [x] `scripts/utils/transitions.py` (hàm thuần túy, không qua gate): `build_pair_counts(df, k)`, `pairs_to_count_matrix(pairs_df)`
+- [x] Notebook 10 cell: load estimation set → ghép cặp k=1 → MLE `P_hat` → heatmap → bảng quan sát §4.1 → ghép cặp k=3 → `P_hat^(3)` trực tiếp → kiểm chứng CK §4.3 → heatmap sai lệch → lưu bảng → cell Quyết định
+- [x] HUNG tự chạy full (`SUFFIX="full"`) trong VS Code, Claude freeze: điền cell Quyết định, đổi trạng thái DRAFT→FROZEN, xác nhận artifact khớp
+
+**Kết quả full run (estimation set, 150.000 khoản vay, 7.253.423 dòng):**
+- `n_ij` (k=1): 7.103.422/7.253.423 cặp hợp lệ. Hàng Prepaid toàn 0 (không có tháng t+1 sau sự kiện Prepaid) → `P_hat` ép identity đúng thiết kế.
+- `P_hat`: Current giữ 0,9798; roll-forward 90+DPD→Default = 0,6517; cure rõ rệt ở 60DPD (0,15 quay lại 30DPD, 0,095 giữ 60DPD) và 90+DPD (0,111 về Current, 0,013+0,021 về 30/60DPD).
+- Bảng quan sát: Current 6.875.554 (96,8%), 30DPD 54.505, 60DPD 16.903, 90+DPD 24.906, Default 131.554 (1,85%), Prepaid 0.
+- **Chapman-Kolmogorov (§4.3): Frobenius norm = 0,421953, sai lệch ô lớn nhất = 0,186636.** Không giảm nhiều so với smoke (0,465 trên 2.000 khoản) dù N tăng ~60 lần → tín hiệu sai lệch mang tính hệ thống (có thể vi phạm Markov bậc 1), để Phase 3 (LR test bậc Markov) kiểm định chính thức.
+- Artifact: `outputs/figures/{heatmap_P_hat,heatmap_ck_deviation}.png`, `outputs/tables/{observed_counts_by_state,ck_comparison}.csv`. Đã đồng bộ vào Ch.4 §4.1/§4.3 báo cáo.
 
 ## Checklist Phase 0 — `scripts/utils/markov.py` — HOÀN TẤT (2026-09-22)
 
