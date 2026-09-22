@@ -11,9 +11,10 @@
 - **Môn:** MAT6206 — Các phương pháp ngẫu nhiên và ứng dụng (Thạc sĩ KHDL, VNU-HUS).
 - **Loại:** Bài tập cuối kỳ (KHÔNG phải luận văn). Thời lượng ước tính ~6 buổi.
 - **Bài toán:** Xây mô hình xích Markov rời rạc thời gian, không gian trạng thái hữu hạn (roll-rate matrix) để cảnh báo sớm nợ vỡ.
-- **Trạng thái (5, hấp thụ ở cuối):** `Current (0) → 30 DPD → 60 DPD → 90+ DPD → Default/Foreclosure`. Default/Foreclosure là trạng thái hấp thụ.
-- **Dữ liệu chính:** Freddie Mac Single-Family Loan-Level Dataset (Standard/Sample).
+- **Trạng thái (6, hai trạng thái hấp thụ):** `Current (0) → 30 DPD → 60 DPD → 90+ DPD` là 4 trạng thái tạm thời; `Default/Foreclosure` và `Prepaid` (trả hết nợ trước hạn/đáo hạn) là 2 trạng thái hấp thụ. Quyết định 2026-09-22 (xem `logs.md`): dùng 2 trạng thái hấp thụ (Phương án B) để `B=NR` có ý nghĩa phân biệt rủi ro, thay vì chỉ 1 trạng thái Default khiến `B=1`.
+- **Dữ liệu chính:** Freddie Mac Single-Family Loan-Level Dataset (Standard/Sample), **3 vintage 2016+2017+2018 gộp** (150.000 khoản vay) — mở rộng từ 1 vintage ban đầu (quyết định 2026-09-22, xem `logs.md`) vì cần đủ sự kiện Default cho kiểm định + backtest.
   - **Dự phòng:** Kaggle "American Express Default Prediction" (~13 tháng) — nếu dùng, kiểm định thuần nhất theo thời gian co lại thành so 2 nửa kỳ.
+- **Định nghĩa trạng thái Default (quyết định 2026-09-22):** ngưỡng 180 ngày quá hạn (`delinquency_status ≥ '06'`) HOẶC `RA` HOẶC `zero_balance_code ∈ {02,03,09}`, kèm quy tắc "sticky absorbing" (một khi chạm ngưỡng, không cho quay lại). Chi tiết + số liệu so sánh 3 phương án: `logs.md`, Ch.3 §3.2.1 của báo cáo.
 - **Chia dữ liệu:** theo thời gian, KHÔNG random. ~80% kỳ đầu = estimation set, ~20% kỳ cuối = validation set.
 - **Công cụ:** Python + `pandas`, `numpy`, `scipy.stats`, `matplotlib`/`seaborn`. Tự cài đặt toàn bộ công thức Markov thủ công.
 - **Output cuối:** Báo cáo tiếng Việt, công thức LaTeX annotate biến số, xuất Markdown/HTML + MathJax (theme indigo/jade, card layout).
@@ -101,7 +102,22 @@
 
 > Nếu giữa chừng nảy ra hướng mở rộng "rất hay" → **dừng lại, hỏi HUNG**, ghi vào `logs.md`, không tự thêm.
 
-## 6. Cấu trúc thư mục dự kiến
+## 6. Luồng code chi tiết theo phase (script-level, map vào buổi ở mục 3)
+
+> Bổ sung 2026-09-22: chi tiết hóa "buổi" thành phase/script cụ thể để code trực tiếp, không đổi phạm vi hay thứ tự buổi.
+
+| Phase | Buổi | File | Nội dung | Map lý thuyết |
+|---|---|---|---|---|
+| 0 | (nền tảng, làm đầu buổi 2) | `scripts/utils/markov.py` | `mle_transition_matrix`, `chapman_kolmogorov_power`, `stationary_distribution`, `fundamental_matrix`, `absorption_probabilities`, `chi2_homogeneity_test`, `lr_test_markov_order` | Ch.2 toàn bộ 7 công thức — tự cài đặt thủ công |
+| 1 | Buổi 2 | `scripts/01_build_trajectory.py`, `scripts/02_split_estimation_validation.py` | Load 3 vintage, rời rạc hóa 6 state + sticky absorbing, xây `(loan_id, month, state)`, chunk + `--limit`, split theo thời gian | Ch.3 tiền xử lý |
+| 2 | Buổi 3 | `scripts/03_estimate_transition_matrix.py` | `P_hat` tháng (4.1) + heatmap; `P_hat^(3)` quý trực tiếp vs `(P_hat^(1))^3` (4.3) | 4.1, 4.3 |
+| 3 | Buổi 4 | `scripts/04_hypothesis_tests.py` | χ² thuần nhất theo giai đoạn con; LR test bậc 1 vs 2 | 4.2 |
+| 4 | Buổi 5 | `scripts/05_stationary_and_absorption.py` | π vs tần suất thực nghiệm; `N=(I-Q)^-1`, `B=NR`; backtest B vs default/prepaid thực tế validation set (H=12) | 4.4, 4.5 (bắt buộc) |
+| 5 | Buổi 6 | `report/report.ipynb` | Ghép Ch.1-2 (text) + 4.1-4.5 (số + diễn giải), export Markdown/HTML MathJax | Toàn bộ |
+
+Artifact convention: `data/processed/`, `outputs/tables/`, `outputs/figures/` theo cấu trúc thư mục ở mục 7bis của `PROJECT_BRIEF.md`.
+
+## 7. Cấu trúc thư mục dự kiến
 
 ```
 plans/                    ← master_plan.md, active_plan.md, logs.md
