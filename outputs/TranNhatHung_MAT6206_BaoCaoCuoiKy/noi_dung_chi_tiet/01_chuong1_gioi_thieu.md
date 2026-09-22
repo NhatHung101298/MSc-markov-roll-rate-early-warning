@@ -20,9 +20,9 @@ Chính điểm thứ hai là khoảng trống thường gặp trong thực hành
 **Về dữ liệu.** Nghiên cứu sử dụng **Freddie Mac Single-Family Loan-Level Dataset** — bộ dữ liệu công khai cấp độ khoản vay do Freddie Mac (Federal Home Loan Mortgage Corporation), một trong hai doanh nghiệp được Chính phủ Hoa Kỳ bảo trợ trên thị trường thế chấp thứ cấp, công bố. Bộ dữ liệu này phù hợp với mục tiêu nghiên cứu vì các lý do sau:
 
 - **Ghi nhận trạng thái quá hạn theo tháng của từng khoản vay** trong suốt vòng đời khoản vay, là dạng dữ liệu quỹ đạo (trajectory) mà mô hình xích Markov đòi hỏi.
-- **Độ dài quan sát lớn**: mẫu được sử dụng (các khoản vay có năm khởi tạo 2016) được theo dõi từ tháng 03/2016 đến tháng 03/2026, khoảng 121 kỳ báo cáo, trải qua nhiều bối cảnh kinh tế khác nhau — giai đoạn tăng trưởng ổn định trước 2020, cú sốc COVID-19 cùng các chương trình hoãn trả nợ (2020–2021), và chu kỳ tăng lãi suất (2022–2023). Đây là điều kiện lý tưởng để kiểm định tính thuần nhất theo thời gian của ma trận chuyển.
+- **Độ dài quan sát lớn**: mẫu được sử dụng (ba năm khởi tạo 2016, 2017, 2018) được theo dõi đến tháng 03/2026 (khoảng 123 kỳ báo cáo cho vintage 2016), trải qua nhiều bối cảnh kinh tế khác nhau — giai đoạn tăng trưởng ổn định trước 2020, cú sốc COVID-19 cùng các chương trình hoãn trả nợ (2020–2021), và chu kỳ tăng lãi suất (2022–2023). Đây là điều kiện lý tưởng để kiểm định tính thuần nhất theo thời gian của ma trận chuyển.
 - **Tính công khai và minh bạch**: dữ liệu có tài liệu mô tả trường dữ liệu chính thức, cho phép tái lập toàn bộ kết quả của báo cáo.
-- **Quy mô vừa phải**: bộ Sample gồm 50.000 khoản vay với khoảng 3,38 triệu bản ghi khoản vay–tháng, đủ lớn để ước lượng ổn định nhưng vẫn xử lý được trên máy tính cá nhân.
+- **Quy mô đủ lớn cho các kiểm định của Chương 4**: bản dựng ban đầu chỉ dùng 1 vintage (2016, 50.000 khoản vay) cho quá ít sự kiện vỡ nợ (76–78 khoản, tùy định nghĩa) để kiểm định giả thiết và backtest theo từng trạng thái xuất phát có ý nghĩa thống kê. Mẫu cuối cùng gộp 3 vintage độc lập (2016, 2017, 2018), tổng 150.000 khoản vay với khoảng 8,24 triệu bản ghi khoản vay–tháng — đủ lớn để có ~4.900 sự kiện vỡ nợ (mục 3.2.1) mà vẫn xử lý được trên máy tính cá nhân. Đánh đổi của việc trộn nhiều vintage được thảo luận ở mục 3.1.2 và phần Kết luận.
 
 ## 1.3. Mục tiêu nghiên cứu
 
@@ -44,15 +44,15 @@ Tương ứng, báo cáo tìm cách trả lời các câu hỏi nghiên cứu:
 
 ### 1.4.1. Đối tượng nghiên cứu
 
-- **Đối tượng dữ liệu:** quỹ đạo trạng thái quá hạn theo tháng của các khoản vay thế chấp nhà ở cho một gia đình (single-family mortgage) có lãi suất cố định, thuộc bộ Freddie Mac Single-Family Loan-Level Dataset, mẫu Sample năm khởi tạo 2016.
+- **Đối tượng dữ liệu:** quỹ đạo trạng thái quá hạn theo tháng của các khoản vay thế chấp nhà ở cho một gia đình (single-family mortgage) có lãi suất cố định, thuộc bộ Freddie Mac Single-Family Loan-Level Dataset, mẫu Sample các năm khởi tạo 2016, 2017, 2018.
 - **Đối tượng phương pháp:** xích Markov rời rạc thời gian với không gian trạng thái hữu hạn, lý thuyết xích Markov hấp thụ, ước lượng hợp lý cực đại và các kiểm định giả thiết cho xích Markov (kiểm định $\chi^2$ về tính thuần nhất, kiểm định tỷ số hợp lý về bậc).
 
 ### 1.4.2. Phạm vi nghiên cứu
 
 **Phạm vi về dữ liệu:**
 
-- Dữ liệu là bộ Sample của Freddie Mac cho năm khởi tạo 2016, gồm 50.000 khoản vay, kỳ báo cáo từ 03/2016 đến 03/2026, tần suất theo tháng.
-- Trạng thái của khoản vay được rời rạc hóa thành năm trạng thái: Trả nợ đúng hạn (Current), Quá hạn 30 ngày (30 DPD), Quá hạn 60 ngày (60 DPD), Quá hạn từ 90 ngày trở lên (90+ DPD) và Vỡ nợ/Tịch biên (Default/Foreclosure), trong đó trạng thái cuối là trạng thái hấp thụ.
+- Dữ liệu là bộ Sample của Freddie Mac cho ba năm khởi tạo 2016, 2017, 2018 (gộp), tổng 150.000 khoản vay, kỳ báo cáo đến 03/2026, tần suất theo tháng.
+- Trạng thái của khoản vay được rời rạc hóa thành sáu trạng thái: bốn trạng thái tạm thời — Trả nợ đúng hạn (Current), Quá hạn 30 ngày (30 DPD), Quá hạn 60 ngày (60 DPD), Quá hạn từ 90 ngày trở lên (90+ DPD) — và hai trạng thái hấp thụ — Vỡ nợ/Tịch biên (Default/Foreclosure) và Trả hết nợ trước hạn/đáo hạn (Prepaid). Việc bổ sung Prepaid làm trạng thái hấp thụ thứ hai (thay vì chỉ có Default) là cần thiết để xác suất hấp thụ $B$ mang ý nghĩa phân biệt rủi ro giữa các khoản vay, thay vì luôn bằng 1 (xem mục 2.5.5).
 - Dữ liệu được chia **theo trục thời gian** (không chia ngẫu nhiên): khoảng 80% giai đoạn đầu dùng để ước lượng tham số, khoảng 20% giai đoạn cuối dùng để kiểm định ngoài mẫu.
 
 **Phạm vi về nội dung và phương pháp:**

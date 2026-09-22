@@ -6,6 +6,25 @@
 
 ---
 
+## 2026-09-22 (tiếp — Phase 1 ETL hoàn tất)
+
+- `[QUYẾT ĐỊNH]` **Sticky absorbing = giữ bản ghi + ép state (không cắt quỹ đạo).** HUNG chốt khi được hỏi lại: câu chữ ngắn gọn "cắt quỹ đạo sau khi vào Default/Prepaid" trong `active_plan.md` cũ không đúng nghĩa đen Ch.3 báo cáo. Cách làm đúng: một khi khoản vay chạm ngưỡng Default/Prepaid lần đầu, các bản ghi tháng sau đó vẫn giữ nguyên trong bảng quỹ đạo nhưng bị ép `state=Default/Prepaid`, không cho quay lại state thấp hơn. Default có ưu tiên tuyệt đối nếu trùng với Prepaid ở cùng khoản vay (hiếm, nhưng có xảy ra trong dữ liệu thật — xem kết quả bên dưới).
+- `[KẾT QUẢ]` Phase 1 (ETL) hoàn tất: `scripts/01_build_trajectory.py` + `scripts/02_split_estimation_validation.py`. Full run 150.000 khoản vay / 8.239.433 dòng (khớp chính xác tổng đã biết). Default = 4.921 khoản (khớp chính xác Phương án C đã tính trước bằng awk). Prepaid = 110.834 (thấp hơn số thô 112.875 do ưu tiên sticky-absorbing của Default, xem giải thích ở `active_plan.md`). τ tính ra = **2024/02** (percentile 80% trên trục lịch gộp 123 tháng), khớp ước tính trước đó (~02/2024) dùng để size backtest H=12. Artifact: `data/processed/{loan_trajectory,estimation_set,validation_set}_full.parquet`, `split_manifest_full.json`.
+- `[TASK]` Cài thêm `pyarrow==25.0.1` vào venv (cần cho parquet), cập nhật `requirements.txt`. Đồng bộ Ch.3 báo cáo (`03_chuong3_du_lieu_va_phuong_phap.md`) §3.2.3: thay chỗ ghi "dự kiến"/τ chưa xác định bằng τ=2024/02 thật.
+- `[RỦI RO]` 1 dòng có gap báo cáo trên 1 khoản vay trong full run — không đáng kể, không ảnh hưởng kết luận, nhưng `segment_id` đã được đánh dấu sẵn trong trajectory để Phase 2 xử lý đúng khi ghép cặp transition.
+
+---
+
+## 2026-09-22 (tiếp — đồng bộ báo cáo nộp + rà soát lệch)
+
+- `[TASK]` HUNG yêu cầu: mọi quyết định phương pháp luận, kết quả chạy, kết luận phải được đồng bộ vào `outputs/TranNhatHung_MAT6206_BaoCaoCuoiKy/` (đây là bản nộp thật). Đã thêm quy ước bắt buộc vào `CLAUDE.md` (project-level, mục "Báo cáo nộp — bắt buộc đồng bộ") — mapping loại nội dung → chương, yêu cầu sửa file chương trong cùng lượt làm việc thay vì dồn lại.
+- `[RỦI RO]` Rà lại toàn bộ 7 file trong `noi_dung_chi_tiet/` đối chiếu với các quyết định đã chốt trong log bên dưới, phát hiện 2 chỗ lệch (log trước đó ghi "đã cập nhật Ch.2 §2.5.5" nhưng bỏ sót 2 mục khác trong cùng chương):
+  - Ch.2 §2.1.4 và §2.5.1 vẫn mô tả mô hình cũ **5 trạng thái/1 hấp thụ** ($K=5$, ma trận (2.6) 5×5, $s=4,r=1$), mâu thuẫn trực tiếp với §2.5.5 (cùng chương) và Ch.1/Ch.3 (đã đúng 6 trạng thái/2 hấp thụ). Đã sửa: bảng trạng thái + ma trận (2.6) → 6×6 (thêm state 5 Prepaid), §2.5.1 → $s=4, r=2$, $R$ là khối $4\times2$.
+  - Ch.5 (`05_ket_luan.md`), mục "Hạn chế": vẫn ghi "chỉ sử dụng một năm khởi tạo (2016)" — sai vì đã mở rộng sang 3 vintage 2016–2018 (150.000 khoản vay, quyết định cùng ngày, xem log bên dưới). Đã sửa lại + bổ sung 1 hạn chế mới về trộn vintage không đồng nhất tuổi khoản vay (đúng như đã đánh dấu "cần nhắc lại ở phần Kết luận" trong log gốc). Mục "Hướng phát triển" — bullet "kết hợp nhiều năm khởi tạo" cũng sửa vì việc này đã làm rồi, không còn là hướng mở rộng.
+  - Không phát hiện lệch ở Ch.1, Ch.3, Ch.6, trang bìa, `outline.md`. Ch.4 và phần "Tóm tắt kết quả" của Ch.5 vẫn là khung TODO — đúng, vì chưa có kết quả chạy thật (chưa có code/pipeline).
+
+---
+
 ## 2026-09-22
 
 - `[KẾT QUẢ]` Phase 0 hoàn tất: `scripts/utils/markov.py` (8 hàm, công thức 2.10-2.19) + `scripts/00_smoke_test_markov.py` (ma trận toy 4 trạng thái, N/B đối chiếu tính tay bằng phân số mẫu 29). Chạy bằng `stochastic\Scripts\python.exe scripts\00_smoke_test_markov.py` — 15/15 PASS, exit code 0. Chưa chạm dữ liệu thật; tiếp theo là Phase 1 (ETL, buổi 2).

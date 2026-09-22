@@ -8,9 +8,9 @@
 ## Trạng thái hiện tại
 
 - **Ngày cập nhật:** 2026-09-22
-- **Buổi:** 1 hoàn tất / đang ở Buổi 2 (2 / 6) — **Phase 0: `scripts/utils/markov.py`** (nền tảng, xem mục 6 `master_plan.md`)
-- **Tình trạng:** Chưa có code/script nào (`scripts/` chưa tồn tại, `data/processed`, `outputs/tables`, `outputs/figures` đều rỗng). Song song đã viết nháp lý thuyết Ch.1–3 của báo cáo cuối kỳ (`outputs/TranNhatHung_MAT6206_BaoCaoCuoiKy/`) trước khi có kết quả số — cần đối chiếu lại khi Buổi 3–5 ra số liệu thật.
-- **Blocker:** không còn — toàn bộ 4 quyết định thiết kế (trạng thái hấp thụ, mở rộng dữ liệu, ngưỡng Default, kỳ hạn backtest) đã chốt, có thể bắt đầu code.
+- **Buổi:** đang ở Buổi 2 (2 / 6) — **Phase 1 xong, chuẩn bị Phase 2** (`scripts/03_estimate_transition_matrix.py`, xem mục 6 `master_plan.md`)
+- **Tình trạng:** Phase 0 + Phase 1 hoàn tất, có artifact thật trong `data/processed/`. Song song đã viết nháp lý thuyết Ch.1–3 của báo cáo cuối kỳ (`outputs/TranNhatHung_MAT6206_BaoCaoCuoiKy/`) trước khi có kết quả số — Ch.3 §3.2.3 đã đồng bộ τ thật (xem bên dưới), Ch.4 vẫn là khung chờ Phase 2-4.
+- **Blocker:** không còn.
 
 ## Checklist Phase 0 — `scripts/utils/markov.py` — HOÀN TẤT (2026-09-22)
 
@@ -43,15 +43,23 @@ Chưa làm: `quasi_stationary_distribution` (để dành nếu Phase 4 cần di�
 
 Đã cập nhật: `PROJECT_BRIEF.md`, `plans/master_plan.md`, `data/raw/DATA_DICTIONARY.md`, `outputs/.../outline.md`, Ch.1 §1.2/1.4, Ch.2 §2.5.5, Ch.3 §3.1.2/3.2.1/3.2.2/3.2.3/3.3/3.4.5 của báo cáo. Chi tiết + số liệu: `logs.md` 2026-09-22.
 
-## Checklist buổi 2 — Tiền xử lý (chép từ `master_plan.md`, đã cập nhật theo các quyết định trên)
+## Checklist Phase 1 — ETL — HOÀN TẤT (2026-09-22)
 
-- [ ] Dựng thư mục `scripts/`, `scripts/feature_engineering/`, `outputs/reports/`
-- [ ] Load dữ liệu **3 vintage** (`orig`/`perf` × 2016/2017/2018), gộp theo `loan_id` (không trùng khóa, prefix `F16/F17/F18`)
-- [ ] Rời rạc hóa DPD thành **6 bucket** `{Current, 30, 60, 90+, Default, Prepaid}` theo bảng ánh xạ ở Ch.3 §3.2.1 (ngưỡng Default = Phương án C, đã chốt), áp dụng quy tắc **sticky absorbing**
-- [ ] Xây bảng quỹ đạo trạng thái theo tháng cho từng khoản vay `(loan_id, month, state)`, cắt quỹ đạo sau khi vào Default hoặc Prepaid
-- [ ] Xử lý theo chunk, log tiến độ, có chế độ smoke test / `--limit`
-- [ ] Chia theo thời gian: estimation set (80% kỳ đầu, ~01/2016–01/2024) / validation set (20% kỳ cuối, ~02/2024–03/2026) — mốc lịch chung áp dụng đồng nhất cho cả 3 vintage
-- [ ] Lưu artifact trung gian (parquet/csv có suffix ngày)
+- [x] Dựng thư mục `scripts/` (đã có từ Phase 0), `data/processed/`
+- [x] Load dữ liệu **3 vintage** (`orig`/`perf` × 2016/2017/2018), gộp theo `loan_id` — `scripts/01_build_trajectory.py`
+- [x] Rời rạc hóa DPD thành **6 bucket** theo bảng Ch.3 §3.2.1, áp dụng **sticky absorbing** — **sửa lại cách hiểu so với dòng cũ bên dưới**: KHÔNG cắt quỹ đạo, giữ nguyên bản ghi tháng sau và ép `state=Default`/`Prepaid` lặp lại đến hết dữ liệu thô (đúng nghĩa đen Ch.3, xem plan Phase 1 đã duyệt)
+- [x] Xây bảng quỹ đạo `(loan_id, vintage, month, month_index, state, segment_id)` — `segment_id` đánh dấu gap báo cáo để Phase 2 ghép cặp đúng
+- [x] Xử lý theo chunk (`--chunksize`), log tiến độ, `--limit` cho smoke test
+- [x] Chia theo thời gian: **τ = 2024/02** (tính bằng percentile 80% trên trục lịch gộp 201601–202603, 123 tháng, mốc thứ 98) — `scripts/02_split_estimation_validation.py`
+- [x] Lưu artifact: `data/processed/loan_trajectory_full.parquet`, `estimation_set_full.parquet`, `validation_set_full.parquet`, `split_manifest_full.json` (+ bản `_smoke` cho 2000 khoản vay)
+
+**Kết quả full run (150.000 khoản vay, 8.239.433 dòng — khớp chính xác tổng đã biết):**
+- Phân phối state: Current 7.819.062, 30DPD 63.839, 60DPD 18.958, 90+DPD 26.417, Default 200.323, Prepaid 110.834
+- Khoản vay từng chạm Default: **4.921** (khớp chính xác số Phương án C đã tính trước bằng awk)
+- Khoản vay từng chạm Prepaid: 110.834 (thấp hơn số thô zbc=01 là 112.875 khoảng 2.041 — do một số khoản vay có zbc=01 nhưng đã chạm Default trước đó nên bị ép giữ Default theo ưu tiên sticky-absorbing, đúng thiết kế)
+- Estimation set: 7.253.423 dòng, 150.000 khoản vay, 4.728 chạm Default, 105.230 chạm Prepaid (trong khung thời gian estimation)
+- Validation set: 986.010 dòng, 42.458 khoản vay, 2.910 chạm Default, 5.604 chạm Prepaid
+- 1 dòng có gap báo cáo trên 1 khoản vay (không đáng kể)
 
 ## Đặc điểm dữ liệu đã xác minh
 

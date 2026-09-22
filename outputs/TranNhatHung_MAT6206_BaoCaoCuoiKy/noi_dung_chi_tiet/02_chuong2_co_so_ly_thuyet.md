@@ -43,7 +43,7 @@ Công thức (2.5) cho thấy phân phối đồng thời của toàn bộ quỹ
 
 ### 2.1.4. Không gian trạng thái của bài toán
 
-Trong báo cáo, không gian trạng thái gồm $K = 5$ trạng thái được rời rạc hóa từ số ngày quá hạn (Days Past Due — DPD):
+Trong báo cáo, không gian trạng thái gồm $K = 6$ trạng thái được rời rạc hóa từ số ngày quá hạn (Days Past Due — DPD), với **hai** trạng thái hấp thụ (lý do dùng hai thay vì một trạng thái hấp thụ được trình bày ở mục 2.5.5; quy tắc ánh xạ dữ liệu → trạng thái ở mục 3.2.1):
 
 | Ký hiệu | Trạng thái | Ý nghĩa |
 |---|---|---|
@@ -52,15 +52,17 @@ Trong báo cáo, không gian trạng thái gồm $K = 5$ trạng thái được 
 | 2 | 60 DPD | Quá hạn từ 60 đến 89 ngày |
 | 3 | 90+ DPD | Quá hạn từ 90 ngày trở lên, chưa bị xử lý như vỡ nợ |
 | 4 | Default/Foreclosure | Vỡ nợ, tịch biên hoặc xử lý tài sản bảo đảm |
+| 5 | Prepaid | Trả hết nợ trước hạn hoặc đáo hạn |
 
-Trạng thái 4 là trạng thái hấp thụ ($p_{44} = 1$); bốn trạng thái 0–3 là các trạng thái tạm thời vì từ mỗi trạng thái này đều có xác suất dương đi vào trạng thái 4 và không bao giờ quay lại. Ma trận chuyển có dạng:
+Trạng thái 4 và 5 là hai trạng thái hấp thụ ($p_{44} = 1$, $p_{55} = 1$); bốn trạng thái 0–3 là các trạng thái tạm thời vì từ mỗi trạng thái này đều có xác suất dương đi vào một trong hai trạng thái hấp thụ và không bao giờ quay lại. Ma trận chuyển có dạng:
 
 $$P = \begin{pmatrix}
-p_{00} & p_{01} & p_{02} & p_{03} & p_{04} \\
-p_{10} & p_{11} & p_{12} & p_{13} & p_{14} \\
-p_{20} & p_{21} & p_{22} & p_{23} & p_{24} \\
-p_{30} & p_{31} & p_{32} & p_{33} & p_{34} \\
-0 & 0 & 0 & 0 & 1
+p_{00} & p_{01} & p_{02} & p_{03} & p_{04} & p_{05} \\
+p_{10} & p_{11} & p_{12} & p_{13} & p_{14} & p_{15} \\
+p_{20} & p_{21} & p_{22} & p_{23} & p_{24} & p_{25} \\
+p_{30} & p_{31} & p_{32} & p_{33} & p_{34} & p_{35} \\
+0 & 0 & 0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 0 & 0 & 1
 \end{pmatrix}. \tag{2.6}$$
 
 Về mặt cơ chế, số ngày quá hạn chỉ có thể tăng thêm tối đa khoảng 30 ngày sau mỗi tháng, nên các chuyển "nhảy cóc" lên mức quá hạn nặng hơn (ví dụ từ Current sang 60 DPD trong một tháng) về nguyên tắc có xác suất rất nhỏ hoặc bằng 0. Ngược lại, khoản vay có thể phục hồi từ bất kỳ mức quá hạn nào về Current nếu bên vay trả hết số tiền còn thiếu. Các ô bằng 0 do cơ chế này được gọi là **số không cấu trúc** (structural zeros) và cần được tính đến khi xác định bậc tự do của các kiểm định ở mục 2.6.
@@ -194,7 +196,7 @@ trong đó:
 - $\mathbf{0} \in \mathbb{R}^{r \times s}$: ma trận không (không thể rời trạng thái hấp thụ);
 - $I_r$: ma trận đơn vị cấp $r$.
 
-Với bài toán của báo cáo, $s = 4$ (Current, 30 DPD, 60 DPD, 90+ DPD) và $r = 1$ (Default/Foreclosure); $Q$ là khối $4 \times 4$ phía trên bên trái và $R$ là cột thứ năm (bỏ phần tử cuối) của ma trận (2.6).
+Với bài toán của báo cáo, $s = 4$ (Current, 30 DPD, 60 DPD, 90+ DPD) và $r = 2$ (Default/Foreclosure, Prepaid); $Q$ là khối $4 \times 4$ phía trên bên trái và $R$ là khối $4 \times 2$ gồm hai cột cuối (cột 5 và 6) của ma trận (2.6).
 
 ### 2.5.2. Lũy thừa của ma trận dạng chuẩn
 
@@ -244,7 +246,7 @@ $$\mathrm{PD}_i(H) = \Big[\big(I + Q + \dots + Q^{H-1}\big) R\Big]_i = \Big[(I -
 
 trong đó đẳng thức sau suy ra từ $\sum_{k=0}^{H-1} Q^k = (I - Q^H)(I - Q)^{-1}$. Công thức (2.19) liên kết trực tiếp ma trận cơ bản $N$, ma trận $R$ và phương trình Chapman–Kolmogorov, đồng thời cho ra đại lượng có thể so sánh với tỷ lệ vỡ nợ quan sát được trong một cửa sổ kiểm định có độ dài hữu hạn.
 
-Lựa chọn giữa (a), (b) hoặc kết hợp cả hai được trình bày ở Chương 3.
+Báo cáo này chọn **phương án (a)** — bổ sung trạng thái hấp thụ thứ hai "Prepaid" — làm không gian trạng thái chính thức của mô hình (sáu trạng thái, xem mục 3.2.1), để $B = NR$ giữ nguyên dạng (2.18) và phản ánh đúng bản chất cạnh tranh giữa vỡ nợ và trả hết nợ, thay vì phải kiểm duyệt quỹ đạo. Công thức kỳ hạn hữu hạn (2.19) vẫn được dùng ở mục 4.5, nhưng áp dụng cho cột Default của $R$ (hai cột) thay vì cho một xích chỉ có một trạng thái hấp thụ.
 
 ## 2.6. Kiểm định giả thiết cho xích Markov
 

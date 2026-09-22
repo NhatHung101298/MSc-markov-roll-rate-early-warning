@@ -26,11 +26,12 @@ Project phải chứng minh được sự hiểu biết về:
 
 ## 3. Dữ liệu
 
-**Nguồn chính:** Freddie Mac Single-Family Loan-Level Dataset (bộ Standard/Sample công khai).
+**Nguồn chính:** Freddie Mac Single-Family Loan-Level Dataset (bộ Standard/Sample công khai), **3 vintage 2016+2017+2018 gộp** (150.000 khoản vay, quyết định 2026-09-22 — xem `plans/logs.md`). Ban đầu chỉ dùng 1 vintage (2016, 50.000 khoản vay); mở rộng vì 1 vintage cho quá ít sự kiện Default để kiểm định + backtest có ý nghĩa thống kê.
 
 - Mỗi khoản vay có lịch sử trạng thái quá hạn theo tháng.
-- Rời rạc hóa thành 5 trạng thái: `{Current (0), 30 DPD, 60 DPD, 90+ DPD, Default/Foreclosure}`.
-- `Default/Foreclosure` là **trạng thái hấp thụ**.
+- Rời rạc hóa thành 6 trạng thái: 4 trạng thái tạm thời `{Current (0), 30 DPD, 60 DPD, 90+ DPD}` và 2 trạng thái hấp thụ `{Default/Foreclosure, Prepaid}`.
+- `Default/Foreclosure` và `Prepaid` (trả hết nợ trước hạn/đáo hạn) đều là **trạng thái hấp thụ** (quyết định 2026-09-22, xem `plans/logs.md`). Lý do: nếu chỉ có 1 trạng thái hấp thụ, xác suất hấp thụ $B=NR$ luôn bằng 1 cho mọi trạng thái xuất phát — không dùng được cho backtest §4.5.
+- **Ngưỡng vào Default** (quyết định 2026-09-22, Phương án C): `delinquency_status ≥ '06'` (≥180 ngày quá hạn) HOẶC `RA` HOẶC `zero_balance_code ∈ {02,03,09}`, kèm quy tắc "sticky absorbing" — một khi chạm ngưỡng, mọi bản ghi sau đó của khoản vay bị ép gán Default dù dữ liệu thô cho thấy giảm quá hạn. Cho ~4.921 sự kiện trên 150.000 khoản vay.
 - Cần dữ liệu trải nhiều năm để có đủ giai đoạn con cho kiểm định tính thuần nhất (Chương 3–4).
 
 **Dự phòng nếu Freddie Mac khó tải/quá nặng:** "American Express Default Prediction" (Kaggle) — ~13 tháng lịch sử hành vi/khách hàng. Nhẹ hơn nhưng ít giai đoạn hơn để so sánh — nếu dùng bộ này, phần kiểm định tính thuần nhất theo thời gian (4.2) có thể co lại thành so sánh 2 nửa kỳ thay vì nhiều giai đoạn theo năm.

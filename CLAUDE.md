@@ -48,6 +48,24 @@ Estimated scope: ~6 work sessions. **Read `PROJECT_BRIEF.md` in full before impl
 - Docstring hàm Markov nên nối lại đúng số công thức Ch.2 (`PROJECT_BRIEF.md`/báo cáo), ví dụ: `"""p_hat_ij = n_ij / sum_k n_ik -- công thức (2.10)."""`.
 - Trước khi commit code mới: rà lại docstring/comment xem còn sót tiếng Việt không dấu không.
 
+## Báo cáo nộp — bắt buộc đồng bộ vào `outputs/TranNhatHung_MAT6206_BaoCaoCuoiKy/`
+
+Thư mục này là bản nộp thật cho thầy — không phải chỗ lưu nháp. Bất cứ khi nào có:
+- **quyết định phương pháp luận** (định nghĩa state, cách chia train/validation theo thời gian, công thức, giả định mô hình, lý do chọn/bỏ một cách tiếp cận),
+- **kết quả chạy** (transition matrix ước lượng, kết quả kiểm định giả thuyết (χ², LR test) kèm kết luận accept/reject, kết quả backtest §4.5, số liệu/metric cụ thể),
+- **kết luận** (nhận xét mô hình tốt/xấu ở đâu, giới hạn, hướng mở rộng bị loại vì ngoài phạm vi),
+
+thì phải cập nhật luôn vào file chương tương ứng trong `outputs/TranNhatHung_MAT6206_BaoCaoCuoiKy/noi_dung_chi_tiet/` (không chỉ ghi vào `plans/logs.md`). `plans/logs.md` là nhật ký làm việc nội bộ; các file trong `noi_dung_chi_tiet/` mới là nội dung được chấm điểm.
+
+Mapping chương hiện có:
+- `01_chuong1_gioi_thieu.md` — giới thiệu, mục tiêu
+- `02_chuong2_co_so_ly_thuyet.md` — cơ sở lý thuyết, công thức Markov
+- `03_chuong3_du_lieu_va_phuong_phap.md` — dữ liệu, phương pháp, định nghĩa state, cách chia thời gian
+- `04_chuong4_ket_qua_thuc_nghiem.md` — kết quả thực nghiệm, kiểm định, backtest §4.5
+- `05_ket_luan.md` — kết luận, giới hạn
+
+Sau khi xong 1 task có nội dung thuộc 1 trong 3 loại trên: sửa file chương liên quan **trong cùng lượt làm việc**, đừng để dồn lại sau. Nếu chưa rõ nội dung thuộc chương nào → hỏi lại thay vì bỏ qua.
+
 ## Environment
 
 - `stochastic/` is a Python 3.11 venv, currently empty (no packages installed). Activate with `stochastic\Scripts\activate` (PowerShell: `stochastic\Scripts\Activate.ps1`) before installing/running anything.
