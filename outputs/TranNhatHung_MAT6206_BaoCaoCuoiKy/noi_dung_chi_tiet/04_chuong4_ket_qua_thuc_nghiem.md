@@ -30,7 +30,7 @@ Hàng Prepaid có $n_{i\cdot}=0$ — không phải thiếu dữ liệu, mà vì 
 | Default | 0 | 0 | 0 | 0 | 1 | 0 |
 | Prepaid | 0 | 0 | 0 | 0 | 0 | 1 |
 
-Hình: `outputs/figures/heatmap_P_hat.png`.
+![Heatmap ma trận chuyển trạng thái P_hat](../../figures/heatmap_P_hat.png)
 
 **Diễn giải:**
 - Xác suất ở lại Current rất cao (0,98) — phần lớn danh mục ổn định.
@@ -99,7 +99,7 @@ So $(\hat{P}^{(1)})^3$ (lũy thừa ma trận, công thức (2.12)) với $\hat{
 | Chuẩn Frobenius $\lVert (\hat{P}^{(1)})^3 - \hat{P}^{(3)}_{\text{trực tiếp}} \rVert_F$ | 0,421953 |
 | Sai lệch tuyệt đối lớn nhất từng ô | 0,186636 |
 
-Hình: `outputs/figures/heatmap_ck_deviation.png`.
+![Heatmap sai lệch Chapman-Kolmogorov](../../figures/heatmap_ck_deviation.png)
 
 **Diễn giải:** sai lệch ở mức trung bình (2 trạng thái hấp thụ luôn khớp tuyệt đối; sai lệch chỉ đến từ 4 hàng tạm thời, trần lý thuyết $\sqrt{4\times2}\approx2{,}83$ nên 0,42 tương đương ~15% mức lệch tối đa). Điểm đáng chú ý: chuẩn Frobenius trên bản smoke (2.000 khoản vay) là 0,465 — gần như không giảm dù cỡ mẫu ở full run lớn hơn ~60 lần. Nếu sai lệch chỉ do nhiễu ngẫu nhiên (sampling noise), lẽ ra phải giảm mạnh theo $N$; việc không giảm là tín hiệu cho thấy đây có thể là **sai lệch mang tính hệ thống** — ví dụ xác suất chuyển phụ thuộc thời gian đã ở trạng thái (duration dependence), không chỉ trạng thái hiện tại, vi phạm giả định Markov bậc 1. Đây chính là câu hỏi mà kiểm định bậc Markov (LR test, mục 4.2.2) sẽ trả lời chính thức bằng accept/reject $H_0$.
 
@@ -118,7 +118,9 @@ Hình: `outputs/figures/heatmap_ck_deviation.png`.
 | 20 | 66,75% / 80,91% | 7,51% / 6,77% | 24,74% / 11,28% |
 | 25 | 61,62% / 78,48% | 7,77% / 6,85% | 29,69% / 13,61% |
 
-Hình: `outputs/figures/forecast_vs_actual_distribution.png`. Bảng đầy đủ (6 trạng thái): `outputs/tables/forecast_vs_actual_distribution.csv`.
+![Phân phối trạng thái: dự báo vs thực tế theo thời gian](../../figures/forecast_vs_actual_distribution.png)
+
+Bảng đầy đủ (6 trạng thái): `outputs/tables/forecast_vs_actual_distribution.csv`.
 
 **Diễn giải:**
 - **Bậc thang quá hạn (30/60/90+DPD, không hiện trong bảng trên) và Default: khớp thực tế khá tốt suốt 25 tháng** — Default lệch dưới 1 điểm % trong toàn bộ giai đoạn, tăng rất chậm từ 0 (t=1) lên 0,92 điểm % (t=25).
@@ -156,7 +158,9 @@ Hình: `outputs/figures/forecast_vs_actual_distribution.png`. Bảng đầy đ�
 
 *(CI Wilson 95% cho tỷ lệ quan sát thực nghiệm $\mathrm{DR}_i$/$\mathrm{PR}_i$ — không phải bootstrap CI cho $\hat{B}$/$\pi$, xem `PROJECT_BRIEF.md` mục 6.)*
 
-Hình: `outputs/figures/backtest_4_5.png`. Bảng đầy đủ: `outputs/tables/backtest_4_5.csv`.
+![Backtest §4.5: dự đoán vs thực tế theo trạng thái xuất phát](../../figures/backtest_4_5.png)
+
+Bảng đầy đủ: `outputs/tables/backtest_4_5.csv`.
 
 **Diễn giải:**
 - **Default:** mô hình dự đoán cao hơn thực tế ở mọi trạng thái (đúng hướng, nhất quán), nhưng độ lệch **không đơn điệu** theo mức độ quá hạn — tệ nhất ở 60DPD (dự đoán cao gấp 2,5 lần thực tế). Đối chiếu giá trị dự đoán với CI của thực tế: dự đoán nằm **ngoài** CI ở Current/30DPD/60DPD (lệch có ý nghĩa thống kê), nhưng ở **90+DPD — trạng thái quan trọng nhất cho cảnh báo sớm — dự đoán 56,62% nằm TRONG CI thực tế [42,70%-65,43%]**, không phân biệt được về mặt thống kê (lưu ý $m_i=70$ khá nhỏ nên CI khá rộng).

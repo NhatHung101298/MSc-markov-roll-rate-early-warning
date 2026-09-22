@@ -115,7 +115,7 @@ Toàn bộ các phép tính của mô hình được **tự cài đặt** bằng
 
 ### 3.4.1. Kiểm định tính thuần nhất theo thời gian
 
-- **Giai đoạn con:** chia tập ước lượng theo **năm dương lịch** của tháng xảy ra chuyển (dự kiến khoảng 8 giai đoạn, 2016–2023). Nếu một năm có quá ít lần chuyển từ các trạng thái quá hạn, các năm liền kề sẽ được gộp lại để đảm bảo số quan sát kỳ vọng trong các ô đủ lớn.
+- **Giai đoạn con:** chia tập ước lượng theo **năm dương lịch** của tháng xảy ra chuyển. Kết quả chạy thực tế (mục 4.2.1): 9 giai đoạn (2016–2024), mỗi năm đều đủ quan sát (năm ít nhất — 2024 — vẫn có 80.133 quan sát ở 4 trạng thái tạm thời) nên không cần gộp giai đoạn nào; quy tắc gộp năm liền kề khi thiếu quan sát vẫn giữ trong thiết kế cho trường hợp tổng quát.
 - **Kiểm định tổng thể:** áp dụng (2.20)/(2.21) cho toàn bộ $G$ giai đoạn, bậc tự do theo (2.22).
 - **Kiểm định từng cặp:** so sánh các cặp năm liền kề (và cặp trước/sau 2020) với $G = 2$, hiệu chỉnh Bonferroni cho mức ý nghĩa.
 - **Mức ý nghĩa:** $\alpha = 0{,}05$.

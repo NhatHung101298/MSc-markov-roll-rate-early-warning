@@ -6,6 +6,15 @@
 
 ---
 
+## 2026-09-23 (tiếp — Buổi 6: build báo cáo Word)
+
+- `[TASK]` Buổi 6: rà soát Ch.1-3 (không có sai lệch số liệu, chỉ 1 chỗ ở Ch.3 §3.4.1 ghi "dự kiến 8 giai đoạn 2016-2023" — sửa lại đúng số thật "9 giai đoạn 2016-2024"). Ch.2 đầy đủ 6 mục lý thuyết (2.1-2.6), không cần sửa. Ch.6 tài liệu tham khảo đầy đủ, còn 1 ghi chú `[Kiểm tra lại]` năm xuất bản 2 tài liệu — cần HUNG tự đối chiếu, không tự bịa số liệu.
+- `[TASK]` Sửa 4 chỗ ở Ch.4 chỉ ghi đường dẫn ảnh dạng text (`` Hình: `path.png` ``) thành cú pháp nhúng ảnh markdown thật (`![...](../../figures/...)`) — bản build đầu tiên thiếu hình vì lỗi này.
+- `[KẾT QUẢ]` Build thành công `TranNhatHung_MAT6206_BaoCaoCuoiKy.docx` bằng `build_docx.sh` (pandoc 3.10.2, có sẵn trên máy) — 452KB, 4 ảnh nhúng đúng (heatmap P_hat, heatmap CK, forecast vs actual, backtest §4.5), công thức LaTeX tự động chuyển thành equation Word gốc (pandoc mặc định, không cần MathJax vì output là .docx không phải HTML).
+- `[RỦI RO]` Trang bìa (`00_trang_bia.md`) còn thiếu **tên giảng viên**, **mã học viên**, **tháng nộp** — không thể tự điền, cần HUNG cung cấp trước khi nộp.
+
+---
+
 ## 2026-09-23 (tiếp — Phase 4 FROZEN, toàn bộ pipeline dữ liệu thật hoàn tất)
 
 - `[KẾT QUẢ]` **Phase 4 (`scripts/05_stationary_and_absorption.ipynb`) FROZEN — phase cuối cùng đụng dữ liệu thật.** HUNG tự chạy full trong VS Code. Trong lúc REVIEWED phát hiện + Claude sửa 2 lỗi thật: (1) `matplotlib.use("Agg")` chặn nhúng ảnh biểu đồ vào notebook (chỉ hiện cảnh báo, không có hình) — sửa bằng `%matplotlib inline` + `display(fig)`, ổn định hơn qua mọi cách chạy (nbconvert/VS Code); (2) lỗi phương pháp nghiêm trọng hơn ở §4.4 — "% thực tế" tính trên mẫu số khoản **còn đang báo cáo** mỗi tháng (co dần theo thời gian vì khoản Prepaid/Default hoàn tất ngừng xuất hiện trong dữ liệu thô), không khớp mẫu số cố định của dự báo `μ_τ·P̂^t` → % Prepaid thực tế bị tính sai nghiêm trọng (0,61% thay vì đúng 13,6%). Sửa bằng cách theo dõi cố định cohort 42.677 khoản xuyên suốt 25 tháng, forward-fill trạng thái cuối cùng đã biết cho khoản ngừng báo cáo.
