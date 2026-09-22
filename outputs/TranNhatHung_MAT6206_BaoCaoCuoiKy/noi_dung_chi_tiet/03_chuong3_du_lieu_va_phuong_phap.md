@@ -1,7 +1,5 @@
 # CHƯƠNG 3: DỮ LIỆU VÀ PHƯƠNG PHÁP
 
-> **[Đã chốt toàn bộ — 2026-09-22, xem `plans/logs.md`]** (1) mô hình sáu trạng thái, hai trạng thái hấp thụ Default/Prepaid (mục 2.5.5); (2) mẫu dữ liệu mở rộng sang 3 vintage 2016–2018 (150.000 khoản vay); (3) định nghĩa trạng thái Default = ngưỡng 180 ngày quá hạn (Phương án C, mục 3.2.1); (4) kỳ hạn backtest $H=12$ tháng, không dùng $H=24$ (Phương án A, mục 3.4.5); (5) **Phase 1 (ETL) đã chạy thực tế 2026-09-22** — $\tau = 02/2024$ (số thật, xem mục 3.2.3), pipeline `scripts/01_build_trajectory.py` + `scripts/02_split_estimation_validation.py`, kết quả full run: 150.000 khoản vay, 8.239.433 dòng, 4.921 sự kiện Default (khớp chính xác Phương án C), 110.834 khoản Prepaid.
-
 ## 3.1. Dữ liệu
 
 ### 3.1.1. Nguồn dữ liệu
@@ -27,9 +25,9 @@ Nghiên cứu sử dụng bộ **Sample** ứng với **ba năm khởi tạo 201
 
 Ba tệp cùng layout 35 cột (Release 47), `loan_id` không trùng khóa giữa các vintage (tiền tố `F16/F17/F18`) nên gộp trực tiếp theo `loan_id` mà không cần xử lý xung đột khóa.
 
-**Lý do mở rộng sang 3 vintage (quyết định 2026-09-22).** Bản dựng ban đầu chỉ dùng vintage 2016 (50.000 khoản vay). Khi thiết kế định nghĩa trạng thái Default (mục 3.2.1), kiểm tra thực tế cho thấy số sự kiện Default trên 1 vintage quá mỏng để kiểm định giả thiết (mục 4.2) và backtest theo từng trạng thái xuất phát (mục 4.5) có sức mạnh thống kê chấp nhận được — kể cả với ngưỡng nới lỏng nhất (180 ngày quá hạn) chỉ có khoảng 1.376 sự kiện trên 50.000 khoản vay. Gộp thêm 2 vintage độc lập (2017, 2018) đưa số sự kiện Default lên 4.921 trên 150.000 khoản vay (xem mục 3.2.1), đồng thời giữ nguyên các mốc thời gian quan sát then chốt (COVID-19 2020–2021, chu kỳ tăng lãi suất 2022–2023) cho kiểm định tính thuần nhất.
+**Lý do sử dụng ba năm khởi tạo.** Thiết kế ban đầu của nghiên cứu chỉ dùng vintage 2016 (50.000 khoản vay). Tuy nhiên, khi xây dựng định nghĩa trạng thái Default ở mục 3.2.1, việc đếm thử trên mẫu một vintage cho thấy số sự kiện vỡ nợ quá mỏng để các kiểm định ở mục 4.2 và đặc biệt là backtest theo từng trạng thái xuất phát ở mục 4.5 có sức mạnh thống kê chấp nhận được: ngay cả với ngưỡng rộng nhất trong các phương án được cân nhắc (180 ngày quá hạn) cũng chỉ thu được khoảng 1.376 sự kiện trên 50.000 khoản vay, và khi chia tiếp theo bốn trạng thái xuất phát thì mỗi nhóm chỉ còn vài chục quan sát. Gộp thêm hai vintage độc lập 2017 và 2018 nâng số sự kiện vỡ nợ lên 4.921 trên 150.000 khoản vay, đồng thời vẫn giữ nguyên các mốc thời gian quan trọng đối với kiểm định tính thuần nhất (giai đoạn COVID-19 2020–2021 và chu kỳ tăng lãi suất 2022–2023).
 
-**Đánh đổi cần lưu ý (hạn chế mô hình, thảo luận lại ở Kết luận):** việc trộn 3 vintage làm mẫu không còn đồng nhất về tuổi khoản vay tại mỗi thời điểm lịch — tại một tháng báo cáo cho trước, vintage 2016 đã "già" hơn vintage 2018 hai năm. Mô hình vẫn giả định xác suất chuyển chỉ phụ thuộc trạng thái hiện tại (không phụ thuộc vintage/tuổi khoản vay), nên nếu tồn tại hiệu ứng vintage/seasoning thực sự, sai lệch đó sẽ không được mô hình bắt được và có thể là một phần nguyên nhân nếu kiểm định thuần nhất theo thời gian (mục 4.2) bác bỏ $H_0$.
+Cái giá phải trả của lựa chọn này là mẫu không còn đồng nhất về tuổi khoản vay: tại cùng một tháng báo cáo, khoản vay thuộc vintage 2016 đã "già" hơn khoản vay vintage 2018 đúng hai năm. Mô hình vẫn giả định xác suất chuyển chỉ phụ thuộc trạng thái quá hạn hiện tại, không phụ thuộc vintage hay tuổi khoản vay, nên nếu tồn tại hiệu ứng seasoning thực sự thì hiệu ứng đó không được mô hình nắm bắt và có thể là một phần nguyên nhân nếu kiểm định tính thuần nhất theo thời gian ở mục 4.2 bác bỏ $H_0$. Hạn chế này được thảo luận lại ở phần Kết luận.
 
 ### 3.1.3. Các trường dữ liệu sử dụng
 
@@ -47,11 +45,11 @@ Các trường đặc điểm khoản vay trong tệp khởi tạo không đư�
 
 ### 3.2.1. Rời rạc hóa trạng thái
 
-Trường `CURRENT_LOAN_DELINQUENCY_STATUS` ghi nhận số chu kỳ thanh toán bị chậm: `00` là đúng hạn (hoặc chậm dưới 30 ngày), `01` là chậm 30–59 ngày, `02` là chậm 60–89 ngày, `03` là chậm 90–119 ngày, và tiếp tục tăng dần; giá trị `RA` biểu thị khoản vay đã chuyển thành tài sản thu hồi (REO Acquisition). Trong mẫu dữ liệu, mã `00` chiếm khoảng 98,4% số bản ghi.
+Trường `CURRENT_LOAN_DELINQUENCY_STATUS` ghi nhận số chu kỳ thanh toán bị chậm: `00` là đúng hạn (hoặc chậm dưới 30 ngày), `01` là chậm 30–59 ngày, `02` là chậm 60–89 ngày, `03` là chậm 90–119 ngày, và tiếp tục tăng dần; giá trị `RA` biểu thị khoản vay đã chuyển thành tài sản thu hồi (REO Acquisition). Trong mẫu dữ liệu, mã `00` chiếm 97,87% số bản ghi (8.063.538 trên 8.239.433 bản ghi khoản vay–tháng), cho thấy danh mục phần lớn ở trạng thái trả nợ đúng hạn.
 
-Trường `ZERO_BALANCE_CODE` cho biết lý do dư nợ khoản vay về 0: `01` trả hết trước hạn hoặc đáo hạn; `02` bán cho bên thứ ba (qua đấu giá tịch biên); `03` bán thiếu (short sale) hoặc xóa nợ; `09` xử lý tài sản thu hồi (REO disposition); `15`, `16` bán khoản vay (bán nợ, bán khoản vay đã tái hoạt động); `96` loại bỏ khỏi danh mục (mua lại). Trong mẫu, mã `01` chiếm đa số tuyệt đối (35.734 khoản vay).
+Trường `ZERO_BALANCE_CODE` cho biết lý do dư nợ khoản vay về 0: `01` trả hết trước hạn hoặc đáo hạn; `02` bán cho bên thứ ba (qua đấu giá tịch biên); `03` bán thiếu (short sale) hoặc xóa nợ; `09` xử lý tài sản thu hồi (REO disposition); `15`, `16` bán khoản vay (bán nợ, bán khoản vay đã tái hoạt động); `96` loại bỏ khỏi danh mục (mua lại). Trong mẫu, mã `01` chiếm đa số tuyệt đối với 112.875 khoản vay, tức khoảng ba phần tư danh mục rời mẫu vì trả hết nợ chứ không phải vì vỡ nợ.
 
-**Quyết định (2026-09-22):** mô hình dùng **sáu trạng thái**, hai trạng thái hấp thụ — Default/Foreclosure và Prepaid — theo Phương án B của mục 2.5.5, nhằm giữ $B = NR$ ở dạng chuẩn (2.18) và tách bạch hai kết cục cạnh tranh (vỡ nợ trước khi trả hết nợ, hay ngược lại), thay vì phải kiểm duyệt (censoring) quỹ đạo và chuyển sang xác suất vỡ nợ theo kỳ hạn hữu hạn.
+Trên cơ sở đó, mô hình sử dụng **sáu trạng thái** với hai trạng thái hấp thụ là Default/Foreclosure và Prepaid, theo phương án đã phân tích ở mục 2.5.5. Cách làm này giữ được $B = NR$ ở dạng chuẩn (2.18) và tách bạch hai kết cục cạnh tranh — khoản vay vỡ nợ trước khi trả hết, hay trả hết trước khi vỡ nợ — thay vì phải kiểm duyệt quỹ đạo và chỉ còn làm việc được với xác suất vỡ nợ theo kỳ hạn hữu hạn.
 
 Quy tắc ánh xạ sang sáu trạng thái của mô hình:
 
@@ -64,7 +62,7 @@ Quy tắc ánh xạ sang sáu trạng thái của mô hình:
 | Delinquency = `RA`, hoặc zero-balance $\in$ {`02`, `03`, `09`}, hoặc Delinquency $\ge$ `06` (**$\ge$ 180 ngày quá hạn**) | 4 — Default/Foreclosure (hấp thụ) |
 | Zero-balance = `01` (trả hết nợ trước hạn/đáo hạn) | 5 — Prepaid (hấp thụ) |
 
-**Quyết định (2026-09-22) — Phương án C.** Ngưỡng Default = 180 ngày quá hạn (mã $\ge$ `06`), hợp với các mã tất toán do tổn thất tín dụng thực tế (`RA`, zero-balance {02,03,09}). Đây là kết quả so sánh 3 phương án trên bộ gộp 3 vintage (150.000 khoản vay, xem `plans/logs.md` 2026-09-22):
+**Về ngưỡng vào trạng thái Default.** Ranh giới giữa "quá hạn nặng" và "đã vỡ nợ" không có sẵn trong dữ liệu mà là một lựa chọn mô hình. Nghiên cứu cân nhắc ba phương án và đếm số sự kiện tương ứng trên toàn bộ 150.000 khoản vay:
 
 | Phương án | Định nghĩa | Số sự kiện Default |
 |---|---|---|
@@ -84,8 +82,8 @@ Các khoản vay rời danh mục vì lý do không phải sự kiện tín dụ
 
 Từ tệp hiệu suất, dữ liệu được sắp xếp theo `(LOAN_SEQUENCE_NUMBER, MONTHLY_REPORTING_PERIOD)` để thu được bảng quỹ đạo dạng dài với cấu trúc `(loan_id, month, state)`. Các bước xử lý:
 
-1. **Kiểm tra chất lượng:** loại bỏ bản ghi trùng lặp theo cặp (khoản vay, tháng); kiểm tra giá trị thiếu ở trường trạng thái; kiểm tra tính liên tục của chuỗi tháng. Nếu một khoản vay bị gián đoạn tháng báo cáo, quỹ đạo được tách tại điểm gián đoạn để không tạo ra lần chuyển giả qua nhiều tháng.
-2. **Cắt quỹ đạo sau hấp thụ:** một khi khoản vay vào trạng thái Default hoặc Prepaid, các bản ghi sau đó (nếu có) bị loại bỏ, đảm bảo đúng tính chất hấp thụ.
+1. **Kiểm tra chất lượng:** loại bỏ bản ghi trùng lặp theo cặp (khoản vay, tháng); kiểm tra giá trị thiếu ở trường trạng thái; kiểm tra tính liên tục của chuỗi tháng. Nếu một khoản vay bị gián đoạn tháng báo cáo, quỹ đạo được tách tại điểm gián đoạn để không tạo ra lần chuyển giả qua nhiều tháng. Trên toàn mẫu chỉ có duy nhất một khoản vay xuất hiện gián đoạn kiểu này, nên ảnh hưởng là không đáng kể.
+2. **Áp quy tắc hấp thụ:** khi khoản vay chạm điều kiện Default hoặc Prepaid lần đầu tiên, mọi bản ghi sau đó của khoản vay vẫn được giữ trong bảng quỹ đạo nhưng bị ép gán đúng trạng thái hấp thụ đã chạm, theo quy tắc "sticky absorbing" ở mục 3.2.1. Trường hợp một khoản vay thỏa đồng thời cả hai điều kiện tại các thời điểm khác nhau, điều kiện Default được ưu tiên vì đây là sự kiện tín dụng xảy ra trước. Cách xử lý này khác với việc cắt bỏ phần đuôi quỹ đạo: nó giữ lại thông tin về số tháng khoản vay thực sự nằm trong trạng thái hấp thụ, đồng thời vẫn đảm bảo không có lần chuyển ngược nào ra khỏi trạng thái đó.
 3. **Tạo các bảng chuyển trạng thái** phục vụ các phần khác nhau của Chương 4:
    - cặp liên tiếp $(S_t, S_{t+1})$ — ước lượng $\hat{P}$ (mục 4.1) và kiểm định thuần nhất (mục 4.2);
    - bộ ba liên tiếp $(S_{t-1}, S_t, S_{t+1})$ — kiểm định bậc Markov (mục 4.2);
@@ -97,10 +95,12 @@ Mỗi lần chuyển được gắn với **tháng xảy ra chuyển** (tháng $
 
 Vì đây là dữ liệu chuỗi thời gian, việc chia ngẫu nhiên sẽ làm rò rỉ thông tin của tương lai vào quá trình ước lượng. Việc chia áp dụng theo **mốc lịch chung** $\tau$ cho cả 3 vintage (hợp lệ vì cả 3 vintage cùng chung một mốc cắt 03/2026, chỉ khác điểm bắt đầu quan sát):
 
-- **Tập ước lượng (estimation set):** các lần chuyển xảy ra trong khoảng 80% số tháng đầu tiên của khung quan sát chung, từ 01/2016 đến **$\tau=$ 02/2024** (98/123 tháng trên trục lịch gộp; vintage 2017/2018 chỉ đóng góp dữ liệu từ điểm bắt đầu quan sát của mình). Toàn bộ tham số $\hat{P}$, $\hat{\pi}$, $\hat{N}$, $\hat{B}$ và các kiểm định ở mục 4.1–4.4 chỉ sử dụng tập này. Kết quả thật: 7.253.423 dòng, 150.000 khoản vay, 4.728 khoản chạm Default trong khung thời gian này.
-- **Tập kiểm định (validation set):** 20% số tháng cuối, từ 03/2024 đến 03/2026 (25 tháng), chỉ dùng cho backtest ở mục 4.5. Kết quả thật: 986.010 dòng, 42.458 khoản vay, 2.910 khoản chạm Default.
+Mốc $\tau$ được xác định là tháng nằm ở phân vị 80% của trục lịch gộp liên tục từ 01/2016 đến 03/2026 (123 tháng, tương ứng tháng thứ 98), cho kết quả $\tau = 02/2024$. Hai tập dữ liệu thu được như sau:
 
-**$\tau = 02/2024$ (số thật, chạy 2026-09-22)** — tính bằng mốc percentile 80% trên trục lịch gộp liên tục 201601–202603 (123 tháng, mốc thứ 98), khớp với ước tính $\tau\approx$02/2024 đã dùng để size backtest $H=12$ ở mục 3.4.5. Pipeline: `scripts/01_build_trajectory.py` (xây quỹ đạo, rời rạc hóa 6 state, sticky absorbing) → `scripts/02_split_estimation_validation.py` (tính $\tau$, chia tập). Artifact: `data/processed/{loan_trajectory,estimation_set,validation_set}_full.parquet`.
+- **Tập ước lượng:** các lần chuyển xảy ra từ 01/2016 đến hết 02/2024, gồm 7.253.423 bản ghi của 150.000 khoản vay, trong đó 4.728 khoản vay chạm trạng thái Default. Toàn bộ tham số $\hat{P}$, $\hat{\pi}$, $\hat{N}$, $\hat{B}$ và các kiểm định ở mục 4.1–4.4 chỉ sử dụng tập này.
+- **Tập kiểm định:** 25 tháng cuối, từ 03/2024 đến 03/2026, gồm 986.010 bản ghi của 42.458 khoản vay còn hoạt động, trong đó 2.910 khoản vay chạm trạng thái Default. Tập này chỉ được dùng ở bước backtest tại mục 4.5.
+
+Cần lưu ý rằng vintage 2017 và 2018 chỉ đóng góp dữ liệu kể từ tháng bắt đầu quan sát của chính chúng, nên tập ước lượng không cân bằng hoàn toàn giữa ba vintage ở các năm đầu.
 
 ## 3.3. Phương pháp ước lượng và tính toán
 
@@ -108,14 +108,14 @@ Toàn bộ các phép tính của mô hình được **tự cài đặt** bằng
 
 1. **Ma trận đếm và MLE:** đếm $n_{ij}$ từ bảng cặp chuyển theo (2.7), chuẩn hóa theo hàng để được $\hat{P}$ theo (2.10); gán hàng hấp thụ bằng vectơ đơn vị.
 2. **Ma trận chuyển nhiều bước:** tính $\hat{P}^n$ bằng phép nhân ma trận lặp theo (2.12).
-3. **Phân phối dừng:** giải hệ tuyến tính (2.14) với điều kiện chuẩn hóa như mô tả ở mục 2.4.3; tính thêm phân phối tựa dừng từ $\hat{Q}$ nếu cần thiết cho diễn giải (mục 2.4.4).
-4. **Ma trận cơ bản và xác suất hấp thụ:** tách $\hat{Q}$ (4×4, bốn trạng thái tạm thời) và $\hat{R}$ (4×2, hai cột Default/Prepaid) theo dạng chuẩn (2.15); thay vì nghịch đảo ma trận trực tiếp, giải hệ tuyến tính $(I - \hat{Q})\hat{B} = \hat{R}$ và $(I - \hat{Q})\hat{\tau} = \mathbf{1}$ để đảm bảo ổn định số; $\hat{B}$ có hai cột $\hat{b}_{i,\text{Default}}$, $\hat{b}_{i,\text{Prepaid}}$. Cho backtest kỳ hạn hữu hạn (mục 3.4.5), áp dụng (2.19) riêng cho cột Default: $\mathrm{PD}_i(H) = \big[(I - \hat{Q}^H)\hat{B}\big]_{i,\text{Default}}$.
+3. **Phân phối dừng:** giải hệ tuyến tính (2.14) kèm điều kiện chuẩn hóa như mô tả ở mục 2.4.3, bằng phương pháp bình phương tối thiểu. Phân phối tựa dừng nêu ở mục 2.4.4 được cân nhắc nhưng cuối cùng không sử dụng, vì phép so sánh có ý nghĩa thực nghiệm đã được thực hiện qua phân phối dự báo hữu hạn kỳ (mục 3.4.4).
+4. **Ma trận cơ bản và xác suất hấp thụ:** tách $\hat{Q}$ (4×4, bốn trạng thái tạm thời) và $\hat{R}$ (4×2, hai cột Default/Prepaid) theo dạng chuẩn (2.15), tính $\hat{N} = (I - \hat{Q})^{-1}$ theo (2.16) và $\hat{B} = \hat{N}\hat{R}$ theo (2.18). Ma trận $\hat{Q}$ chỉ có kích thước 4×4 và cách xa ma trận suy biến nên phép nghịch đảo trực tiếp là ổn định về mặt số; số tháng kỳ vọng đến khi bị hấp thụ xuất phát từ trạng thái $i$ được tính bằng tổng hàng $i$ của $\hat{N}$. Cho backtest kỳ hạn hữu hạn ở mục 3.4.5, áp dụng (2.19) và lấy riêng cột Default: $\mathrm{PD}_i(H) = \big[(I - \hat{Q}^H)\hat{N}\hat{R}\big]_{i,\text{Default}}$.
 
 ## 3.4. Thiết kế kiểm định và đánh giá mô hình
 
 ### 3.4.1. Kiểm định tính thuần nhất theo thời gian
 
-- **Giai đoạn con:** chia tập ước lượng theo **năm dương lịch** của tháng xảy ra chuyển. Kết quả chạy thực tế (mục 4.2.1): 9 giai đoạn (2016–2024), mỗi năm đều đủ quan sát (năm ít nhất — 2024 — vẫn có 80.133 quan sát ở 4 trạng thái tạm thời) nên không cần gộp giai đoạn nào; quy tắc gộp năm liền kề khi thiếu quan sát vẫn giữ trong thiết kế cho trường hợp tổng quát.
+- **Giai đoạn con:** chia tập ước lượng theo **năm dương lịch** của tháng xảy ra chuyển, thu được 9 giai đoạn từ 2016 đến 2024. Thiết kế dự phòng quy tắc gộp hai năm liền kề nếu một năm có quá ít lần chuyển xuất phát từ các trạng thái quá hạn; trên dữ liệu thực tế, quy tắc này không phải dùng đến vì năm mỏng nhất (2024, chỉ tính đến mốc $\tau$) vẫn có 80.133 lần chuyển xuất phát từ bốn trạng thái tạm thời.
 - **Kiểm định tổng thể:** áp dụng (2.20)/(2.21) cho toàn bộ $G$ giai đoạn, bậc tự do theo (2.22).
 - **Kiểm định từng cặp:** so sánh các cặp năm liền kề (và cặp trước/sau 2020) với $G = 2$, hiệu chỉnh Bonferroni cho mức ý nghĩa.
 - **Mức ý nghĩa:** $\alpha = 0{,}05$.
@@ -142,15 +142,15 @@ Toàn bộ các phép tính của mô hình được **tự cài đặt** bằng
 
 Đây là bước đánh giá quan trọng nhất của báo cáo, đối chiếu dự báo của mô hình với thực tế ngoài mẫu:
 
-**Quyết định (2026-09-22) — Phương án A: chỉ dùng kỳ hạn $H = 12$ tháng.** Lý do: tập validation chỉ dài ~25 tháng nên $H$ không thể vượt quá khoảng này; $H=12$ giữ đúng tinh thần "cảnh báo **sớm**" của đề tài, dữ liệu dư đệm an toàn (~13 tháng) so với mốc cắt, còn $H=24$ chỉ vừa khít tập validation (đệm ~1 tháng) và làm loãng tính "sớm". Kiểm tra trên bộ gộp 3 vintage tại mốc $\tau \approx$ 02/2024: số khoản vay theo trạng thái xuất phát và số sự kiện Default quan sát trong 12 tháng sau đó — $i=0$ (Current): 39.195 khoản, 34 sự kiện; $i=1$ (30 DPD): 392 khoản, 15 sự kiện; $i=2$ (60 DPD): 84 khoản, 13 sự kiện; $i=3$ (90+ DPD): 70 khoản, 38 sự kiện. Nhóm $i=1,2$ vốn mỏng nên khoảng tin cậy sẽ rộng bất kể chọn $H$ nào — nêu rõ như một hạn chế ở mục 3.4.5 bước 4 và ở phần Kết luận.
+**Lựa chọn kỳ hạn.** Nghiên cứu chỉ sử dụng một kỳ hạn duy nhất là $H = 12$ tháng. Tập kiểm định dài khoảng 25 tháng nên về nguyên tắc có thể thử thêm $H = 24$, nhưng khi đó cửa sổ theo dõi vừa khít độ dài dữ liệu còn lại (chỉ dư khoảng một tháng đệm), bất kỳ khoản vay nào rời mẫu sớm cũng làm hỏng quan sát, và kỳ hạn hai năm cũng làm loãng ý nghĩa "cảnh báo **sớm**" của đề tài. Với $H = 12$, cửa sổ theo dõi còn dư khoảng 13 tháng đệm so với mốc cắt dữ liệu. Đếm thử tại mốc $\tau$ cho thấy quy mô từng nhóm như sau: trạng thái Current có 39.195 khoản vay, 30 DPD có 392 khoản, 60 DPD có 84 khoản và 90+ DPD có 70 khoản. Hai nhóm giữa vốn đã rất mỏng, nên khoảng tin cậy của tỷ lệ quan sát sẽ rộng bất kể chọn kỳ hạn nào; đây là hạn chế được nêu lại ở bước 4 dưới đây và ở phần Kết luận.
 
-1. Tại mốc $\tau$ (đầu giai đoạn kiểm định), xác định trạng thái của mọi khoản vay còn trong danh mục; nhóm các khoản vay theo trạng thái xuất phát $i \in \{0, 1, 2, 3\}$.
-2. **Dự báo:** với mỗi $i$, tính xác suất vỡ nợ mô hình dự báo trong 12 tháng, $\mathrm{PD}_i(12) = \big[(I - \hat{Q}^{12})\hat{B}\big]_{i,\text{Default}}$ (cột Default của $\hat B$, theo mục 3.3), sử dụng tham số ước lượng từ tập ước lượng.
-3. **Thực tế:** theo dõi các khoản vay trong nhóm $i$ qua 12 tháng của tập kiểm định, tính tỷ lệ vỡ nợ quan sát được $\widehat{\mathrm{DR}}_i(12)$ = số khoản vay vào Default trong 12 tháng / số khoản vay trong nhóm. Khoản vay rơi vào Prepaid trong 12 tháng được tính là **không vỡ nợ** (kết cục cạnh tranh, khớp với ý nghĩa cột Default của $\hat B$), không loại khỏi mẫu số.
-4. **Đối chiếu:** so sánh $\mathrm{PD}_i(12)$ với $\widehat{\mathrm{DR}}_i(12)$ cho từng trạng thái xuất phát; kiểm tra xem tỷ lệ thực tế có nằm trong khoảng tin cậy nhị thức xấp xỉ $\mathrm{PD}_i(12) \pm 1{,}96\sqrt{\mathrm{PD}_i(12)(1 - \mathrm{PD}_i(12))/m_i}$ hay không, với $m_i$ là số khoản vay trong nhóm; đánh giá mô hình dự báo cao hay thấp một cách có hệ thống, và liên hệ với kết quả kiểm định thuần nhất ở mục 4.2.
+1. Tại mốc $\tau$, xác định trạng thái của mọi khoản vay còn trong danh mục và nhóm chúng theo trạng thái xuất phát $i \in \{0, 1, 2, 3\}$. Các khoản vay đã bị hấp thụ trước $\tau$ đương nhiên không thuộc nhóm nào, vì câu hỏi dự báo chỉ có nghĩa với khoản vay còn ở trạng thái tạm thời.
+2. **Dự báo:** với mỗi $i$, tính xác suất vỡ nợ mô hình dự báo trong 12 tháng, $\mathrm{PD}_i(12) = \big[(I - \hat{Q}^{12})\hat{N}\hat{R}\big]_{i,\text{Default}}$, sử dụng tham số ước lượng hoàn toàn từ tập ước lượng.
+3. **Thực tế:** theo dõi các khoản vay trong nhóm $i$ qua 12 tháng của tập kiểm định và tính tỷ lệ vỡ nợ quan sát được $\widehat{\mathrm{DR}}_i(12)$, bằng số khoản vay chạm trạng thái Default tại bất kỳ tháng nào trong cửa sổ chia cho số khoản vay $m_i$ của nhóm. Khoản vay rơi vào Prepaid trong cửa sổ được tính là **không vỡ nợ** đúng theo tinh thần kết cục cạnh tranh của cột Default trong $\hat{B}$, và không bị loại khỏi mẫu số. Khoản vay rời mẫu vì các lý do vận hành (mã `15`, `16`, `96`) mà chưa chạm trạng thái hấp thụ nào cũng được giữ trong mẫu số và tính là chưa xảy ra sự kiện; đây là quy ước đơn giản hóa, chấp nhận được vì nhóm này rất nhỏ và vì các kỹ thuật hiệu chỉnh kiểm duyệt nằm ngoài phạm vi nghiên cứu.
+4. **Đối chiếu:** so sánh $\mathrm{PD}_i(12)$ với $\widehat{\mathrm{DR}}_i(12)$ cho từng trạng thái xuất phát. Để đánh giá xem chênh lệch có vượt quá mức dao động lấy mẫu hay không, nghiên cứu tính khoảng tin cậy Wilson 95% cho tỷ lệ quan sát $\widehat{\mathrm{DR}}_i(12)$ và kiểm tra xem giá trị dự báo $\mathrm{PD}_i(12)$ có rơi vào khoảng đó hay không. Khoảng Wilson được chọn thay cho khoảng xấp xỉ chuẩn thông thường vì nó vẫn cho kết quả hợp lệ khi tỷ lệ quan sát gần 0 hoặc khi cỡ mẫu nhóm nhỏ, đúng tình huống của các nhóm 60 DPD và 90+ DPD ở đây. Lưu ý rằng đây là khoảng tin cậy cho đại lượng thực nghiệm, không phải khoảng tin cậy cho tham số $\hat{B}$ của mô hình; việc định lượng độ bất định của chính $\hat{B}$ nằm ngoài phạm vi nghiên cứu và được nêu ở phần hướng phát triển.
 
 ## 3.5. Công cụ thực hiện
 
 - **Ngôn ngữ:** Python 3.11.
 - **Thư viện:** `pandas`, `numpy` (xử lý dữ liệu, đại số tuyến tính), `scipy.stats` (phân phối $\chi^2$, p-value), `matplotlib`, `seaborn` (heatmap, biểu đồ).
-- **Tổ chức mã nguồn:** pipeline gồm các script đánh số theo thứ tự chạy, các hàm Markov dùng chung (MLE, lũy thừa ma trận, $N$, $B$, phân phối dừng, các thống kê kiểm định) đặt trong một module tiện ích; toàn bộ kết quả của Chương 4 có thể tái lập bằng cách chạy lại pipeline từ dữ liệu gốc.
+- **Tổ chức mã nguồn:** chương trình được tách thành các bước đánh số theo đúng thứ tự thực hiện (tiền xử lý và chia tập, ước lượng ma trận chuyển, kiểm định giả thiết, tính phân phối dừng và backtest). Các hàm Markov dùng chung — ước lượng hợp lý cực đại, lũy thừa ma trận, ma trận cơ bản $N$, xác suất hấp thụ $B$, phân phối dừng và các thống kê kiểm định — được gom vào một mô-đun tiện ích riêng và kiểm thử trước trên ma trận nhỏ có nghiệm tính tay được, trước khi áp lên dữ liệu thật. Nhờ cách tổ chức này, toàn bộ kết quả của Chương 4 có thể tái lập bằng cách chạy lại chương trình từ dữ liệu gốc.

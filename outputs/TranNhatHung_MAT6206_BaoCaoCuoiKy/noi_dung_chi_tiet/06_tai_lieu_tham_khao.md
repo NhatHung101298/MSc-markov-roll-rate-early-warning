@@ -9,7 +9,5 @@
 7. Jarrow, R. A., Lando, D., & Turnbull, S. M. (1997). A Markov model for the term structure of credit risk spreads. *The Review of Financial Studies*, 10(2), 481–523.
 8. Basel Committee on Banking Supervision (2006). *International Convergence of Capital Measurement and Capital Standards: A Revised Framework*. Bank for International Settlements.
 9. IASB (2014). *IFRS 9 Financial Instruments*. International Accounting Standards Board.
-10. Freddie Mac. *Single-Family Loan-Level Dataset — General User Guide* và *File Layout*. Federal Home Loan Mortgage Corporation.
+10. Freddie Mac. *Single-Family Loan-Level Dataset: General User Guide* và *File Layout* (Release 47). Federal Home Loan Mortgage Corporation. Truy cập tại: https://www.freddiemac.com/research/datasets/sf-loanlevel-dataset
 11. Tài liệu bài giảng môn Các phương pháp ngẫu nhiên và ứng dụng (MAT6206), Khoa Toán – Cơ – Tin, Trường Đại học Khoa học Tự nhiên, ĐHQGHN.
-
-> **[Kiểm tra lại]** Đối chiếu năm xuất bản/phiên bản của tài liệu 6 và 10 với bản thực tế sử dụng trước khi nộp.

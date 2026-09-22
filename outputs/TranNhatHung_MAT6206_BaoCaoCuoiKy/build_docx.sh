@@ -21,5 +21,11 @@ REF=()
 pandoc "$MERGED" -f markdown -t docx --toc --toc-depth=3 -M toc-title="MỤC LỤC" \
   --resource-path=noi_dung_chi_tiet "${REF[@]}" -o "$OUT"
 
+# Pandoc luôn đặt mục lục ở đầu tài liệu, tức trước cả trang bìa; chuyển nó
+# xuống sau trang bìa cho đúng thứ tự thông thường của một báo cáo.
+PY="../../stochastic/Scripts/python.exe"
+[[ -x "$PY" ]] || PY="python"
+"$PY" fix_toc_position.py "$OUT"
+
 rm -rf "$TMP"
 echo "Đã tạo $OUT"

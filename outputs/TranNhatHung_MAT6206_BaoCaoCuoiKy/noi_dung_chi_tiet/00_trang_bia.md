@@ -16,9 +16,10 @@
 
 | | |
 |---|---|
-| **Giảng viên:** | (điền tên giảng viên) |
-| **Học viên thực hiện:** | Trần Nhật Hưng — (điền mã học viên) |
+| **Giảng viên:** | PGS.TS. Tạ Công Sơn |
+| **Học viên thực hiện:** | Trần Nhật Hưng |
+| **Mã học viên:** |  |
 
 &nbsp;
 
-Hà Nội, Tháng … Năm 2026
+Hà Nội, Tháng 09 Năm 2026

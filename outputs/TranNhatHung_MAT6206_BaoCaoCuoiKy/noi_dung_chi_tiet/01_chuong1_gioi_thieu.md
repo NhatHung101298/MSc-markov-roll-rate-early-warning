@@ -22,7 +22,7 @@ Chính điểm thứ hai là khoảng trống thường gặp trong thực hành
 - **Ghi nhận trạng thái quá hạn theo tháng của từng khoản vay** trong suốt vòng đời khoản vay, là dạng dữ liệu quỹ đạo (trajectory) mà mô hình xích Markov đòi hỏi.
 - **Độ dài quan sát lớn**: mẫu được sử dụng (ba năm khởi tạo 2016, 2017, 2018) được theo dõi đến tháng 03/2026 (khoảng 123 kỳ báo cáo cho vintage 2016), trải qua nhiều bối cảnh kinh tế khác nhau — giai đoạn tăng trưởng ổn định trước 2020, cú sốc COVID-19 cùng các chương trình hoãn trả nợ (2020–2021), và chu kỳ tăng lãi suất (2022–2023). Đây là điều kiện lý tưởng để kiểm định tính thuần nhất theo thời gian của ma trận chuyển.
 - **Tính công khai và minh bạch**: dữ liệu có tài liệu mô tả trường dữ liệu chính thức, cho phép tái lập toàn bộ kết quả của báo cáo.
-- **Quy mô đủ lớn cho các kiểm định của Chương 4**: bản dựng ban đầu chỉ dùng 1 vintage (2016, 50.000 khoản vay) cho quá ít sự kiện vỡ nợ (76–78 khoản, tùy định nghĩa) để kiểm định giả thiết và backtest theo từng trạng thái xuất phát có ý nghĩa thống kê. Mẫu cuối cùng gộp 3 vintage độc lập (2016, 2017, 2018), tổng 150.000 khoản vay với khoảng 8,24 triệu bản ghi khoản vay–tháng — đủ lớn để có ~4.900 sự kiện vỡ nợ (mục 3.2.1) mà vẫn xử lý được trên máy tính cá nhân. Đánh đổi của việc trộn nhiều vintage được thảo luận ở mục 3.1.2 và phần Kết luận.
+- **Quy mô đủ lớn cho các kiểm định của Chương 4**: thiết kế ban đầu chỉ dùng một năm khởi tạo (2016, 50.000 khoản vay), nhưng với định nghĩa vỡ nợ được chọn ở mục 3.2.1 thì mẫu này chỉ cho khoảng 1.376 sự kiện, và khi chia tiếp theo bốn trạng thái xuất phát thì mỗi nhóm chỉ còn vài chục quan sát — không đủ để các kiểm định và bước đối chiếu ngoài mẫu có sức thuyết phục. Mẫu cuối cùng gộp ba năm khởi tạo độc lập (2016, 2017, 2018), tổng 150.000 khoản vay với khoảng 8,24 triệu bản ghi khoản vay–tháng, cho 4.921 sự kiện vỡ nợ mà vẫn xử lý được trên máy tính cá nhân. Cái giá của việc trộn nhiều năm khởi tạo được thảo luận ở mục 3.1.2 và phần Kết luận.
 
 ## 1.3. Mục tiêu nghiên cứu
 
@@ -31,7 +31,7 @@ Mục tiêu tổng quát của báo cáo là xây dựng, kiểm định và đ�
 1. **Ước lượng ma trận chuyển trạng thái** một bước (theo tháng) bằng phương pháp hợp lý cực đại từ dữ liệu quỹ đạo khoản vay.
 2. **Kiểm định các giả thiết nền tảng của mô hình**: (i) tính thuần nhất theo thời gian của ma trận chuyển giữa các giai đoạn con, và (ii) bậc của xích Markov (bậc 1 so với bậc 2).
 3. **Kiểm chứng phương trình Chapman–Kolmogorov bằng số liệu**: so sánh ma trận chuyển ba tháng suy ra từ lũy thừa ma trận tháng với ma trận chuyển ba tháng ước lượng trực tiếp.
-4. **Tính phân phối dừng** của xích Markov ước lượng được và đối chiếu với phân phối trạng thái quan sát thực tế.
+4. **Tính phân phối dừng** của xích Markov ước lượng được, và đối chiếu phân phối trạng thái mà mô hình dự báo sau một số hữu hạn tháng với phân phối quan sát thực tế.
 5. **Tính ma trận cơ bản và xác suất hấp thụ** (xác suất vỡ nợ) theo từng trạng thái xuất phát, và **đối chiếu dự báo này với tỷ lệ vỡ nợ thực tế trên tập dữ liệu kiểm định ngoài mẫu** (backtest).
 
 Tương ứng, báo cáo tìm cách trả lời các câu hỏi nghiên cứu:
