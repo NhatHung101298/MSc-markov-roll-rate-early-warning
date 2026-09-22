@@ -29,7 +29,7 @@ Final assignment (not a thesis) for **MAT6206 — Các phương pháp ngẫu nhi
 
 Estimated scope: ~6 work sessions. **Read `PROJECT_BRIEF.md` in full before implementing anything** — it is the authoritative spec. Key points to hold onto:
 
-- **States (5, absorbing at the end):** `Current (0) → 30 DPD → 60 DPD → 90+ DPD → Default/Foreclosure`. Default/Foreclosure is absorbing.
+- **States (6, two absorbing):** `Current (0) → 30 DPD → 60 DPD → 90+ DPD` are transient; `Default/Foreclosure` and `Prepaid` (paid off early/matured) are both absorbing. Decided 2026-09-22 (see `plans/logs.md`): a single-absorbing-state chain makes `B=NR=1` for every starting state (mathematically correct but useless for the §4.5 backtest), so a second absorbing state "Prepaid" was added — `R` has two columns, `B` gives competing-risk probabilities (default vs. prepay) that differ meaningfully by starting state.
 - **Split by time, not randomly** — e.g. first 80% of periods for parameter estimation, last 20% for validation/backtesting. This is loan-level time-series data.
 - **Must implement the Markov math by hand** (transition matrix MLE, Chapman–Kolmogorov, stationary distribution, fundamental matrix `N=(I-Q)^-1`, absorption probabilities `B=NR`) using `pandas`/`numpy`/`scipy.stats` only.
 - **Do not use** `hmmlearn`, `lifelines`, `scikit-survival`, or any HMM/survival/hazard library — that is explicitly out of scope for this assignment (see brief §6).
@@ -40,6 +40,13 @@ Estimated scope: ~6 work sessions. **Read `PROJECT_BRIEF.md` in full before impl
 ## Scope discipline (important)
 
 `PROJECT_BRIEF.md` §6 lists explicit non-goals: no HMM/Baum-Welch/Viterbi, no Cox PH / discrete-time hazard / survival analysis, no multistate/semi-Markov regression, no ML model comparison (Random Survival Forest, XGBoost-AFT), no trading-style backtest strategy, no customer-segment-level transition matrices, no bootstrap confidence intervals for π or B — unless the user explicitly asks for one of these. If an extension seems like a good idea mid-implementation, stop and ask before adding it rather than expanding scope silently.
+
+## Coding conventions — ngôn ngữ docstring/comment
+
+- Tên biến/hàm/file: tiếng Anh (theo `~/.claude/CLAUDE.md`).
+- **Docstring và comment trong code: tiếng Việt có dấu đầy đủ** (không viết tiếng Việt không dấu kiểu "cong thuc", "tra ve"). Lý do: tránh lỗi encoding dấu tiếng Việt lẫn code review khó đọc — đã xảy ra ở Phase 0 (`scripts/utils/markov.py`, sửa lại 2026-09-22).
+- Docstring hàm Markov nên nối lại đúng số công thức Ch.2 (`PROJECT_BRIEF.md`/báo cáo), ví dụ: `"""p_hat_ij = n_ij / sum_k n_ik -- công thức (2.10)."""`.
+- Trước khi commit code mới: rà lại docstring/comment xem còn sót tiếng Việt không dấu không.
 
 ## Environment
 
