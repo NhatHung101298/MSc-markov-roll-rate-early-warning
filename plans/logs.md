@@ -6,6 +6,10 @@
 
 ---
 
+## 2026-09-19
+
+- `[TASK]` `data/raw/` (bị gitignore) đã mất khỏi máy — tải lại từ freddiemac.embs.com. Kiểm tra: `sample_orig_2016.txt` 50.000 dòng/31 cột, `sample_perf_2016.txt` 3.379.650 dòng/35 cột, loan_id unique = 50.000 trong orig — khớp tuyệt đối với log 2026-09-07. Lệch nhỏ: kỳ báo cáo thực tế bắt đầu `201601` (log cũ ghi nhầm `201603`), do tổng dòng khớp 100% nên coi là cùng file, chỉ sửa lại ghi chú.
+
 ## 2026-09-17
 
 - `[REPORT]` Tạo `outputs/TranNhatHung_MAT6206_BaoCaoCuoiKy/`: `outline.md` (tổng quan), `noi_dung_chi_tiet/00..06_*.md` (mỗi phần 1 file), `build_docx.sh` (pandoc gộp → .docx). Ch.1, Ch.2, Ch.3 viết nháp đầy đủ; Ch.4 + Tóm tắt kết luận là khung TODO.
